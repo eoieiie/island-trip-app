@@ -1,16 +1,7 @@
 # project_island
 
-A new Flutter project.
+섬은 바다로 완전히 둘러싸인 땅으로 대륙보다 작고 암초보다는 큰 것을 말한다. 특히 사람이 살 수 없거나 살지 않는 섬은 무인도라고 한다. 적당히 큰 섬은 도(島, island)라 하고 작은 섬은 서(嶼, islet)라 하여 이 둘을 통칭 도서(島嶼)라 한다.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+장지민
+황병주
+김경주

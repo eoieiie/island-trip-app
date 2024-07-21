@@ -13,7 +13,7 @@ import 'package:project_island/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp()); //const MyApp()이었는데 const 빨간줄이길래 지워봤음
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

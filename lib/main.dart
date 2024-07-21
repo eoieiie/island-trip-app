@@ -2,6 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
+
+import 'package:project_island/section/feed/view/feed_view.dart';
+import 'package:project_island/section/my_page/view/my_page_view.dart';
+
 // 다른 섹션들의 import도 필요에 따라 추가
 
 void main() {
@@ -36,9 +40,9 @@ class _MainPageState extends State<MainPage> {
     // 섬 모양 홈버튼 페이지
     Scaffold(body: Center(child: Text('섬 모양 홈버튼 페이지'))),
     // 피드 페이지
-    Scaffold(body: Center(child: Text('피드 페이지'))),
+    FeedView(),
     // 마이페이지
-    Scaffold(body: Center(child: Text('마이페이지'))),
+    MyPageView(),
   ];
 
   void _onItemTapped(int index) {

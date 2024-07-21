@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
+import 'package:project_island/section/home/view/home_view.dart';
+
 // 다른 섹션들의 import도 필요에 따라 추가
 
 void main() {
@@ -33,8 +35,8 @@ class _MainPageState extends State<MainPage> {
     MyTravelView(),
     // 여행 도구 페이지
     Scaffold(body: Center(child: Text('여행 도구 페이지'))),
-    // 섬 모양 홈버튼 페이지
-    Scaffold(body: Center(child: Text('섬 모양 홈버튼 페이지'))),
+    // 홈버튼 페이지를 HomeView로 교체
+    HomeView(),
     // 피드 페이지
     Scaffold(body: Center(child: Text('피드 페이지'))),
     // 마이페이지

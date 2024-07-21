@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// import 'island_selection_view.dart'; // island_selection_view.dart 임포트
+import 'island_selection_view.dart';
 
 
 class MyTravelView extends StatelessWidget {
@@ -47,10 +47,10 @@ class MyTravelView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                // Navigator.push(
-                //context,
-                // MaterialPageRoute(builder: (context) => IslandSelectionView()),
-                // );
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => IslandSelectionView()),
+                 );
               },
               child: Text('새로운 섬캉스 떠나기!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
               style: ElevatedButton.styleFrom(

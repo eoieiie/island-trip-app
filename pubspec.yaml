@@ -30,9 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.17.0  # my_travel.view.dart
-
-
+  intl: ^0.17.0  # my_travel_view.dart
+  flutter_naver_map: ^1.0.2 # my_travel/view/island_Selection_view.dart
+  flutter_calendar_carousel: ^2.4.1 # my_travel/view/travel_dates_view.dart
+  table_calendar: ^3.0.0 # my_travel/view/travel_dates_view.dart
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6

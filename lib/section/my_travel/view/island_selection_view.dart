@@ -1,8 +1,14 @@
+// lib/section/my_travel/view/island_selection_view.dart
+
+// https://navermaps.github.io/maps.js.ncp/docs/tutorial-2-Marker.html
+// 마커 이미지 변경 위 링크 참고
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import '../../common/map_view.dart';
 import 'travel_dates_view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class IslandSelectionView extends StatefulWidget {
   @override
@@ -12,50 +18,66 @@ class IslandSelectionView extends StatefulWidget {
 class _IslandSelectionViewState extends State<IslandSelectionView> {
   final Completer<NaverMapController> _controller = Completer();
   String _selectedIsland = '거제도';
-  Future<void>? _initialization;
+  bool _isMapReady = false;  // 지도가 준비되었는지 확인하는 변수
 
   @override
   void initState() {
     super.initState();
-    _initialization = _initializeNaverMap();
+    _initializeMap();
   }
 
-  Future<void> _initializeNaverMap() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  Future<void> _initializeMap() async {
     await NaverMapSdk.instance.initialize(
-      clientId: 'tvzws5acgu',
+      clientId: dotenv.env['NAVER_MAP_CLIENT_ID']!,
       onAuthFailed: (e) {
         print('네이버맵 인증오류: $e');
       },
     );
+    setState(() {
+      _isMapReady = true;  // 지도가 준비되었음을 표시
+    });
   }
 
   void _onMapReady(NaverMapController controller) {
     _controller.complete(controller);
+    _addDefaultMarkers(controller);
+  }
 
+  void _addDefaultMarkers(NaverMapController controller) {
     final geojeMarker = NMarker(
       id: 'geoje',
       position: const NLatLng(34.8806, 128.6217),
+      iconTintColor: Colors.blue,
     );
+
     final udoMarker = NMarker(
       id: 'udo',
       position: const NLatLng(33.5037, 126.5302),
+      iconTintColor: Colors.blue,
     );
+
     final oedoMarker = NMarker(
       id: 'oedo',
       position: const NLatLng(34.6305, 128.6566),
+      iconTintColor: Colors.blue,
     );
+
     final hongdoMarker = NMarker(
       id: 'hongdo',
       position: const NLatLng(34.6851, 125.1594),
+      iconTintColor: Colors.blue,
     );
+
     final muuidoMarker = NMarker(
       id: 'muuido',
       position: const NLatLng(37.4519, 126.3947),
+      iconTintColor: Colors.blue,
     );
+
     final jindoMarker = NMarker(
       id: 'jindo',
       position: const NLatLng(34.4887, 126.2630),
+      iconTintColor: Colors.blue,
     );
 
     controller.addOverlayAll({
@@ -100,50 +122,40 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
       appBar: AppBar(
         title: Text('섬 선택'),
       ),
-      body: FutureBuilder<void>(
-        future: _initialization,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('네이버 지도 초기화 실패: ${snapshot.error}'));
-          } else {
-            return Column(
-              children: [
-                Expanded(
-                  child: NaverMap(
-                    onMapReady: _onMapReady,
-                    options: NaverMapViewOptions(
-                      initialCameraPosition: NCameraPosition(
-                        target: NLatLng(35.9078, 127.7669), // 남한의 중심 좌표
-                        zoom: 6.2,
-                      ),
-                    ),
+      body: _isMapReady  // 지도가 준비되었는지 확인
+          ? Column(
+        children: [
+          Expanded(
+            child: MapView(onMapReady: _onMapReady), // 공통 MapView 사용
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
                   ),
+                );
+              },
+              child: Text(
+                '$_selectedIsland로 결정하기!',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
-                        ),
-                      );
-                    },
-                    child: Text('$_selectedIsland로 결정하기!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 48),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
-      ),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 48),
+                backgroundColor: Colors.blueAccent,
+              ),
+            ),
+          ),
+        ],
+      )
+          : Center(child: CircularProgressIndicator()),  // 지도가 준비되지 않았을 때 로딩 표시
     );
   }
 }

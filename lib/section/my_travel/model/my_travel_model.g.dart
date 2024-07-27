@@ -8,17 +8,17 @@ part of 'my_travel_model.dart';
 
 TravelModel _$TravelModelFromJson(Map<String, dynamic> json) {
   return TravelModel(
-    title: json['title'] as String,
-    startDate: DateTime.parse(json['startDate'] as String),
-    endDate: DateTime.parse(json['endDate'] as String),
-    island: json['island'] as String,
+    title: json['title'] as String, // JSON에서 'title' 필드를 읽어와서 String으로 변환하여 설정합니다.
+    startDate: DateTime.parse(json['startDate'] as String), // JSON에서 'startDate' 필드를 읽어와서 DateTime으로 변환하여 설정합니다.
+    endDate: DateTime.parse(json['endDate'] as String), // JSON에서 'endDate' 필드를 읽어와서 DateTime으로 변환하여 설정합니다.
+    island: json['island'] as String, // JSON에서 'island' 필드를 읽어와서 String으로 변환하여 설정합니다.
   );
 }
 
-Map<String, dynamic> _$TravelModelToJson(TravelModel instance) =>
-    <String, dynamic>{
-      'title': instance.title,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
-      'island': instance.island,
-    };
+Map<String, dynamic> _$TravelModelToJson(TravelModel instance) => <String, dynamic>{
+  'title': instance.title, // 객체의 'title' 필드를 JSON에 String으로 저장합니다.
+  'startDate': instance.startDate.toIso8601String(), // 객체의 'startDate' 필드를 ISO 8601 형식의 String으로 변환하여 JSON에 저장합니다.
+  'endDate': instance.endDate.toIso8601String(), // 객체의 'endDate' 필드를 ISO 8601 형식의 String으로 변환하여 JSON에 저장합니다.
+  'island': instance.island, // 객체의 'island' 필드를 JSON에 String으로 저장합니다.
+};
+

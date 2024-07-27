@@ -1,21 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:project_island/section/my_travel/view/travel_schedule_view.dart';
+// lib/section/my_travel/view/travel_dates_view.dart
+
+import 'package:flutter/material.dart'; // Flutter의 Material 디자인 라이브러리를 가져옵니다.
+import 'package:project_island/section/my_travel/view/travel_schedule_view.dart'; // TravelScheduleView 페이지를 가져옵니다.
 
 class TravelDatePage extends StatefulWidget {
-  final String selectedIsland;
+  final String selectedIsland; // 선택된 섬을 저장하는 변수
 
-  const TravelDatePage({required this.selectedIsland, Key? key}) : super(key: key);
+  const TravelDatePage({required this.selectedIsland, Key? key}) : super(key: key); // 생성자, 선택된 섬을 필수 인자로 받습니다.
 
   @override
-  _TravelDatePageState createState() => _TravelDatePageState();
+  _TravelDatePageState createState() => _TravelDatePageState(); // 상태를 생성합니다.
 }
 
 class _TravelDatePageState extends State<TravelDatePage> {
-  DateTime _focusedDate = DateTime.now();
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTime _focusedDate = DateTime.now(); // 현재 포커스된 날짜를 저장하는 변수
+  DateTime? _startDate; // 선택된 시작 날짜를 저장하는 변수
+  DateTime? _endDate; // 선택된 종료 날짜를 저장하는 변수
 
-  List<String> _daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  List<String> _daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']; // 요일 이름 리스트
 
   void _onDaySelected(DateTime selectedDay) {
     setState(() {
@@ -41,7 +43,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
     List<Widget> dayWidgets = [];
 
     for (int i = 0; i < firstDayWeekday; i++) {
-      dayWidgets.add(Container());
+      dayWidgets.add(Container()); // 첫 주의 공백을 채우기 위한 빈 컨테이너
     }
 
     for (int i = 1; i <= daysInMonth; i++) {
@@ -101,7 +103,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 setState(() {
-                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1); // 이전 달로 이동
                 });
               },
             ),
@@ -113,7 +115,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
               icon: Icon(Icons.arrow_forward),
               onPressed: () {
                 setState(() {
-                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
+                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1); // 다음 달로 이동
                 });
               },
             ),
@@ -124,40 +126,40 @@ class _TravelDatePageState extends State<TravelDatePage> {
           crossAxisCount: 7,
           children: _daysOfWeek
               .map((day) => Center(child: Text(day, style: TextStyle(fontWeight: FontWeight.bold))))
-              .toList(),
+              .toList(), // 요일 헤더를 그리드뷰로 생성
         ),
         GridView.count(
           shrinkWrap: true,
           crossAxisCount: 7,
-          children: dayWidgets,
+          children: dayWidgets, // 날짜를 그리드뷰로 생성
         ),
       ],
     );
   }
 
   String _formatDate(DateTime? date) {
-    if (date == null) return '선택되지 않음';
-    return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} (${_getDayOfWeek(date)})";
+    if (date == null) return '선택되지 않음'; // 날짜가 선택되지 않았을 때 표시할 텍스트
+    return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} (${_getDayOfWeek(date)})"; // 날짜를 형식에 맞춰 문자열로 변환
   }
 
   String _getDayOfWeek(DateTime date) {
-    List<String> days = ['일', '월', '화', '수', '목', '금', '토'];
-    return days[date.weekday % 7];
+    List<String> days = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 리스트
+    return days[date.weekday % 7]; // 날짜의 요일을 반환
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('여행 날짜'),
+        title: Text('여행 날짜'), // 앱바 제목 설정
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(), // 뒤로 가기 버튼
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0), // 전체 패딩 설정
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -175,7 +177,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                   Text('내 섬 pick!', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(width: 15),
                   DropdownButton<String>(
-                    value: widget.selectedIsland,
+                    value: widget.selectedIsland, // 선택된 섬
                     items: <String>['거제도', '우도', '외도', '홍도', '무의도', '진도']
                         .map((String value) {
                       return DropdownMenuItem<String>(
@@ -183,7 +185,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                         child: Text(value),
                       );
                     }).toList(),
-                    onChanged: (String? newValue) {},
+                    onChanged: (String? newValue) {}, // 선택된 섬 변경 이벤트 핸들러
                   ),
                 ],
               ),
@@ -215,7 +217,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                 ],
               ),
               SizedBox(height: 20),
-              _buildCalendar(),
+              _buildCalendar(), // 캘린더 위젯 생성
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -232,8 +234,8 @@ class _TravelDatePageState extends State<TravelDatePage> {
                 },
                 child: Text('다음', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 48),
-                  backgroundColor: Colors.blueAccent,
+                  minimumSize: Size(double.infinity, 48), // 버튼 크기 설정
+                  backgroundColor: Colors.blueAccent, // 버튼 배경 색상 설정
                 ),
               ),
             ],

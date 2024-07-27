@@ -42,9 +42,10 @@ dependencies:
   image_picker: ^1.1.2
   expandable_text: ^2.3.0
   timeago: ^3.3.0
-  json_annotation: ^4.7.0 #my_travel/model
+  json_annotation: ^4.7.0 # my_travel/model
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
+  flutter_dotenv: ^5.0.2 # 네이버 지도 api 인증키 env를 위하여 사용
 
 
 dev_dependencies:
@@ -72,6 +73,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/data/travel_data.json
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

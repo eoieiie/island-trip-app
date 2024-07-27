@@ -21,3 +21,4 @@ Map<String, dynamic> _$TravelModelToJson(TravelModel instance) => <String, dynam
   'endDate': instance.endDate.toIso8601String(), // 객체의 'endDate' 필드를 ISO 8601 형식의 String으로 변환하여 JSON에 저장합니다.
   'island': instance.island, // 객체의 'island' 필드를 JSON에 String으로 저장합니다.
 };
+

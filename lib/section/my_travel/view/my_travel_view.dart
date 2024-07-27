@@ -20,6 +20,7 @@ class MyTravelView extends StatelessWidget {
       body: Obx(() {
         if (travelViewModel.isLoading.value) {
           return Center(child: CircularProgressIndicator()); // 로딩 중일 때 로딩 인디케이터를 표시
+
         } else {
           return Column(
             children: [

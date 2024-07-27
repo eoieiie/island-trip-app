@@ -8,6 +8,7 @@ class MyTravelViewModel extends GetxController {
   var travels = <TravelModel>[].obs; // 여행 목록을 Observable 리스트로 선언합니다.
   var isLoading = true.obs; // 로딩 상태를 Observable 변수로 선언합니다.
 
+
   @override
   void onInit() {
     super.onInit();

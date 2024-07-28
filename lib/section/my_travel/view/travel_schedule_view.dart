@@ -3,16 +3,14 @@
 import 'dart:async'; // 비동기 프로그래밍을 위한 라이브러리를 가져옵니다.
 import 'package:flutter/material.dart'; // Flutter의 Material 디자인 라이브러리를 가져옵니다.
 import 'package:flutter_naver_map/flutter_naver_map.dart'; // 네이버 지도를 사용하기 위한 라이브러리를 가져옵니다.
+import 'package:get/get.dart'; // GetX 라이브러리를 가져옵니다.
+import '../viewmodel/my_travel_viewmodel.dart'; // MyTravelViewModel을 가져옵니다.
 
 class TravelScheduleView extends StatefulWidget {
-  final String selectedIsland; // 선택된 섬 이름
-  final DateTime startDate; // 여행 시작 날짜
-  final DateTime endDate; // 여행 종료 날짜
+  final String travelId; // 여행 ID를 저장하는 변수
 
   TravelScheduleView({
-    required this.selectedIsland, // 선택된 섬 이름을 필수 인자로 받습니다.
-    required this.startDate, // 시작 날짜를 필수 인자로 받습니다.
-    required this.endDate, // 종료 날짜를 필수 인자로 받습니다.
+    required this.travelId, // 여행 ID를 필수 인자로 받습니다.
   });
 
   @override
@@ -23,10 +21,12 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   final Completer<NaverMapController> _controller = Completer(); // NaverMapController를 완성합니다.
   Future<void>? _initialization; // 네이버 지도 초기화를 저장하는 변수
   int _selectedDayIndex = 0; // 선택된 날짜 인덱스를 저장하는 변수
+  late MyTravelViewModel travelViewModel; // MyTravelViewModel 인스턴스 저장 변수
 
   @override
   void initState() {
     super.initState();
+    travelViewModel = Get.find<MyTravelViewModel>(); // MyTravelViewModel 인스턴스를 가져옵니다.
     _initialization = _initializeNaverMap(); // 네이버 지도 초기화를 설정합니다.
   }
 
@@ -73,7 +73,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
           _buildMap(), // 네이버 지도 위젯
           Column(
             children: [
-              _buildIslandInfo(widget.selectedIsland, widget.startDate, widget.endDate), // 섬 정보 위젯
+              _buildIslandInfo(), // 섬 정보 위젯
               Expanded(child: _buildBottomSheet(context)), // 바텀 시트 위젯
             ],
           ),
@@ -83,7 +83,10 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     );
   }
 
-  Widget _buildIslandInfo(String island, DateTime start, DateTime end) {
+  Widget _buildIslandInfo() {
+    // 여행 ID를 사용해 TravelModel을 가져옵니다.
+    final travel = travelViewModel.travels.firstWhere((t) => t.id == widget.travelId);
+
     return Container(
       color: Colors.white, // 배경 색상 설정
       width: double.infinity, // 너비를 화면 전체로 설정
@@ -92,11 +95,11 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
         crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
         children: [
           Text(
-            island,
+            travel.island,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue), // 섬 이름 텍스트 스타일 설정
           ),
           Text(
-            "${start.year}.${start.month.toString().padLeft(2, '0')}.${start.day.toString().padLeft(2, '0')} ~ ${end.year}.${end.month.toString().padLeft(2, '0')}.${end.day.toString().padLeft(2, '0')}",
+            "${travel.startDate.year}.${travel.startDate.month.toString().padLeft(2, '0')}.${travel.startDate.day.toString().padLeft(2, '0')} ~ ${travel.endDate.year}.${travel.endDate.month.toString().padLeft(2, '0')}.${travel.endDate.day.toString().padLeft(2, '0')}",
             style: TextStyle(fontSize: 16, color: Colors.blue.withOpacity(0.7)), // 날짜 텍스트 스타일 설정
           ),
         ],

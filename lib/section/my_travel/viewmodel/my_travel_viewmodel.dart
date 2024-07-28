@@ -1,32 +1,55 @@
 // lib/section/my_travel/viewmodel/my_travel_viewmodel.dart
 
-import 'package:get/get.dart'; // 상태 관리 및 의존성 주입을 위한 GetX 라이브러리를 가져옵니다.
-import '../model/my_travel_model.dart'; // TravelModel 클래스를 가져옵니다.
-import '../repository/my_travel_repository.dart'; // MyTravelRepository 클래스를 가져옵니다.
+import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
+import '../model/my_travel_model.dart';
+import '../repository/my_travel_repository.dart';
 
 class MyTravelViewModel extends GetxController {
-  var travels = <TravelModel>[].obs; // 여행 목록을 Observable 리스트로 선언합니다.
-  var isLoading = true.obs; // 로딩 상태를 Observable 변수로 선언합니다.
-
+  var travels = <TravelModel>[].obs;
+  var isLoading = true.obs;
+  final uuid = Uuid();
 
   @override
   void onInit() {
     super.onInit();
-    loadTravels(); // 뷰모델 초기화 시 여행 데이터를 로드합니다.
+    loadTravels();
   }
 
   Future<void> loadTravels() async {
     try {
-      isLoading(true); // 데이터를 로드하기 전에 로딩 상태를 true로 설정합니다.
-      var loadedTravels = await MyTravelRepository.loadTravelData(); // 여행 데이터를 로드합니다.
-      travels.assignAll(loadedTravels); // 로드한 데이터를 travels 리스트에 할당합니다.
+      isLoading(true);
+      var loadedTravels = await MyTravelRepository.loadTravelData();
+      travels.assignAll(loadedTravels);
     } finally {
-      isLoading(false); // 데이터 로드 후 로딩 상태를 false로 설정합니다.
+      isLoading(false);
     }
   }
 
+  String addTravel(String island, DateTime startDate, DateTime endDate) {
+    final newTravel = TravelModel(
+      id: uuid.v4(),
+      title: '$island 여행',
+      startDate: startDate,
+      endDate: endDate,
+      island: island,
+    );
+    travels.add(newTravel);
+    MyTravelRepository.saveTravelData(travels);
+    return newTravel.id; // 고유 ID 반환
+  }
+
   Future<void> updateTravel(int index, TravelModel updatedTravel) async {
-    travels[index] = updatedTravel; // 특정 인덱스의 여행 데이터를 업데이트합니다.
-    await MyTravelRepository.saveTravelData(travels); // 업데이트된 데이터를 저장합니다.
+    updatedTravel.updatedAt = DateTime.now(); // 수정된 날짜를 현재 시간으로 업데이트
+    travels[index] = updatedTravel;
+    await MyTravelRepository.saveTravelData(travels);
+  }
+
+  Future<void> deleteTravel(String id) async {
+    travels.removeWhere((travel) => travel.id == id);
+    await MyTravelRepository.saveTravelData(travels);
+  }
+  Future<void> saveTravels() async {
+    await MyTravelRepository.saveTravelData(travels); // 여행 데이터를 저장합니다.
   }
 }

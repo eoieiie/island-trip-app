@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_island/section/feed/view/add_photo_view.dart'; // add_photo_view 파일 가져오기
+import 'package:project_island/section/feed/view/upload_view.dart'; // add_photo_view 파일 가져오기
 
 class ReviewWriteView extends StatelessWidget {
   @override
@@ -21,7 +21,7 @@ class ReviewWriteView extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPhotoView()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => UploadView()));
                         },
                         child: Container(
                           margin: EdgeInsets.all(4.0),
@@ -36,7 +36,7 @@ class ReviewWriteView extends StatelessWidget {
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => AddPhotoView()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => UploadView()));
                               },
                               child: Container(
                                 margin: EdgeInsets.all(4.0),
@@ -48,7 +48,7 @@ class ReviewWriteView extends StatelessWidget {
                           Expanded(
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => AddPhotoView()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => UploadView()));
                               },
                               child: Container(
                                 margin: EdgeInsets.all(4.0),

@@ -2,45 +2,45 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-class AddPhotoView extends StatefulWidget {
+class UploadView extends StatefulWidget {
   @override
-  _AddPhotoViewState createState() => _AddPhotoViewState();
+  _UploadViewState createState() => _UploadViewState();
 }
 
-class _AddPhotoViewState extends State<AddPhotoView> {
-  List<AssetPathEntity> albums = [];
-  List<AssetEntity> imageList = [];
-  AssetEntity? selectedImage;
-  String headerTitle = 'All Photos';
+class _UploadViewState extends State<UploadView> {
+  List<AssetPathEntity> albums = []; // 앨범 리스트
+  List<AssetEntity> imageList = []; // 이미지 리스트
+  AssetEntity? selectedImage; // 선택된 이미지
+  String headerTitle = 'All Photos'; // 헤더 타이틀
 
   @override
   void initState() {
     super.initState();
-    _loadImages();
+    _loadImages(); // 이미지 로드
   }
 
   Future<void> _loadImages() async {
-    final permitted = await PhotoManager.requestPermissionExtend();
+    final permitted = await PhotoManager.requestPermissionExtend(); // 권한 요청
     if (!permitted.isAuth) return;
 
-    List<AssetPathEntity> albumList = await PhotoManager.getAssetPathList();
+    List<AssetPathEntity> albumList = await PhotoManager.getAssetPathList(); // 앨범 리스트 가져오기
     setState(() {
       albums = albumList;
-      headerTitle = albums.first.name;
+      headerTitle = albums.first.name; // 첫 앨범 이름 설정
     });
-    _loadData(albums.first);
+    _loadData(albums.first); // 첫 앨범 데이터 로드
   }
 
   Future<void> _loadData(AssetPathEntity album) async {
-    List<AssetEntity> imageListData = await album.getAssetListPaged(page: 0, size: 80);
+    List<AssetEntity> imageListData = await album.getAssetListPaged(page: 0, size: 80); // 이미지 리스트 가져오기
     setState(() {
       imageList = imageListData;
-      selectedImage = imageList.first;
+      selectedImage = imageList.first; // 첫 이미지 선택
     });
   }
 
   Widget _imagePreview() {
-    var width = MediaQuery.of(context).size.width;
+    var width = MediaQuery.of(context).size.width; // 화면 너비
     return Container(
       width: width,
       height: width,
@@ -221,21 +221,21 @@ class _AddPhotoViewState extends State<AddPhotoView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // 배경색 흰색
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Colors.white, // 앱바 배경색 흰색
+        elevation: 0, // 앱바 그림자 제거
         leading: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // 뒤로가기
           },
           child: Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Icon(Icons.close, color: Colors.black),
+            child: Icon(Icons.close, color: Colors.black), // 닫기 아이콘
           ),
         ),
         title: const Text(
-          'New Post',
+          'New Post', // 제목
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -249,7 +249,7 @@ class _AddPhotoViewState extends State<AddPhotoView> {
             },
             child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Icon(Icons.arrow_forward, color: Colors.black),
+              child: Icon(Icons.arrow_forward, color: Colors.black), // 앞으로 가기 아이콘
             ),
           ),
         ],
@@ -257,9 +257,9 @@ class _AddPhotoViewState extends State<AddPhotoView> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _imagePreview(),
-            _header(),
-            _imageSelectList(),
+            _imagePreview(), // 이미지 미리보기
+            _header(), // 헤더
+            _imageSelectList(), // 이미지 선택 리스트
           ],
         ),
       ),

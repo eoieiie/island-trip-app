@@ -1,14 +1,11 @@
-// lib/section/my_travel/view/island_selection_view.dart
-
-// https://navermaps.github.io/maps.js.ncp/docs/tutorial-2-Marker.html
-// 마커 이미지 변경 위 링크 참고
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import '../../common/map_view.dart';
 import 'travel_dates_view.dart';
+import '../viewmodel/my_travel_viewmodel.dart';
+import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 class IslandSelectionView extends StatefulWidget {
   @override
@@ -17,8 +14,9 @@ class IslandSelectionView extends StatefulWidget {
 
 class _IslandSelectionViewState extends State<IslandSelectionView> {
   final Completer<NaverMapController> _controller = Completer();
+  final MyTravelViewModel travelViewModel = Get.find<MyTravelViewModel>();
   String _selectedIsland = '거제도';
-  bool _isMapReady = false;  // 지도가 준비되었는지 확인하는 변수
+  bool _isMapReady = false;
 
   @override
   void initState() {
@@ -34,7 +32,7 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
       },
     );
     setState(() {
-      _isMapReady = true;  // 지도가 준비되었음을 표시
+      _isMapReady = true;
     });
   }
 
@@ -116,17 +114,21 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
     });
   }
 
+  void _addTravel(String island, DateTime startDate, DateTime endDate) {
+    travelViewModel.addTravel(island, startDate, endDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('섬 선택'),
       ),
-      body: _isMapReady  // 지도가 준비되었는지 확인
+      body: _isMapReady
           ? Column(
         children: [
           Expanded(
-            child: MapView(onMapReady: _onMapReady), // 공통 MapView 사용
+            child: MapView(onMapReady: _onMapReady),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -137,7 +139,11 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
                   MaterialPageRoute(
                     builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
                   ),
-                );
+                ).then((dates) {
+                  if (dates != null) {
+                    _addTravel(_selectedIsland, dates['startDate'], dates['endDate']);
+                  }
+                });
               },
               child: Text(
                 '$_selectedIsland로 결정하기!',
@@ -155,7 +161,7 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
           ),
         ],
       )
-          : Center(child: CircularProgressIndicator()),  // 지도가 준비되지 않았을 때 로딩 표시
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }

@@ -1,23 +1,23 @@
-// lib/section/my_travel/view/travel_dates_view.dart
-
-import 'package:flutter/material.dart'; // Flutter의 Material 디자인 라이브러리를 가져옵니다.
-import 'package:project_island/section/my_travel/view/travel_schedule_view.dart'; // TravelScheduleView 페이지를 가져옵니다.
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../viewmodel/my_travel_viewmodel.dart';
+import 'travel_schedule_view.dart';
 
 class TravelDatePage extends StatefulWidget {
-  final String selectedIsland; // 선택된 섬을 저장하는 변수
+  final String selectedIsland;
 
-  const TravelDatePage({required this.selectedIsland, Key? key}) : super(key: key); // 생성자, 선택된 섬을 필수 인자로 받습니다.
+  const TravelDatePage({required this.selectedIsland, Key? key}) : super(key: key);
 
   @override
-  _TravelDatePageState createState() => _TravelDatePageState(); // 상태를 생성합니다.
+  _TravelDatePageState createState() => _TravelDatePageState();
 }
 
 class _TravelDatePageState extends State<TravelDatePage> {
-  DateTime _focusedDate = DateTime.now(); // 현재 포커스된 날짜를 저장하는 변수
-  DateTime? _startDate; // 선택된 시작 날짜를 저장하는 변수
-  DateTime? _endDate; // 선택된 종료 날짜를 저장하는 변수
+  DateTime _focusedDate = DateTime.now();
+  DateTime? _startDate;
+  DateTime? _endDate;
 
-  List<String> _daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']; // 요일 이름 리스트
+  List<String> _daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   void _onDaySelected(DateTime selectedDay) {
     setState(() {
@@ -198,7 +198,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_startDate), style: TextStyle(fontSize: 16)),
+                        Text(_formatDate(_startDate), style: TextStyle(fontSize: 16, color: Colors.white)),
                         Text('AM 09:00', style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -209,7 +209,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_endDate), style: TextStyle(fontSize: 16)),
+                        Text(_formatDate(_endDate), style: TextStyle(fontSize: 16, color: Colors.white)),
                         Text('AM 09:00', style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -221,18 +221,22 @@ class _TravelDatePageState extends State<TravelDatePage> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TravelScheduleView(
-                        selectedIsland: widget.selectedIsland,
-                        startDate: _startDate!,
-                        endDate: _endDate!,
+                  if (_startDate != null && _endDate != null) {
+                    // 여행 데이터를 추가하고 스케줄 뷰로 이동
+                    final travelId = Get.find<MyTravelViewModel>().addTravel(
+                      widget.selectedIsland,
+                      _startDate!,
+                      _endDate!,
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TravelScheduleView(travelId: travelId),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
-                child: Text('다음', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text('다음', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 48), // 버튼 크기 설정
                   backgroundColor: Colors.blueAccent, // 버튼 배경 색상 설정

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_page/view/profile_edit_view.dart';
 import 'package:project_island/section/my_page/view/setting_view.dart';
+import 'package:project_island/section/my_travel/view/travel_schedule_view.dart';
 
+// MyPageView 위젯의 상태를 관리하는 StatefulWidget입니다.
 class MyPageView extends StatefulWidget {
   @override
   _MyPageViewState createState() => _MyPageViewState();
 }
 
+// _MyPageViewState 클래스는 MyPageView의 상태를 관리합니다.
 class _MyPageViewState extends State<MyPageView> {
-  int _selectedIndex = 0;
-  PageController _pageController = PageController();
+  int _selectedIndex = 0; // 선택된 페이지 인덱스를 저장합니다.
+  PageController _pageController = PageController(); // 페이지 전환을 위한 컨트롤러입니다.
 
+  // 하단 네비게이션 아이템이 탭될 때 호출되는 함수입니다.
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -18,6 +22,7 @@ class _MyPageViewState extends State<MyPageView> {
     _pageController.jumpToPage(index);
   }
 
+  // 프로필 편집 페이지로 이동하는 함수입니다.
   void _goToProfileEditPage() {
     Navigator.push(
       context,
@@ -25,6 +30,7 @@ class _MyPageViewState extends State<MyPageView> {
     );
   }
 
+  // 설정 페이지로 이동하는 함수입니다.
   void _goToSettingPage() {
     Navigator.push(
       context,
@@ -139,6 +145,7 @@ class _MyPageViewState extends State<MyPageView> {
   }
 }
 
+// LeftPage 위젯입니다.
 class LeftPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -162,11 +169,29 @@ class LeftPage extends StatelessWidget {
   }
 }
 
+// RightPage 위젯입니다.
 class RightPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('오른쪽 페이지 내용 없음'),
+    return ListView.builder(
+      itemCount: 20, // 예제용 아이템 수
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text('여행 일정 $index'), // 아이템 텍스트 설정
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TravelScheduleView(
+                  selectedIsland: '제주도', // 예제용 선택된 섬 이름
+                  startDate: DateTime.now(), // 예제용 시작 날짜
+                  endDate: DateTime.now().add(Duration(days: 5)), // 예제용 종료 날짜
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

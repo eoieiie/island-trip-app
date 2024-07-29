@@ -1,12 +1,14 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
-import 'package:project_island/section/my_travel/view/my_travel_view.dart';
-import 'package:project_island/section/my_page/view/my_page_view.dart';
-import 'package:project_island/section/feed/view/feed_view.dart';
-import 'package:project_island/section/home/view/home_view.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'section/my_travel/view/my_travel_view.dart';
+import 'section/my_page/view/my_page_view.dart';
+import 'section/feed/view/feed_view.dart';
+import 'section/home/view/home_view.dart';
+import 'section/home/view/magazine_view.dart'; // 추가된 Import
+import 'package:project_island/section/home/repository/home_repository.dart';
+import 'package:project_island/section/home/viewmodel/magazine_viewmodel.dart'; // 추가된 Import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -23,12 +25,19 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Island Travel App', // 앱의 제목을 설정합니다.
-      theme: ThemeData(
-        primarySwatch: Colors.blue, // 앱의 기본 색상을 파란색으로 설정합니다.
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => MagazineViewModel(repository: Repository()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Island Travel App', // 앱의 제목을 설정합니다.
+        theme: ThemeData(
+          primarySwatch: Colors.blue, // 앱의 기본 색상을 파란색으로 설정합니다.
+        ),
+        home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
       ),
-      home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
     );
   }
 }

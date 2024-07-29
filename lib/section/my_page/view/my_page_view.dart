@@ -185,7 +185,7 @@ class RightPage extends StatelessWidget {
                 builder: (context) => TravelScheduleView(
                   selectedIsland: '제주도', // 예제용 선택된 섬 이름
                   startDate: DateTime.now(), // 예제용 시작 날짜
-                  endDate: DateTime.now().add(Duration(days: 5)), // 예제용 종료 날짜
+                  endDate: DateTime.now().add(Duration(days: 5)), travelId: '', // 예제용 종료 날짜
                 ),
               ),
             );

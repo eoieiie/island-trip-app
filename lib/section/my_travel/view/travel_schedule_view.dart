@@ -10,7 +10,7 @@ class TravelScheduleView extends StatefulWidget {
   final String travelId; // 여행 ID를 저장하는 변수
 
   TravelScheduleView({
-    required this.travelId, // 여행 ID를 필수 인자로 받습니다.
+    required this.travelId, required String selectedIsland, required DateTime startDate, required DateTime endDate, // 여행 ID를 필수 인자로 받습니다.
   });
 
   @override

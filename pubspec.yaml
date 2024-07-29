@@ -46,6 +46,10 @@ dependencies:
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
   flutter_dotenv: ^5.0.2 # 네이버 지도 api 인증키 env를 위하여 사용
+  google_sign_in: ^6.2.1
+  image: ^3.3.0
+  path: ^1.9.0
+  photofilters: ^3.0.1
 
 
 dev_dependencies:

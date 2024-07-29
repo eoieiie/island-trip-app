@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart'; // Flutter의 Material 디자인 패키지 가져오기
-import 'package:project_island/section/feed/view/feed_view.dart'; // feed_view 파일 가져오기
 
 class SearchFocus extends StatefulWidget { // SearchFocus Stateful 위젯 선언
   const SearchFocus({Key? key}) : super(key: key);

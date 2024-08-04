@@ -165,25 +165,17 @@ class TravelCard extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TravelScheduleView(travelId: travel.id)),
+              MaterialPageRoute(builder: (context) => TravelScheduleView(
+                travelId: travel.id,
+                selectedIsland: travel.island,
+                startDate: travel.startDate,
+                endDate: travel.endDate,
+              )),
             );
           },
         ),
       ),
     );
-  }
-
-  String _formatUpdatedAt(DateTime updatedAt) {
-    final now = DateTime.now();
-    final difference = now.difference(updatedAt);
-
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}분 전 편집됨';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}시간 전 편집됨';
-    } else {
-      return '${difference.inDays}일 전 편집됨';
-    }
   }
 }
 

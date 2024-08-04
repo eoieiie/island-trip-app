@@ -1,10 +1,13 @@
 import 'dart:math'; // Random 클래스를 사용하기 위해 math 패키지 가져오기
-import 'dart:async';
 import 'package:flutter/material.dart'; // Flutter UI 구성 요소 패키지
 import 'package:project_island/section/feed/view/review_write_view.dart'; // ReviewWriteView 파일 가져오기
 import 'package:project_island/section/feed/view/search_focus_view.dart'; // SearchFocus 파일 가져오기
 import 'package:project_island/section/feed/view/photo_detail_view.dart'; // PhotoDetailView 파일 가져오기
-import 'package:flutter_naver_map/flutter_naver_map.dart'; // Naver 지도 패키지
+import 'package:project_island/section/common/map_view.dart'; // MapView 파일 가져오기
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:project_island/section/feed/repository/map_marker_repository.dart';
+import 'package:project_island/section/feed/viewmodel/map_marker_viewmodel.dart';
+import 'package:get/get.dart';
 
 class FeedView extends StatefulWidget { // FeedView라는 Stateful 위젯 선언
   const FeedView({Key? key}) : super(key: key); // 생성자
@@ -17,13 +20,12 @@ class FeedView extends StatefulWidget { // FeedView라는 Stateful 위젯 선언
 class _FeedViewState extends State<FeedView> { // FeedView의 상태 클래스
   List<List<int>> groupBox = [[], [], []]; // 3개의 빈 리스트로 이루어진 groupBox 리스트 생성
   List<int> groupIndex = [0, 0, 0]; // 3개의 0으로 초기화된 groupIndex 리스트 생성
-  final Completer<NaverMapController> _controller = Completer();
-  late Future<void> _initialization; //기존, 위는 추가한거임
+
+  final MapMarkerViewmodel viewModel = Get.put(MapMarkerViewmodel(repository: MapMarkerRepository(apiUrl: 'https://your-api-url.com/places')));
 
   @override
   void initState() { // 상태 초기화 메서드
     super.initState();
-    _initialization = _initializeNaverMap(); // 네이버 지도 초기화
 
     if (groupIndex.isNotEmpty) { // groupIndex가 비어있지 않으면
       for (var i = 0; i < 100; i++) { // 100번 반복
@@ -38,53 +40,30 @@ class _FeedViewState extends State<FeedView> { // FeedView의 상태 클래스
     }
   }
 
-  // 네이버 지도 초기화 함수
-  Future<void> _initializeNaverMap() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await NaverMapSdk.instance.initialize(
-      clientId: 'tvzws5acgu', // API 키
-      onAuthFailed: (e) {
-        print('네이버맵 인증오류: $e');
-      },
-    );
-  }
-
-  // 네이버 지도 준비 완료 시 호출되는 함수
-  void _onMapReady(NaverMapController controller) {
-    _controller.complete(controller);
-
-    // 마커 생성
-    final marker1 = NMarker(
-      id: '1',
-      position: const NLatLng(37.5665, 126.9780), // 서울 위치
-    );
-    final marker2 = NMarker(
-      id: '2',
-      position: const NLatLng(37.5765, 126.9880), // 서울 다른 위치
-    );
-
-    controller.addOverlayAll({marker1, marker2}); // 마커 지도에 추가
-  }
-
   @override
-  Widget build(BuildContext context) { // 빌드 메서드
+  Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // 탭의 개수
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0, // 그림자 제거
-          title: _appbar(), // _appbar 위젯을 title로 사용
+          elevation: 0,
+          title: _appbar(),
           bottom: const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.feed_rounded)), // 첫 번째 탭 아이콘
-              Tab(icon: Icon(Icons.map)), // 두 번째 탭 아이콘
+              Tab(icon: Icon(Icons.feed_rounded)),
+              Tab(icon: Icon(Icons.map)),
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            _body(), // 첫 번째 탭 내용
-            _mapView(context), // 두 번째 탭 내용
+            _body(),
+            Obx(() {
+              if (viewModel.isLoading.value) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return _mapView(context);
+            }),
           ],
         ),
       ),
@@ -171,6 +150,45 @@ class _FeedViewState extends State<FeedView> { // FeedView의 상태 클래스
     );
   }
 
+  Widget _mapView(BuildContext context) { // 지도 화면 위젯
+    return Scaffold(
+      body: Stack(
+        children: [
+          MapView(
+            onMapReady: (controller) {
+              for (var place in viewModel.places) {
+                final marker = NMarker(
+                  id: place.id,
+                  position: NLatLng(place.latitude, place.longitude),
+                  caption: NOverlayCaption(text: place.name),
+                );
+
+                marker.setOnTapListener((overlay) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(place.name),
+                      content: Text(place.description),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    ),
+                  );
+                });
+
+                controller.addOverlay(marker);
+              }
+            },
+          ), // 네이버 지도 위젯
+          _buildBottomSheet(context), // 바텀 시트 위젯
+        ],
+      ),
+    );
+  }
+
   Widget _buildBottomSheet(BuildContext context) {
     return DraggableScrollableSheet(
       initialChildSize: 0.4, // 초기 크기 설정
@@ -221,8 +239,54 @@ class _FeedViewState extends State<FeedView> { // FeedView의 상태 클래스
                   controller: scrollController,
                   itemCount: 20, // 예제용 아이템 수
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text('Item $index'), // 아이템 텍스트 설정
+                    // 예제 데이터
+                    final store = {
+                      'name': '가게 이름 $index',
+                      'rating': '4.${index % 5}',
+                      'reviews': '${index * 10} 리뷰',
+                      'distance': '${index * 100}m',
+                      'address': '경기 수원시 권선구 곡반정로 ${index * 10}',
+                      'image': 'https://via.placeholder.com/150'
+                    };
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 2.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(8.0),
+                          leading: Image.network(
+                            store['image']!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(
+                            store['name']!,
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '평점: ${store['rating']} (${store['reviews']})',
+                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                              ),
+                              Text(
+                                store['address']!,
+                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                              ),
+                              Text(
+                                store['distance']!,
+                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -231,40 +295,6 @@ class _FeedViewState extends State<FeedView> { // FeedView의 상태 클래스
           ),
         );
       },
-    );
-  }
-
-  Widget _buildMap() {
-    return FutureBuilder<void>(
-      future: _initialization, // 네이버 지도 초기화 Future
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // 초기화 중 로딩 인디케이터 표시
-        } else if (snapshot.hasError) {
-          return Center(child: Text('네이버 지도 초기화 실패: ${snapshot.error}')); // 초기화 실패 시 오류 메시지 표시
-        } else {
-          return NaverMap(
-            onMapReady: _onMapReady, // 지도 준비 완료 시 호출되는 함수
-            options: NaverMapViewOptions(
-              initialCameraPosition: NCameraPosition(
-                target: NLatLng(37.5665, 126.9780), // 예시 좌표 (서울)
-                zoom: 10, // 초기 줌 레벨 설정
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _mapView(BuildContext context) { // 지도 화면 위젯
-    return Scaffold(
-      body: Stack(
-        children: [
-          _buildMap(), // 네이버 지도 위젯
-          Expanded(child: _buildBottomSheet(context)), // 바텀 시트 위젯
-        ],
-      ),
     );
   }
 }

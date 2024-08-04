@@ -47,6 +47,7 @@ dependencies:
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
   flutter_dotenv: ^5.0.2 # 네이버 지도 api 인증키 env를 위하여 사용
+  http: ^1.2.2 #한국관광공사 Open api 호출을 위해 사용
 
 
 dev_dependencies:

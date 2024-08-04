@@ -51,7 +51,7 @@ class HomeView extends StatelessWidget {
                 child: Text('섬 자세히 보기'),
               ),
             ),
-            // 나머지 콘텐츠를 포함하는 확장 가능한 섹션
+            //나머지 콘텐츠를 포함하는 확장 가능한 섹션
             Expanded(
               child: SingleChildScrollView(
                 child: Column(

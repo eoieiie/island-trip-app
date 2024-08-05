@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/feed/view/upload_view.dart'; // add_photo_view 파일 가져오기
+import 'package:get/get.dart';
+import 'package:project_island/section/feed/viewmodel/upload_controller.dart';
+
 
 class ReviewWriteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // UploadController를 초기화
+    Get.put(UploadController());
     return Scaffold(
       appBar: AppBar(
         title: Text('사진 올리기'),

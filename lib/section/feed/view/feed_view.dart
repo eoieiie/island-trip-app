@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:project_island/section/feed/view/review_write_view.dart'; // ReviewWriteView 파일 가져오기
 import 'package:project_island/section/feed/view/search_focus_view.dart'; // SearchFocus 파일 가져오기
-import 'package:project_island/section/feed/view/photo_detail_view.dart'; // PhotoDetailView 파일 가져오기
+// import 'package:project_island/section/feed/view/photo_detail_view.dart'; // PhotoDetailView 파일 가져오기
 
 import 'package:project_island/section/common/map_view.dart'; // MapView 파일 가져오기
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -14,7 +14,7 @@ import 'package:project_island/section/feed/viewmodel/map_marker_viewmodel.dart'
 
 import 'package:project_island/section/common/feed_my_page common/src/components/post_widget.dart';
 import 'package:project_island/section/feed/model/post_model.dart';
-import 'package:project_island/section/my_page/model/user_model.dart'; // IUser 클래스가 정의된 파일
+// import 'package:project_island/section/my_page/model/user_model.dart'; // IUser 클래스가 정의된 파일
 
 // post_widget.dart
 import 'package:project_island/section/feed/model/post_model.dart'; // Post 클래스가 정의된 파일

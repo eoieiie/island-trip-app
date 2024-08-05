@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 enum AvatarType { TYPE1, TYPE2, TYPE3 }
 
 class AvatarWidget extends StatelessWidget {
-  bool? hasStory;
-  String thumbPath;
-  String? nickname;
-  AvatarType type;
-  double? size;
+  final bool? hasStory; // immutable한거라고 final로 수정해달라고 오류나서 final 넣음
+  final String thumbPath;
+  final String? nickname;
+  final AvatarType type;
+  final double? size;
 
   AvatarWidget({
     Key? key,

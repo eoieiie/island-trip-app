@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ImageData extends StatelessWidget {
-  String icon;
+  final String icon; // immutable한거라고 final로 수정해달라고 오류나서 final 넣음
   final double? width;
   ImageData(
     this.icon, {

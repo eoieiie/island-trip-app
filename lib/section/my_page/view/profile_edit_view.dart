@@ -22,7 +22,7 @@ class ProfileEditView extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => UploadView()), // add_photo_view 페이지로 이동
+                  MaterialPageRoute(builder: (context) => UploadView()), // Uploadview 페이지로 이동
                 );
               },
               child: CircleAvatar(

@@ -16,12 +16,6 @@ import 'package:project_island/section/common/feed_my_page common/src/components
 import 'package:project_island/section/feed/model/post_model.dart';
 // import 'package:project_island/section/my_page/model/user_model.dart'; // IUser 클래스가 정의된 파일
 
-// post_widget.dart
-import 'package:project_island/section/feed/model/post_model.dart'; // Post 클래스가 정의된 파일
-
-// feed_view.dart
-import 'package:project_island/section/feed/model/post_model.dart'; // 동일한 파일 import
-
 
 class FeedView extends StatefulWidget { // FeedView라는 Stateful 위젯 선언
   const FeedView({Key? key}) : super(key: key); // 생성자

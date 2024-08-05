@@ -19,6 +19,7 @@ import 'package:project_island/section/feed/viewmodel/feed_controller.dart';
 import 'package:project_island/section/my_page/viewmodel/my_page_controller.dart';
 import 'package:project_island/section/feed/viewmodel/upload_controller.dart';
 import 'package:get/get.dart';
+import 'package:project_island/section/my_page/viewmodel/profile_upload_controller.dart';
 
 class InitBinding extends Bindings {
   @override
@@ -31,5 +32,6 @@ class InitBinding extends Bindings {
   }
 
   static additionalBinding() { // 추가적인 바인딩이 필요하다면 여기에 추가
+    Get.put(ProfileUploadController(), permanent: true);
   }
 }

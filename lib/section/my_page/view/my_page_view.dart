@@ -136,20 +136,20 @@ class _MyPageViewState extends State<MyPageView> {
               ),
             ),
             Container(
-              height: 2,
-              color: Colors.grey[200],
+              height: 2, // 높이 설정
+              color: Colors.grey[200], // 배경색 설정
               child: Row(
                 children: [
                   Expanded(
                     child: Container(
-                      color: _selectedIndex == 0 ? Colors.blue : Colors.transparent,
-                      height: 2,
+                      color: _selectedIndex == 0 ? Colors.blue : Colors.transparent, // 선택된 상태에 따른 색상 변경
+                      height: 2, // 높이 설정
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      color: _selectedIndex == 1 ? Colors.blue : Colors.transparent,
-                      height: 2,
+                      color: _selectedIndex == 1 ? Colors.blue : Colors.transparent, // 선택된 상태에 따른 색상 변경
+                      height: 2, // 높이 설정
                     ),
                   ),
                 ],
@@ -157,15 +157,15 @@ class _MyPageViewState extends State<MyPageView> {
             ),
             Expanded(
               child: PageView(
-                controller: _pageController,
+                controller: _pageController, // 페이지 컨트롤러 설정
                 onPageChanged: (index) {
                   setState(() {
-                    _selectedIndex = index;
+                    _selectedIndex = index; // 페이지 변경 시 인덱스 업데이트
                   });
                 },
                 children: [
-                  LeftPage(),
-                  RightPage(),
+                  LeftPage(groupBox: groupBox), // groupBox를 전달
+                  RightPage(), // RightPage 추가
                 ],
               ),
             ),
@@ -178,57 +178,314 @@ class _MyPageViewState extends State<MyPageView> {
 
 // LeftPage 위젯입니다.
 class LeftPage extends StatelessWidget {
+  final List<List<int>> groupBox; // groupBox 리스트를 받아옴
+
+  const LeftPage({Key? key, required this.groupBox}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-        childAspectRatio: 1,
-      ),
-      itemCount: 15,
-      itemBuilder: (context, index) {
-        return Container(
-          color: Colors.grey[300],
-          child: Center(
-            child: Text(index % 2 == 0 ? '사진' : '영상'),
+    return SingleChildScrollView(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // 시작 위치에서 정렬
+        children: List.generate( // 3개의 그룹 생성
+          groupBox.length,
+              (index) => Expanded(
+            child: Column(
+              children: List.generate(
+                groupBox[index].length,
+                    (jndex) => GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PhotoDetailView(
+                          // 여기에서 PhotoDetailView로 전달할 인자 설정
+                          // 예를 들어, 이미지 URL 또는 ID를 전달할 수 있습니다.
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.width * 0.33 * groupBox[index][jndex], // 크기 설정
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white), // 경계선 설정
+                      color: Colors.primaries[
+                      Random().nextInt(Colors.primaries.length)], // 랜덤 색상 설정
+                    ),
+                  ),
+                ),
+              ).toList(),
+            ),
           ),
-        );
-      },
+        ).toList(),
+      ),
     );
   }
 }
 
 // RightPage 위젯입니다.
 class RightPage extends StatelessWidget {
+  final MyTravelViewModel travelViewModel = Get.put(MyTravelViewModel()); // 뷰모델 인스턴스 생성
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 20, // 예제용 아이템 수
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('여행 일정 $index'), // 아이템 텍스트 설정
+    return Obx(() {
+      if (travelViewModel.isLoading.value) {
+        return Center(child: CircularProgressIndicator()); // 로딩 중일 때 로딩 인디케이터 표시
+      } else if (travelViewModel.travels.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('여행 리스트가 없습니다.'), // 여행 리스트가 없을 때 메시지 표시
+              SizedBox(height: 16), // 간격 조정
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => IslandSelectionView()), // 섬 선택 페이지로 이동
+                  );
+                },
+                child: Text('새로운 섬캉스 떠나기!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)), // 버튼 텍스트 스타일 설정
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 48), // 버튼 크기 설정
+                  backgroundColor: Colors.blueAccent, // 버튼 배경색 설정
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        travelViewModel.travels.sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // 수정 시간 순으로 정렬
+        return ListView.builder(
+          itemCount: travelViewModel.travels.length, // 여행 리스트 길이만큼 항목 생성
+          itemBuilder: (context, index) {
+            final travel = travelViewModel.travels[index]; // 현재 인덱스의 여행 가져오기
+            return Dismissible(
+              key: Key(travel.id), // Dismissible 위젯의 키 설정
+              direction: DismissDirection.endToStart, // 스와이프 방향 설정
+              background: Container(
+                color: Colors.red, // 배경색 설정
+                padding: EdgeInsets.symmetric(horizontal: 20), // 좌우 패딩 설정
+                alignment: Alignment.centerRight, // 오른쪽 정렬
+                child: Icon(Icons.delete, color: Colors.white), // 삭제 아이콘
+              ),
+              confirmDismiss: (direction) async {
+                return await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('삭제 확인'), // 다이얼로그 제목
+                      content: Text('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'), // 다이얼로그 내용
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false), // 취소 버튼
+                          child: Text('취소'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true), // 삭제 버튼
+                          child: Text('삭제'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              onDismissed: (direction) {
+                travelViewModel.deleteTravel(travel.id); // 스와이프 후 항목 삭제
+              },
+              child: TravelCard(
+                travel: travel, // 현재 여행 데이터를 전달
+                onSave: (updatedTravel) {
+                  travelViewModel.updateTravel(index, updatedTravel); // 여행 데이터 업데이트
+                },
+              ),
+            );
+          },
+        );
+      }
+    });
+  }
+}
+
+// TravelCard 위젯입니다.
+class TravelCard extends StatelessWidget {
+  final TravelModel travel; // 여행 데이터
+  final Function(TravelModel) onSave; // 저장 함수
+
+  TravelCard({
+    required this.travel, // 여행 데이터를 필수 인자로 받음
+    required this.onSave, // 저장 함수를 필수 인자로 받음
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0), // 전체 패딩 설정
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // 카드 모서리를 둥글게 설정
+        child: ListTile(
+          title: Text(
+            travel.title, // 여행 제목
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), // 텍스트 스타일 설정
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+            children: [
+              Text(travel.travelStatus, style: TextStyle(color: Colors.grey)), // 여행 상태 표시
+              SizedBox(height: 8.0), // 간격 조정
+              Text(travel.island, style: TextStyle(fontSize: 16)), // 섬 이름 표시
+              Text('${DateFormat('yyyy-MM-dd').format(travel.startDate)} ~ ${DateFormat('yyyy-MM-dd').format(travel.endDate)}', style: TextStyle(color: Colors.grey)), // 여행 날짜 표시
+              Text('최근 수정: ${DateFormat('yyyy-MM-dd HH:mm').format(travel.updatedAt)}', style: TextStyle(color: Colors.grey)), // 최근 수정 시간 표시
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.edit), // 수정 아이콘
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return EditTravelDialog(
+                    travel: travel, // 현재 여행 데이터를 전달
+                    onSave: onSave, // 저장 함수 전달
+                  );
+                },
+              );
+            },
+          ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => TravelScheduleView(
-                  selectedIsland: '제주도', // 예제용 선택된 섬 이름
-                  startDate: DateTime.now(), // 예제용 시작 날짜
-                  endDate: DateTime.now().add(Duration(days: 5)), travelId: '', // 예제용 종료 날짜
+                  travelId: travel.id,
+                  selectedIsland: travel.island, // 적절한 값으로 교체
+                  startDate: travel.startDate,   // 적절한 값으로 교체
+                  endDate: travel.endDate,       // 적절한 값으로 교체
                 ),
               ),
             );
           },
-        );
-      },
+        ),
+      ),
     );
+  }
+
+  String _formatUpdatedAt(DateTime updatedAt) {
+    final now = DateTime.now(); // 현재 시간
+    final difference = now.difference(updatedAt); // 수정 시간과 현재 시간의 차이 계산
+
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}분 전 편집됨'; // 60분 이내
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}시간 전 편집됨'; // 24시간 이내
+    } else {
+      return '${difference.inDays}일 전 편집됨'; // 그 이상
+    }
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: MyPageView(),
-  ));
+// EditTravelDialog 위젯입니다.
+class EditTravelDialog extends StatefulWidget {
+  final TravelModel travel; // 여행 데이터
+  final Function(TravelModel) onSave; // 저장 함수
+
+  EditTravelDialog({
+    required this.travel, // 여행 데이터를 필수 인자로 받음
+    required this.onSave, // 저장 함수를 필수 인자로 받음
+  });
+
+  @override
+  _EditTravelDialogState createState() => _EditTravelDialogState();
+}
+
+class _EditTravelDialogState extends State<EditTravelDialog> {
+  late TextEditingController _titleController; // 제목 컨트롤러
+  late DateTime _startDate; // 시작 날짜
+  late DateTime _endDate; // 종료 날짜
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.travel.title); // 제목 초기화
+    _startDate = widget.travel.startDate; // 시작 날짜 초기화
+    _endDate = widget.travel.endDate; // 종료 날짜 초기화
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose(); // 제목 컨트롤러 해제
+    super.dispose();
+  }
+
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      initialDateRange: DateTimeRange(start: _startDate, end: _endDate), // 초기 날짜 범위 설정
+      firstDate: DateTime(2020), // 선택할 수 있는 첫 번째 날짜
+      lastDate: DateTime(2100), // 선택할 수 있는 마지막 날짜
+    );
+    if (picked != null && picked != DateTimeRange(start: _startDate, end: _endDate)) {
+      setState(() {
+        _startDate = picked.start; // 선택한 시작 날짜로 설정
+        _endDate = picked.end; // 선택한 종료 날짜로 설정
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('여행 정보 수정'), // 다이얼로그 제목
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _titleController, // 제목 입력 필드
+            decoration: InputDecoration(labelText: '여행 이름'), // 라벨 설정
+          ),
+          SizedBox(height: 20), // 간격 조정
+          GestureDetector(
+            onTap: () {
+              _selectDateRange(context); // 날짜 선택 다이얼로그 열기
+            },
+            child: AbsorbPointer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+                children: [
+                  Text('출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 출발 라벨
+                  Text(DateFormat('yyyy-MM-dd').format(_startDate)), // 선택한 출발 날짜 표시
+                  Text('도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 도착 라벨
+                  Text(DateFormat('yyyy-MM-dd').format(_endDate)), // 선택한 도착 날짜 표시
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // 다이얼로그 닫기
+          },
+          child: Text('취소'), // 취소 버튼
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final updatedTravel = TravelModel(
+              id: widget.travel.id, // 여행 ID
+              title: _titleController.text, // 수정된 제목
+              island: widget.travel.island, // 섬 이름
+              startDate: _startDate, // 수정된 시작 날짜
+              endDate: _endDate, // 수정된 종료 날짜
+              updatedAt: DateTime.now(), // 수정 시간 업데이트
+            );
+            widget.onSave(updatedTravel); // 수정된 여행 데이터 저장
+            Navigator.of(context).pop(); // 다이얼로그 닫기
+          },
+          child: Text('저장'), // 저장 버튼
+        ),
+      ],
+    );
+  }
 }

@@ -16,7 +16,7 @@ import 'package:photofilters/filters/preset_filters.dart'; // 사진 필터 프�
 import 'package:photofilters/widgets/photo_filter.dart'; // 사진 필터 위젯
 import 'package:http/http.dart' as http; // HTTP 패키지
 
-class UploadController extends GetxController { // GetxController를 상속받아 컨트롤러로 설정
+class ProfileUploadController extends GetxController { // GetxController를 상속받아 컨트롤러로 설정
   var albums = <AssetPathEntity>[]; // 사진 앨범 리스트
   RxList<AssetEntity> imageList = <AssetEntity>[].obs; // Observable한 이미지 리스트
   RxList<AssetEntity> selectedImages = <AssetEntity>[].obs; // 선택된 이미지 리스트
@@ -148,7 +148,6 @@ class UploadController extends GetxController { // GetxController를 상속받�
       }
     }
   }
-
 
   Future<String> uploadFile(File file, String filename) async { // 파일 업로드 메서드
     var request = http.MultipartRequest('POST', Uri.parse('https://your-api-url.com/upload')); // MultipartRequest로 파일 업로드 요청

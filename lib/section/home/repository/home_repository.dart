@@ -1,6 +1,11 @@
 import '../model/home_model.dart';
+import 'dart:convert';  // JSON 파싱을 위해 필요
+import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
 
 class Repository {
+  final String apiKey = dotenv.env['TOUR_API_KEY'] ?? '';  // 환경 변수에서 API 키 가져오기
   // 더미 데이터 - 매거진 목록
   List<Magazine> fetchMagazines() {
     return [
@@ -17,6 +22,45 @@ class Repository {
         thumbnail: '',
       ),
     ];
+  }
+
+  // 실제 API에서 매거진 데이터를 가져오는 함수
+  Future<List<Magazine>> fetchMagazinesFromApi() async {
+    final response = await http.get(
+      Uri.parse('http://apis.data.go.kr/B551011/KorService1/detailCommon1'
+          '?ServiceKey=$apiKey'
+          '&contentTypeId=12'
+          '&contentId=126293'
+          '&MobileOS=ETC'
+          '&MobileApp=AppTest'
+          '&defaultYN=Y'
+          '&firstImageYN=Y'
+          '&areacodeYN=Y'
+          '&catcodeYN=Y'
+          '&addrinfoYN=Y'
+          '&mapinfoYN=Y'
+          '&overviewYN=Y'
+          '&_type=json'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)); // UTF-8로 디코딩
+      final items = data['response']['body']['items']['item'];
+
+      List<Magazine> magazines = [];
+      for (var item in items) {
+        magazines.add(Magazine(
+          title: item['title'] ?? '제목 없음',
+          description: item['overview'] ?? '설명 없음',
+          hashtags: ['#여행', '#힐링, #명소'],
+          thumbnail: item['firstimage'] ?? '',
+        ));
+      }
+
+      return magazines;
+    } else {
+      throw Exception('Failed to load magazines from API');
+    }
   }
 
   // 더미 데이터 - 콘텐츠 목록

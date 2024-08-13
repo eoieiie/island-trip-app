@@ -45,7 +45,7 @@ dependencies:
   json_annotation: ^4.7.0 # my_travel/model
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
-  flutter_dotenv: ^5.0.2 # 네이버 지도 api 인증키 env를 위하여 사용
+  flutter_dotenv: ^5.0.2 # 네이버 지도 api 인증키 env를 위하여 사용, 한국관광공사 tourapi 인증키 env를 위하여 사용
   google_sign_in: ^6.2.1
   image: ^3.3.0
   path: ^1.9.0

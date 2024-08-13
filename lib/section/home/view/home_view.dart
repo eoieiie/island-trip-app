@@ -1,11 +1,10 @@
-// view/home_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_island/section/home/view/island_detail_view.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // 홈 화면을 표시하는 StatelessWidget 클래스
 class HomeView extends StatelessWidget {
@@ -114,50 +113,72 @@ class MagazineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
-      color: Colors.grey[300],
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    magazine.title,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    magazine.description,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    magazine.hashtags.join(' '),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      height: 250, // 높이를 고정하여 오버플로우 방지
+      child: ClipRRect( // 이미지를 둥글게 클립
+        borderRadius: BorderRadius.circular(16.0),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CachedNetworkImage(
+                imageUrl: magazine.thumbnail,
+                fit: BoxFit.cover, // 이미지를 컨테이너에 맞춰 자름
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.image_not_supported),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 0, // 텍스트를 하단에 위치
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.black.withOpacity(0.6), // 텍스트 배경 색을 반투명하게
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 텍스트 크기에 맞게 컨테이너 크기 조정
+                  children: [
+                    Text(
+                      magazine.title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 1, // 텍스트 줄 수 제한
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      magazine.description,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 2, // 텍스트 줄 수 제한
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      magazine.hashtags.join(' '),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 1, // 텍스트 줄 수 제한
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
 
 // 각 섹션을 표시하는 StatelessWidget 클래스
 class Section extends StatelessWidget {

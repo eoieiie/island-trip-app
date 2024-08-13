@@ -1,5 +1,3 @@
-// viewmodels/home_view_model.dart
-
 import 'package:get/get.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
@@ -24,15 +22,22 @@ class HomeViewModel extends GetxController {
 
   // 데이터를 비동기적으로 가져오는 메서드 정의
   void _fetchData() async {
-    // 2초 지연을 추가하여 데이터 로딩 시뮬레이션
-    await Future.delayed(Duration(seconds: 2));
-    // 각 콘텐츠 타입별 데이터를 repository로부터 가져와서 상태를 업데이트
-    magazines.value = repository.fetchMagazines();
-    contents.value = repository.fetchContents();
-    fishingContents.value = repository.fetchFishingContents();
-    viewpointContents.value = repository.fetchViewpointContents();
-    beachContents.value = repository.fetchBeachContents();
-    // 데이터 로딩 완료 후 isLoading 상태를 false로 변경
-    isLoading.value = false;
+    // 데이터를 로드 중임을 나타냄
+    isLoading.value = true;
+
+    try {
+      // 매거진 데이터를 API에서 가져와 상태를 업데이트
+      magazines.value = await repository.fetchMagazinesFromApi();
+      contents.value = repository.fetchContents();
+      fishingContents.value = repository.fetchFishingContents();
+      viewpointContents.value = repository.fetchViewpointContents();
+      beachContents.value = repository.fetchBeachContents();
+    } catch (e) {
+      // 에러 처리
+      print('Failed to fetch data: $e');
+    } finally {
+      // 데이터 로딩 완료 후 isLoading 상태를 false로 변경
+      isLoading.value = false;
+    }
   }
 }

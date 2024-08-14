@@ -6,12 +6,12 @@ class SettingView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('설정'),
+        title: Text('설정'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

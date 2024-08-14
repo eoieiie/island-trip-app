@@ -1,6 +1,81 @@
 import '../model/home_model.dart';
+import 'dart:convert';  // JSON 파싱을 위해 필요
+import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Repository {
+  final String apiKey = dotenv.env['TOUR_API_KEY'] ?? '';  // 환경 변수에서 API 키 가져오기
+
+  // 여러 섬의 매거진 데이터를 가져오는 함수
+  Future<List<Magazine>> fetchMagazinesFromMultipleIslands(List<String> islandNames) async {
+    List<Magazine> allMagazines = [];
+
+    for (String islandName in islandNames) {
+      List<Magazine> magazines = await fetchMagazinesFromApi(islandName);
+      allMagazines.addAll(magazines);
+    }
+
+    return allMagazines;
+  }
+
+  // 실제 API에서 매거진 데이터를 가져오는 함수
+  Future<List<Magazine>> fetchMagazinesFromApi(String islandName) async {
+    // 섬에 따라 contentId를 다르게 설정
+    int contentId = _getContentIdByIslandName(islandName);
+
+    final response = await http.get(
+      Uri.parse('http://apis.data.go.kr/B551011/KorService1/detailCommon1'
+          '?ServiceKey=$apiKey'
+          '&contentTypeId=12'
+          '&contentId=$contentId'
+          '&MobileOS=ETC'
+          '&MobileApp=AppTest'
+          '&defaultYN=Y'
+          '&firstImageYN=Y'
+          '&areacodeYN=Y'
+          '&catcodeYN=Y'
+          '&addrinfoYN=Y'
+          '&mapinfoYN=Y'
+          '&overviewYN=Y'
+          '&_type=json'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)); // UTF-8로 디코딩
+      final items = data['response']['body']['items']['item'];
+
+      List<Magazine> magazines = [];
+      for (var item in items) {
+        magazines.add(Magazine(
+          title: item['title'] ?? '제목 없음',
+          description: item['overview'] ?? '설명 없음',
+          hashtags: ['#여행', '#힐링', '#명소'],
+          thumbnail: item['firstimage'] ?? '',
+        ));
+      }
+
+      return magazines;
+    } else {
+      throw Exception('Failed to load magazines from API');
+    }
+  }
+
+  // 섬에 따라 contentId를 반환하는 함수
+  int _getContentIdByIslandName(String islandName) {
+    // 여기에 다른 섬의 contentId를 추가할 수 있습니다.
+    switch (islandName) {
+      case '신시도':
+        return 126293;  // 예시 contentId
+      case '실미도':
+        return 2767625;
+    // 추가 섬에 대한 contentId를 여기에 추가
+      case '장자도':
+        return 126299;
+      default:
+        return 0;  // 기본 contentId, 또는 예외 처리
+    }
+  }
+
   // 더미 데이터 - 매거진 목록
   List<Magazine> fetchMagazines() {
     return [
@@ -84,5 +159,10 @@ class Repository {
       return stores;
     }
     return stores.where((store) => store.category == category).toList();
+  }
+
+  // 음식점 이름으로 검색 필터링
+  List<Store> filterStoresByName(List<Store> stores, String keyword) {
+    return stores.where((store) => store.name.contains(keyword)).toList();
   }
 }

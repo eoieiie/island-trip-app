@@ -1,11 +1,10 @@
-// view/home_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_island/section/home/view/island_detail_view.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // 홈 화면을 표시하는 StatelessWidget 클래스
 class HomeView extends StatelessWidget {
@@ -67,9 +66,19 @@ class HomeView extends StatelessWidget {
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 16.0),
-                          // 매거진 리스트가 비어있지 않으면 매거진 카드들을 표시
+                          // 매거진 리스트가 비어있지 않으면 매거진 카드들을 가로 스크롤로 표시
                           if (viewModel.magazines.isNotEmpty)
-                            ...viewModel.magazines.map((magazine) => MagazineCard(magazine: magazine)).toList(),
+                            Container(
+                              height: 250, // 카드의 높이
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: viewModel.magazines.length,
+                                itemBuilder: (context, index) {
+                                  final magazine = viewModel.magazines[index];
+                                  return MagazineCard(magazine: magazine);
+                                },
+                              ),
+                            ),
                           SizedBox(height: 16.0),
                         ],
                       ),
@@ -114,46 +123,67 @@ class MagazineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
-      color: Colors.grey[300],
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    magazine.title,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    magazine.description,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    magazine.hashtags.join(' '),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      width: 200, // 카드의 너비를 고정
+      child: ClipRRect( // 이미지를 둥글게 클립
+        borderRadius: BorderRadius.circular(16.0),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CachedNetworkImage(
+                imageUrl: magazine.thumbnail,
+                fit: BoxFit.cover, // 이미지를 컨테이너에 맞춰 자름
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.image_not_supported),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 0, // 텍스트를 하단에 위치
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.black.withOpacity(0.6), // 텍스트 배경 색을 반투명하게
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 텍스트 크기에 맞게 컨테이너 크기 조정
+                  children: [
+                    Text(
+                      magazine.title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 1, // 텍스트 줄 수 제한
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      magazine.description,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 2, // 텍스트 줄 수 제한
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      magazine.hashtags.join(' '),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
+                      maxLines: 1, // 텍스트 줄 수 제한
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -180,13 +210,8 @@ class Section extends StatelessWidget {
           SizedBox(height: 16.0),
           Container(
             height: 300,
-            child: GridView.builder(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-              ),
               itemCount: contents.length,
               itemBuilder: (context, index) {
                 final content = contents[index];

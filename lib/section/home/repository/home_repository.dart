@@ -2,35 +2,32 @@ import '../model/home_model.dart';
 import 'dart:convert';  // JSON 파싱을 위해 필요
 import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
 
 class Repository {
   final String apiKey = dotenv.env['TOUR_API_KEY'] ?? '';  // 환경 변수에서 API 키 가져오기
-  // 더미 데이터 - 매거진 목록
-  List<Magazine> fetchMagazines() {
-    return [
-      Magazine(
-        title: '갈매기 까까, 울릉도',
-        description: '사진 울릉도 고슴도치길 226-11',
-        hashtags: ['#가성비', '#스쿠버다이빙', '#탁트인바다'],
-        thumbnail: '',
-      ),
-      Magazine(
-        title: '울릉도 여행의 모든 것',
-        description: '울릉도의 숨은 명소들을 소개합니다.',
-        hashtags: ['#여행', '#힐링', '#명소'],
-        thumbnail: '',
-      ),
-    ];
+
+  // 여러 섬의 매거진 데이터를 가져오는 함수
+  Future<List<Magazine>> fetchMagazinesFromMultipleIslands(List<String> islandNames) async {
+    List<Magazine> allMagazines = [];
+
+    for (String islandName in islandNames) {
+      List<Magazine> magazines = await fetchMagazinesFromApi(islandName);
+      allMagazines.addAll(magazines);
+    }
+
+    return allMagazines;
   }
 
   // 실제 API에서 매거진 데이터를 가져오는 함수
-  Future<List<Magazine>> fetchMagazinesFromApi() async {
+  Future<List<Magazine>> fetchMagazinesFromApi(String islandName) async {
+    // 섬에 따라 contentId를 다르게 설정
+    int contentId = _getContentIdByIslandName(islandName);
+
     final response = await http.get(
       Uri.parse('http://apis.data.go.kr/B551011/KorService1/detailCommon1'
           '?ServiceKey=$apiKey'
           '&contentTypeId=12'
-          '&contentId=126293'
+          '&contentId=$contentId'
           '&MobileOS=ETC'
           '&MobileApp=AppTest'
           '&defaultYN=Y'
@@ -52,7 +49,7 @@ class Repository {
         magazines.add(Magazine(
           title: item['title'] ?? '제목 없음',
           description: item['overview'] ?? '설명 없음',
-          hashtags: ['#여행', '#힐링, #명소'],
+          hashtags: ['#여행', '#힐링', '#명소'],
           thumbnail: item['firstimage'] ?? '',
         ));
       }
@@ -61,6 +58,40 @@ class Repository {
     } else {
       throw Exception('Failed to load magazines from API');
     }
+  }
+
+  // 섬에 따라 contentId를 반환하는 함수
+  int _getContentIdByIslandName(String islandName) {
+    // 여기에 다른 섬의 contentId를 추가할 수 있습니다.
+    switch (islandName) {
+      case '신시도':
+        return 126293;  // 예시 contentId
+      case '실미도':
+        return 2767625;
+    // 추가 섬에 대한 contentId를 여기에 추가
+      case '장자도':
+        return 126299;
+      default:
+        return 0;  // 기본 contentId, 또는 예외 처리
+    }
+  }
+
+  // 더미 데이터 - 매거진 목록
+  List<Magazine> fetchMagazines() {
+    return [
+      Magazine(
+        title: '갈매기 까까, 울릉도',
+        description: '사진 울릉도 고슴도치길 226-11',
+        hashtags: ['#가성비', '#스쿠버다이빙', '#탁트인바다'],
+        thumbnail: '',
+      ),
+      Magazine(
+        title: '울릉도 여행의 모든 것',
+        description: '울릉도의 숨은 명소들을 소개합니다.',
+        hashtags: ['#여행', '#힐링', '#명소'],
+        thumbnail: '',
+      ),
+    ];
   }
 
   // 더미 데이터 - 콘텐츠 목록
@@ -128,5 +159,10 @@ class Repository {
       return stores;
     }
     return stores.where((store) => store.category == category).toList();
+  }
+
+  // 음식점 이름으로 검색 필터링
+  List<Store> filterStoresByName(List<Store> stores, String keyword) {
+    return stores.where((store) => store.name.contains(keyword)).toList();
   }
 }

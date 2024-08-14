@@ -66,9 +66,19 @@ class HomeView extends StatelessWidget {
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 16.0),
-                          // 매거진 리스트가 비어있지 않으면 매거진 카드들을 표시
+                          // 매거진 리스트가 비어있지 않으면 매거진 카드들을 가로 스크롤로 표시
                           if (viewModel.magazines.isNotEmpty)
-                            ...viewModel.magazines.map((magazine) => MagazineCard(magazine: magazine)).toList(),
+                            Container(
+                              height: 250, // 카드의 높이
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: viewModel.magazines.length,
+                                itemBuilder: (context, index) {
+                                  final magazine = viewModel.magazines[index];
+                                  return MagazineCard(magazine: magazine);
+                                },
+                              ),
+                            ),
                           SizedBox(height: 16.0),
                         ],
                       ),
@@ -113,8 +123,8 @@ class MagazineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      height: 250, // 높이를 고정하여 오버플로우 방지
+      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      width: 200, // 카드의 너비를 고정
       child: ClipRRect( // 이미지를 둥글게 클립
         borderRadius: BorderRadius.circular(16.0),
         child: Stack(
@@ -179,7 +189,6 @@ class MagazineCard extends StatelessWidget {
   }
 }
 
-
 // 각 섹션을 표시하는 StatelessWidget 클래스
 class Section extends StatelessWidget {
   final String title;
@@ -201,13 +210,8 @@ class Section extends StatelessWidget {
           SizedBox(height: 16.0),
           Container(
             height: 300,
-            child: GridView.builder(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-              ),
               itemCount: contents.length,
               itemBuilder: (context, index) {
                 final content = contents[index];

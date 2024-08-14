@@ -357,7 +357,12 @@ class TravelCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TravelScheduleView(travelId: travel.id), // 여행 일정 페이지로 이동
+                builder: (context) => TravelScheduleView(
+                  travelId: travel.id,
+                  selectedIsland: travel.island, // 적절한 값으로 교체
+                  startDate: travel.startDate,   // 적절한 값으로 교체
+                  endDate: travel.endDate,       // 적절한 값으로 교체
+                ),
               ),
             );
           },

@@ -7,7 +7,9 @@ import 'package:project_island/section/feed/view/feed_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-
+import 'package:get/get.dart';
+import 'binding/init_binding.dart';
+//
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
   await dotenv.load(fileName: ".env"); // .env 파일 로드
@@ -23,7 +25,8 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp( //GetMaterialApp으로 수정
+      initialBinding: InitBinding(), // InitBinding으로 초기 바인딩 설정 (추가햇슴니다)
       title: 'Island Travel App', // 앱의 제목을 설정합니다.
       theme: ThemeData(
         primarySwatch: Colors.blue, // 앱의 기본 색상을 파란색으로 설정합니다.

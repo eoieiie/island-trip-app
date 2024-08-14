@@ -50,6 +50,7 @@ dependencies:
   image: ^3.3.0
   path: ^1.9.0
   photofilters: ^3.0.1
+  http: ^1.2.2 #한국관광공사 Open api 호출을 위해 사용
 
 
 dev_dependencies:
@@ -78,6 +79,7 @@ flutter:
   assets:
     - assets/data/travel_data.json
     - .env
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

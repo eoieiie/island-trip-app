@@ -198,7 +198,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_startDate), style: TextStyle(fontSize: 16, color: Colors.white)),
+                        Text(_formatDate(_startDate), style: TextStyle(fontSize: 16, color: Colors.black)),
                         Text('AM 09:00', style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -209,7 +209,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_endDate), style: TextStyle(fontSize: 16, color: Colors.white)),
+                        Text(_formatDate(_endDate), style: TextStyle(fontSize: 16, color: Colors.black)),
                         Text('AM 09:00', style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -231,7 +231,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TravelScheduleView(travelId: travelId),
+                        builder: (context) => TravelScheduleView(travelId: travelId, selectedIsland: widget.selectedIsland, startDate: _startDate!, endDate: _endDate!),
                       ),
                     );
                   }

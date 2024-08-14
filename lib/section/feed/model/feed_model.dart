@@ -1,4 +1,4 @@
-/* class Feed {
+class Feed {
   final String id;
   final String userId;
   final String content;
@@ -34,4 +34,4 @@
   }
 }
 
- */
+

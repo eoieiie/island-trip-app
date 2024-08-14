@@ -44,11 +44,11 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 2; // 현재 선택된 페이지의 인덱스를 저장합니다.
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     MyTravelView(), // 내 일정 페이지
-    Scaffold(body: Center(child: Text('여행 도구 페이지'))), // 여행 도구 페이지
+    const Scaffold(body: Center(child: Text('여행 도구 페이지'))), // 여행 도구 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
-    FeedView(), // 피드 페이지
+    const FeedView(), // 피드 페이지
     MyPageView(), // 마이페이지
   ];
 

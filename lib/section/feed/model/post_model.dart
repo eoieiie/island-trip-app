@@ -2,7 +2,7 @@ import 'package:project_island/section/my_page/model/user_model.dart';
 
 class Post {
   final String? id;
-  final String? thumbnail;
+  final String? thumbnail; //다중 업로드를 구현할 것이라면 list로 묶어줌
   final String? description;
   final int? likeCount;
   final IUser? userInfo;

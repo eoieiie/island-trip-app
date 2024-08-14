@@ -16,6 +16,8 @@
 import 'package:project_island/section/feed/viewmodel/auth_controller.dart';
 //import 'package:flutter_clone_instagram/src/controller/bottom_nav_controller.dart';
 import 'package:project_island/section/feed/viewmodel/feed_controller.dart';
+import 'package:project_island/section/feed/viewmodel/postcard_controller.dart';
+import 'package:project_island/section/feed/viewmodel/search_focus_controller.dart';
 import 'package:project_island/section/my_page/viewmodel/my_page_controller.dart';
 import 'package:project_island/section/feed/viewmodel/upload_controller.dart';
 import 'package:get/get.dart';
@@ -26,12 +28,16 @@ class InitBinding extends Bindings {
   void dependencies() {
     // Get.put(BottomNavController(), permanent: true);
     Get.put(AuthController(), permanent: true);
-    Get.put(UploadController(), permanent: true); // UploadController 추가
+    Get.put(UploadController(), permanent: true);
     Get.put(MypageController(), permanent: true);
-    Get.put(FeedController(), permanent: true);
+    Get.put(ProfileUploadController(), permanent: true);
+    //Get.put(SearchFocusController(), permanent: true); //feed 부분이므로 주석
+    //Get.put(FeedController(), permanent: true);
+    //Get.put(PostcardController(), permanent: true);
   }
 
   static additionalBinding() { // 추가적인 바인딩이 필요하다면 여기에 추가
-    Get.put(ProfileUploadController(), permanent: true);
+
+
   }
 }

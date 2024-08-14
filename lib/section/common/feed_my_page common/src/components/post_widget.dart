@@ -87,7 +87,7 @@ class PostWidget extends StatelessWidget {
             post.description ?? '',
             prefixText: post.userInfo!.nickname,
             onPrefixTap: () {
-              print('개발하는남자 페이지 이동');
+              print('유림쓰 페이지 이동');
             },
             prefixStyle: const TextStyle(fontWeight: FontWeight.bold),
             expandText: '더보기',

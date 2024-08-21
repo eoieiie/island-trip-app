@@ -55,6 +55,7 @@ dependencies:
   firebase_storage: ^11.6.0
   get_storage: ^2.1.1
   cloud_firestore: ^4.14.0
+  confetti: ^0.7.0
 
 
 dev_dependencies:
@@ -84,6 +85,7 @@ flutter:
     - assets/data/travel_data.json
     - .env
     - assets/images/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

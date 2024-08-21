@@ -46,13 +46,13 @@ class _MapViewState extends State<MapView> {
       future: _initialization,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('네이버 지도 초기화 실패: ${snapshot.error}'));
         } else {
           return NaverMap(
             onMapReady: _onMapReady,
-            options: NaverMapViewOptions(
+            options: const NaverMapViewOptions(
               initialCameraPosition: NCameraPosition(
                 target: NLatLng(36.2665, 127.7780),
                 zoom: 6.2,

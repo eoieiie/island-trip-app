@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
-import 'package:project_island/section/my_page/view/my_page_view.dart';
+import 'package:project_island/section/my_page/view/mypage_view.dart';
 import 'package:project_island/section/feed/view/feed_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

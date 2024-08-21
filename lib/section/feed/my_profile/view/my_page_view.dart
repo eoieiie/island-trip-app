@@ -89,14 +89,14 @@ class _MyPageViewState extends State<MyPageView> with SingleTickerProviderStateM
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // 뒤로 가기 버튼
+          icon: const Icon(Icons.arrow_back), // 뒤로 가기 버튼
           onPressed: () {
             Navigator.of(context).pop(); // 이전 화면으로 돌아가기
           },
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.more_horiz), // 점 3개 아이콘(케밥 메뉴)
+            icon: const Icon(Icons.more_horiz), // 점 3개 아이콘(케밥 메뉴)
             onPressed: _goToSettingPage, // 설정 페이지로 이동
           ),
         ],
@@ -106,8 +106,8 @@ class _MyPageViewState extends State<MyPageView> with SingleTickerProviderStateM
       body: Column(
         children: [
           // 프로필 섹션
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0), // 좌우 패딩 설정
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0), // 좌우 패딩 설정
             child: Column(
               children: [
                 CircleAvatar(
@@ -126,7 +126,7 @@ class _MyPageViewState extends State<MyPageView> with SingleTickerProviderStateM
               ],
             ),
           ),
-          SizedBox(height: 24), // 프로필과 탭 간 간격
+          const SizedBox(height: 24), // 프로필과 탭 간 간격
 
           // 탭 섹션
           Expanded(
@@ -134,7 +134,7 @@ class _MyPageViewState extends State<MyPageView> with SingleTickerProviderStateM
               children: [
                 TabBar(
                   controller: _tabController, // TabController 연결
-                  tabs: [
+                  tabs: const [
                     Tab(text: '전체'), // 첫 번째 탭
                     Tab(text: '사진'), // 두 번째 탭
                     Tab(text: '영상'), // 세 번째 탭

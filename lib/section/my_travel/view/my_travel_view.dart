@@ -14,167 +14,176 @@ class MyTravelView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '내 일정',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // 제목 텍스트 크기 설정
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 0, top: 10.0, right: 10.0, bottom: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      //appBar: AppBar(
+        //title: Text(
+          //'내 일정',
+          //style: TextStyle(
+              //fontSize: 24, fontWeight: FontWeight.bold), // 제목 텍스트 크기 설정
+        //),
+        //centerTitle: true,
+      //),
+      backgroundColor: Colors.white,
+      body: Obx(() {
+        return Stack(
+          children: [
+            Column(
               children: [
-                Text(
-                  '내가 작성한',
-                  style: TextStyle(
-                    fontSize: 24, // 큰 글씨 크기 설정
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '여행 일정을 확인하세요',
-                  style: TextStyle(
-                    fontSize: 24, // 큰 글씨 크기 설정
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '이전에 작성한 섬으로 떠나는 일정을 확인해 보세요.',
-                  style: TextStyle(
-                    fontSize: 13, // 설명 텍스트 크기 설정
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Obx(() {
-              if (travelViewModel.isLoading.value) {
-                return Center(child: CircularProgressIndicator());
-              } else if (travelViewModel.travels.isEmpty) {
-                return Center(
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 0, top: 100.0, right: 50.0, bottom: 0.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '여행 리스트가 없습니다.',
-                        style: TextStyle(fontSize: 16), // 텍스트 크기 설정
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => IslandSelectionView()),
-                          );
-                        },
-                        child: Text(
-                          '+ 일정 추가',
-                          style: TextStyle(
-                              fontSize: 14, // 버튼 텍스트 크기 설정
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        '내가 작성한',
+                        style: TextStyle(
+                          fontSize: 24, // 큰 글씨 크기 설정
+                          fontWeight: FontWeight.bold,
                         ),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(130, 38),
-                          backgroundColor: Colors.black, // 검은색 버튼 유지
+                      ),
+                      Text(
+                        '여행 일정을 확인하세요',
+                        style: TextStyle(
+                          fontSize: 24, // 큰 글씨 크기 설정
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '이전에 작성한 섬으로 떠나는 일정을 확인해 보세요.',
+                        style: TextStyle(
+                          fontSize: 13, // 설명 텍스트 크기 설정
+                          color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
-                );
-              } else {
-                travelViewModel.travels
-                    .sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // 수정 시간 순으로 정렬
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: travelViewModel.travels.length,
-                    itemBuilder: (context, index) {
-                      final travel = travelViewModel.travels[index];
-                      return Dismissible(
-                        key: Key(travel.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          alignment: Alignment.centerRight,
-                          child: Icon(Icons.delete, color: Colors.white),
+                ),
+                Expanded(
+                  child: travelViewModel.isLoading.value
+                      ? Center(child: CircularProgressIndicator())
+                      : travelViewModel.travels.isEmpty
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '여행 리스트가 없습니다.',
+                          style: TextStyle(fontSize: 16), // 텍스트 크기 설정
                         ),
-                        confirmDismiss: (direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('삭제 확인'),
-                                content: Text('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(false),
-                                    child: Text('취소'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(true),
-                                    child: Text('삭제'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        onDismissed: (direction) {
-                          travelViewModel.deleteTravel(travel.id);
-                        },
-                        child: TravelCard(
-                          travel: travel,
-                          onSave: (updatedTravel) {
-                            travelViewModel.updateTravel(index, updatedTravel);
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      IslandSelectionView()),
+                            );
                           },
+                          child: Text(
+                            '+ 일정 추가',
+                            style: TextStyle(
+                                fontSize: 14, // 버튼 텍스트 크기 설정
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(130, 38),
+                            backgroundColor: Colors.black, // 검은색 버튼 유지
+                          ),
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                  )
+                      : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView.builder(
+                      itemCount: travelViewModel.travels.length,
+                      itemBuilder: (context, index) {
+                        final travel = travelViewModel.travels[index];
+                        return Dismissible(
+                          key: Key(travel.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.delete, color: Colors.white),
+                          ),
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('삭제 확인'),
+                                  content: Text(
+                                      '정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text('취소'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: Text('삭제'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          onDismissed: (direction) {
+                            travelViewModel.deleteTravel(travel.id);
+                          },
+                          child: TravelCard(
+                            travel: travel,
+                            onSave: (updatedTravel) {
+                              travelViewModel.updateTravel(
+                                  index, updatedTravel);
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                );
-              }
-            }),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 40.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => IslandSelectionView()),
-                );
-              },
-              child: Text(
-                '+ 일정 추가',
-                style: TextStyle(
-                  fontSize: 14, // 버튼 텍스트 크기 설정
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                ),
+              ],
+            ),
+            if (travelViewModel.travels.isNotEmpty)
+              Positioned(
+                bottom: 60,
+                left: MediaQuery
+                    .of(context)
+                    .size
+                    .width / 2 - 60, // 가운데 위치 조정
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => IslandSelectionView()),
+                    );
+                  },
+                  icon: Icon(Icons.add, color: Colors.white),
+                  label: Text('일정 추가',
+                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                  backgroundColor: Color(0XFF292929),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(130, 38),
-                backgroundColor: Colors.black, // 검은색 버튼 유지
-              ),
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 }
 
-class TravelCard extends StatelessWidget {
+  class TravelCard extends StatelessWidget {
   final TravelModel travel;
   final Function(TravelModel) onSave;
 
@@ -185,7 +194,8 @@ class TravelCard extends StatelessWidget {
 
   String getFormattedDate(DateTime date) {
     final weekday = ['월', '화', '수', '목', '금', '토', '일'];
-    return '${DateFormat('yy.MM.dd').format(date)} (${weekday[date.weekday - 1]})';
+    return '${DateFormat('yy.MM.dd').format(date)} (${weekday[date.weekday -
+        1]})';
   }
 
   @override
@@ -194,82 +204,98 @@ class TravelCard extends StatelessWidget {
       height: 140, // 컨테이너 높이 설정
       padding: EdgeInsets.symmetric(vertical: 8.0), // 카드 위아래 여백 추가
       child: Card(
+        color: Color(0XFFf7f7f7),
         elevation: 4,
         margin: EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Card 안쪽 여백 조절
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.grey[300],
-                backgroundImage: travel.imageUrl != null && travel.imageUrl!.isNotEmpty
-                    ? NetworkImage(travel.imageUrl!)
-                    : AssetImage('assets/images/mypage_bottom_sheet_setting_07.jpg') as ImageProvider,
-                radius: 30,
+        child: InkWell(  // InkWell을 사용하여 카드를 터치할 수 있게 함
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TravelScheduleView(
+                  travelId: travel.id,
+                  selectedIsland: travel.island,
+                  startDate: travel.startDate,
+                  endDate: travel.endDate,
+                ),
               ),
-              SizedBox(width: 16), // 이미지와 텍스트 사이의 여백 추가
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Card 안쪽 여백 조절
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: travel.imageUrl != null && travel.imageUrl!.isNotEmpty
+                      ? NetworkImage(travel.imageUrl!)
+                      : AssetImage('assets/default_image.png') as ImageProvider,
+                  radius: 30,
+                ),
+                SizedBox(width: 16), // 이미지와 텍스트 사이의 여백 추가
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        travel.island,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        travel.title,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8), // 제목과 날짜 사이의 여백 추가
+                      Text(
+                        '${getFormattedDate(travel.startDate)} ~ ${getFormattedDate(travel.endDate)}', // 날짜 형식에 한글 요일 추가
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8), // 텍스트와 트레일링 아이콘 사이의 여백 추가
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 아이콘과 텍스트를 센터로 배치
                   children: [
-                    SizedBox(height: 8), // 제목과 날짜 사이의 여백 추가
-                    Text(
-                      travel.island,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                      overflow: TextOverflow.ellipsis,
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.grey[700]),
+                      iconSize: 18, // 아이콘 크기 조정
+                      padding: EdgeInsets.zero, // 패딩 없애기
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EditTravelDialog(
+                              travel: travel,
+                              onSave: onSave,
+                            );
+                          },
+                        );
+                      },
                     ),
-                    Text(
-                      travel.title,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 2), // 제목과 날짜 사이의 여백 추가
-                    Text(
-                      '${getFormattedDate(travel.startDate)} ~ ${getFormattedDate(travel.endDate)}', // 날짜 형식에 한글 요일 추가
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    SizedBox(height: 4), // 아이콘과 상태 텍스트 사이의 간격
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: travel.statusColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        travel.statusText,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(width: 8), // 텍스트와 트레일링 아이콘 사이의 여백 추가
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start, // Start 대신 Center로 하면 문제 해결 가능
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.grey[700]),
-                    iconSize: 18, // 아이콘 크기 조정
-                    padding: EdgeInsets.zero, // 패딩 없애기
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EditTravelDialog(
-                            travel: travel,
-                            onSave: onSave,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: travel.statusColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      travel.statusText,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -277,9 +303,7 @@ class TravelCard extends StatelessWidget {
   }
 }
 
-
-
-class EditTravelDialog extends StatefulWidget {
+  class EditTravelDialog extends StatefulWidget {
   final TravelModel travel;
   final Function(TravelModel) onSave;
 

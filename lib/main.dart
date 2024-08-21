@@ -39,12 +39,22 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  final int selectedIndex;
+
+  MainPage({this.selectedIndex = 2}); // 디폴트로 2(홈)를 설정
+
   @override
-  _MainPageState createState() => _MainPageState(); // 상태를 생성합니다.
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 2; // 현재 선택된 페이지의 인덱스를 저장합니다.
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex; // 전달받은 인덱스로 초기화
+  }
 
   static final List<Widget> _widgetOptions = <Widget>[
     MyTravelView(), // 내 일정 페이지
@@ -130,9 +140,9 @@ class _MainPageState extends State<MainPage> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     // BoxShadow(
-                      // color: Colors.black.withOpacity(0.2),
-                      // blurRadius: 8,
-                      // offset: Offset(0, 4),
+                    // color: Colors.black.withOpacity(0.2),
+                    // blurRadius: 8,
+                    // offset: Offset(0, 4),
                     // ),
                   ],
                 ),

@@ -31,9 +31,9 @@ class InitBinding extends Bindings {
     Get.put(UploadController(), permanent: true);
     Get.put(MypageController(), permanent: true);
     Get.put(ProfileUploadController(), permanent: true);
-    //Get.put(SearchFocusController(), permanent: true); //feed 부분이므로 주석
-    //Get.put(FeedController(), permanent: true);
-    //Get.put(PostcardController(), permanent: true);
+    Get.put(SearchFocusController(), permanent: true); //feed 부분이므로 주석
+    Get.put(FeedController(), permanent: true);
+    Get.put(PostcardController(), permanent: true);
   }
 
   static additionalBinding() { // 추가적인 바인딩이 필요하다면 여기에 추가

@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
+
+
 import 'package:project_island/section/my_page/viewmodel/saved_controller.dart';
-import 'package:project_island/section/my_page/view/saved_listview.dart';
+// import 'package:project_island/section/my_page/view/saved_listview.dart';
 
 class SavedView extends StatefulWidget {
   @override
@@ -153,3 +155,5 @@ class _SavedViewState extends State<SavedView> {
     );
   }
 }
+
+ */

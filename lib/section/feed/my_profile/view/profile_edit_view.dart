@@ -7,12 +7,12 @@ class ProfileEditView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text('프로필 편집'),
+        title: const Text('프로필 편집'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,20 +25,20 @@ class ProfileEditView extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => UploadView()), // Uploadview 페이지로 이동
                 );
               },
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.grey,
                 child: Icon(Icons.camera_alt, size: 40),
               ),
             ),
-            SizedBox(height: 40), // 간격 조정
-            TextField(
+            const SizedBox(height: 40), // 간격 조정
+            const TextField(
               decoration: InputDecoration(
                 labelText: '닉네임',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               decoration: InputDecoration(
                 labelText: '한 줄 소개',

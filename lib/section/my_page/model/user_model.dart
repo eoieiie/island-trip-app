@@ -3,20 +3,23 @@ class IUser {
   String? nickname;
   String? thumbnail;
   String? description;
+  String? email; // 이메일 추가
+
   IUser({
     this.uid,
     this.nickname,
     this.thumbnail,
     this.description,
+    this.email,
   });
 
   factory IUser.fromJson(Map<String, dynamic> json) {
     return IUser(
-      uid: json['uid'] == null ? '' : json['uid'] as String,
-      nickname: json['nickname'] == null ? '' : json['nickname'] as String,
-      thumbnail: json['thumbnail'] == null ? '' : json['thumbnail'] as String,
-      description:
-      json['description'] == null ? '' : json['description'] as String,
+      uid: json['uid'] as String?,
+      nickname: json['nickname'] as String?,
+      thumbnail: json['thumbnail'] as String?,
+      description: json['description'] as String?,
+      email: json['email'] as String?, // 이메일 추가
     );
   }
 
@@ -26,9 +29,7 @@ class IUser {
       'nickname': nickname,
       'thumbnail': thumbnail,
       'description': description,
-      //추가함
-      // 'userInfo': userInfo?.toMap(), // userInfo가 null일 경우를 고려하여 ?. 사용
-
+      'email': email, // 이메일 추가
     };
   }
 
@@ -37,12 +38,14 @@ class IUser {
     String? nickname,
     String? thumbnail,
     String? description,
+    String? email, // 이메일 추가
   }) {
     return IUser(
       uid: uid ?? this.uid,
       nickname: nickname ?? this.nickname,
       thumbnail: thumbnail ?? this.thumbnail,
       description: description ?? this.description,
+      email: email ?? this.email, // 이메일 추가
     );
   }
 }

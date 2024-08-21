@@ -147,11 +147,11 @@ class _AddPhotoViewState extends State<AddPhotoView> {
                 decoration: BoxDecoration(
                     color: const Color(0xff808080),
                     borderRadius: BorderRadius.circular(30)),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Icons.select_all),
-                    const SizedBox(width: 7),
-                    const Text(
+                    SizedBox(width: 7),
+                    Text(
                       '여러 항목 선택',
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
@@ -165,7 +165,7 @@ class _AddPhotoViewState extends State<AddPhotoView> {
                   shape: BoxShape.circle,
                   color: Color(0xff808080),
                 ),
-                child: Icon(Icons.camera_alt),
+                child: const Icon(Icons.camera_alt),
               )
             ],
           ),
@@ -230,8 +230,8 @@ class _AddPhotoViewState extends State<AddPhotoView> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
+          child: const Padding(
+            padding: EdgeInsets.all(15.0),
             child: Icon(Icons.close, color: Colors.black),
           ),
         ),
@@ -248,8 +248,8 @@ class _AddPhotoViewState extends State<AddPhotoView> {
             onTap: () {
               // 이미지 필터 화면으로 이동 (추후 구현)
             },
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
+            child: const Padding(
+              padding: EdgeInsets.all(15.0),
               child: Icon(Icons.arrow_forward, color: Colors.black),
             ),
           ),

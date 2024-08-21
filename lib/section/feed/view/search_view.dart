@@ -28,7 +28,7 @@ class SearchView extends StatelessWidget {
       backgroundColor: Colors.white,
       // AppBar 배경색을 흰색으로 설정
       leading: Container(
-        margin: const EdgeInsets.only(left: 10), // 왼쪽 여백을 추가
+        margin: const EdgeInsets.all(4.5), // 왼쪽 여백을 추가
         child: IconButton(
           icon: const Icon(Icons.close, color: Colors.black),
           // X 버튼 아이콘을 검정색으로 설정
@@ -51,8 +51,8 @@ class SearchView extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               color: Colors.black26, // 그림자 색상 설정
-              blurRadius: 4, // 그림자 흐림 정도 설정
-              offset: Offset(2, 2), // 그림자 위치 설정
+              blurRadius: 3, // 그림자 흐림 정도 설정
+              offset: Offset(0, 0), // 그림자 위치 설정
             ),
           ],
         ),

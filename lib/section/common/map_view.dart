@@ -54,8 +54,8 @@ class _MapViewState extends State<MapView> {
             onMapReady: _onMapReady,
             options: const NaverMapViewOptions(
               initialCameraPosition: NCameraPosition(
-                target: NLatLng(36.2665, 127.7780),
-                zoom: 6.2,
+                target: NLatLng(36.0665, 127.2780),
+                zoom: 5.8,
               ),
             ),
           );

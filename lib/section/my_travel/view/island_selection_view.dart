@@ -45,41 +45,82 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
     final geojeMarker = NMarker(
       id: 'geoje',
       position: const NLatLng(34.8806, 128.6217),
-      iconTintColor: Colors.blue,
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '거제도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/snorkeling.png'),
     );
 
     final udoMarker = NMarker(
       id: 'udo',
       position: const NLatLng(33.5037, 126.5302),
-      iconTintColor: Colors.blue,
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '우도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/island.png'),
     );
 
     final oedoMarker = NMarker(
       id: 'oedo',
-      position: const NLatLng(34.6305, 128.6566),
-      iconTintColor: Colors.blue,
+      position: const NLatLng(34.5805, 128.6566),
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '외도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/island.png'),
     );
 
     final hongdoMarker = NMarker(
       id: 'hongdo',
-      position: const NLatLng(34.6851, 125.1594),
-      iconTintColor: Colors.blue,
+      position: const NLatLng(34.7851, 125.1594),
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '홍도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/island.png'),
     );
 
     final muuidoMarker = NMarker(
       id: 'muuido',
       position: const NLatLng(37.4519, 126.3947),
-      iconTintColor: Colors.blue,
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '무의도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/island.png'),
     );
 
     final jindoMarker = NMarker(
       id: 'jindo',
       position: const NLatLng(34.4887, 126.2630),
-      iconTintColor: Colors.blue,
+      size: const Size(35, 35),
+      caption: NOverlayCaption(
+        text: '진도',
+        textSize: 15,
+        color: Colors.black,
+      ),
+      icon: const NOverlayImage.fromAssetImage('assets/images/snorkeling.png'),
     );
 
     controller.addOverlayAll({
-      geojeMarker, udoMarker, oedoMarker, hongdoMarker, muuidoMarker, jindoMarker
+      geojeMarker,
+      udoMarker,
+      oedoMarker,
+      hongdoMarker,
+      muuidoMarker,
+      jindoMarker
     });
 
     geojeMarker.setOnTapListener((overlay) {
@@ -122,46 +163,92 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('섬 선택'),
+        backgroundColor: Colors.white,
+        title: Text(''),
       ),
-      body: _isMapReady
-          ? Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: MapView(onMapReady: _onMapReady),
+          // 지도 위젯
+          Positioned.fill(
+            child: _isMapReady
+                ? MapView(onMapReady: _onMapReady)
+                : Center(child: CircularProgressIndicator()),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
+          Positioned(
+            top: 0, // 상단에 붙이기 위해 top을 0으로 설정
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.only(left: 30.0, top: 0.0, right: 16.0, bottom: 10.0),
+              color: Colors.white, // 배경을 하얀색으로 설정
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '어느 섬으로',
+                    style: TextStyle(
+                      fontSize: 24, // 큰 글씨 크기 설정
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '여행을 떠나시나요?',
+                    style: TextStyle(
+                      fontSize: 24, // 큰 글씨 크기 설정
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '가고 싶은 섬을 선택해 주세요..',
+                    style: TextStyle(
+                      fontSize: 13, // 설명 텍스트 크기 설정
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 플로팅 액션 버튼
+          Positioned(
+            bottom: 16.0,
+            left: MediaQuery
+                .of(context)
+                .size
+                .width / 2 - 165, // 버튼을 화면 중앙에 위치
+            child: FloatingActionButton.extended(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
+                    builder: (context) =>
+                        TravelDatePage(selectedIsland: _selectedIsland),
                   ),
                 ).then((dates) {
                   if (dates != null) {
-                    _addTravel(_selectedIsland, dates['startDate'], dates['endDate']);
+                    _addTravel(
+                        _selectedIsland, dates['startDate'], dates['endDate']);
                   }
                 });
               },
-              child: Text(
-                '$_selectedIsland로 결정하기!',
+              icon: Icon(Icons.map, color: Colors.white),
+              label: Text(
+                '            $_selectedIsland로 결정하기!              ',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 48),
-                backgroundColor: Colors.blueAccent,
+              backgroundColor: Color(0XFF1BB874),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),
         ],
-      )
-          : Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }

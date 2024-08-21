@@ -9,6 +9,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'binding/init_binding.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 //
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -46,9 +48,9 @@ class _MainPageState extends State<MainPage> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     MyTravelView(), // 내 일정 페이지
-    const Scaffold(body: Center(child: Text('여행 도구 페이지'))), // 여행 도구 페이지
-    HomeView(), // 섬 모양 홈버튼 페이지
     const FeedView(), // 피드 페이지
+    HomeView(), // 섬 모양 홈버튼 페이지
+    const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
     MyPageView(), // 마이페이지
   ];
 
@@ -61,34 +63,88 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex), // 선택된 인덱스에 해당하는 페이지를 보여줍니다.
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on), // 내 일정 아이콘
-            label: '내 일정', // 내 일정 라벨
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: Stack(
+        children: [
+          BottomNavigationBar(
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'assets/images/icon_calendar.svg', // SVG 이미지 경로
+                  width: 24,
+                  height: 24,
+                  color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                label: '일정',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-search-mono.svg', // SVG 이미지 경로
+                  // 'assets/images/icon-home-mono.svg', // SVG 이미지 경로
+                  width: 24,
+                  height: 24,
+                  color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                label: '피드',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(), // 중앙 버튼은 Stack에서 따로 처리하므로 빈 컨테이너
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-stack-up-square-mono.svg', // SVG 이미지 경로
+                  width: 24,
+                  height: 24,
+                  color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                label: '저장',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-user-mono.svg', // SVG 이미지 경로
+                  width: 24,
+                  height: 24,
+                  color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                label: '마이페이지',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.green,
+            unselectedItemColor: Colors.grey,
+            onTap: _onItemTapped,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.travel_explore), // 여행 도구 아이콘
-            label: '여행 도구', // 여행 도구 라벨
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home), // 섬 모양 홈버튼 아이콘
-            label: '섬 모양 홈버튼', // 섬 모양 홈버튼 라벨
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed), // 피드 아이콘
-            label: '피드', // 피드 라벨
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person), // 마이페이지 아이콘
-            label: '마이페이지', // 마이페이지 라벨
+          Positioned(
+            top: -30, // 이 값을 조정하여 중앙 아이콘의 높이를 설정하세요.
+            left: MediaQuery
+                .of(context)
+                .size
+                .width / 2 - 50, // 아이콘 크기의 절반만큼 왼쪽으로 이동
+            child: GestureDetector(
+              onTap: () => _onItemTapped(2), // 중앙 버튼 탭 처리
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    // BoxShadow(
+                      // color: Colors.black.withOpacity(0.2),
+                      // blurRadius: 8,
+                      // offset: Offset(0, 4),
+                    // ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/images/icon_compass.png', // PNG 이미지 경로
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
         ],
-        currentIndex: _selectedIndex, // 현재 선택된 인덱스를 표시합니다.
-        selectedItemColor: Colors.blue, // 선택된 아이템의 색상을 파란색으로 설정합니다.
-        unselectedItemColor: Colors.grey, // 선택되지 않은 아이템의 색상을 회색으로 설정합니다.
-        onTap: _onItemTapped, // 아이템이 탭될 때 호출되는 콜백 함수입니다.
+        clipBehavior: Clip.none, // 상단에 겹치는 아이콘이 잘리지 않도록 설정
       ),
     );
   }

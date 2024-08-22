@@ -43,7 +43,7 @@ class _GridWidgetState extends State<GridWidget> {
   Widget build(BuildContext context) {
     return GridView.builder(
       controller: _scrollController, // 스크롤 컨트롤러 연결
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3, // 3개의 열
         childAspectRatio: 1, // 정사각형 비율
         mainAxisSpacing: 1, // 항목 간 세로 간격
@@ -66,7 +66,7 @@ class _GridWidgetState extends State<GridWidget> {
             ),
           );
         } else {
-          return SizedBox.shrink(); // 빈 공간 반환
+          return const SizedBox.shrink(); // 빈 공간 반환
         }
       },
     );

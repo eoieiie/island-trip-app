@@ -434,7 +434,7 @@ class ActivitySection extends StatelessWidget {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Get.to(SavedView());
+                  Get.to(SavedView());
                   // '관심 목록' 버튼 클릭 시 이벤트 처리
                 },
                 icon: Icon(Icons.bookmark, color: Colors.orange, size: 18), // 아이콘 색상과 크기 설정

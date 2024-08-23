@@ -210,40 +210,43 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
               ),
             ),
           ),
-          // 플로팅 액션 버튼
           Positioned(
-            bottom: 16.0,
-            left: MediaQuery
-                .of(context)
-                .size
-                .width / 2 - 165, // 버튼을 화면 중앙에 위치
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        TravelDatePage(selectedIsland: _selectedIsland),
+            bottom: 0, // 하단에 붙이기 위해 bottom을 0으로 설정
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          TravelDatePage(selectedIsland: _selectedIsland),
+                    ),
+                  ).then((dates) {
+                    if (dates != null) {
+                      _addTravel(
+                          _selectedIsland, dates['startDate'], dates['endDate']);
+                    }
+                  });
+                },
+                icon: Icon(Icons.map, color: Colors.white),
+                label: Text(
+                  '$_selectedIsland로 결정하기!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ).then((dates) {
-                  if (dates != null) {
-                    _addTravel(
-                        _selectedIsland, dates['startDate'], dates['endDate']);
-                  }
-                });
-              },
-              icon: Icon(Icons.map, color: Colors.white),
-              label: Text(
-                '            $_selectedIsland로 결정하기!              ',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
                 ),
-              ),
-              backgroundColor: Color(0XFF1BB874),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0XFF1BB874),
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
               ),
             ),
           ),

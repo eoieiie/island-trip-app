@@ -27,7 +27,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
   }
 
   void _onDaySelected(DateTime selectedDay) {
-    if (selectedDay.isBefore(DateTime.now())) return;
+    if (selectedDay.isBefore(DateTime.now().subtract(Duration(days: 1)))) return;
     setState(() {
       if (_startDate == null || (_startDate != null && _endDate != null)) {
         _startDate = selectedDay;
@@ -59,7 +59,20 @@ class _TravelDatePageState extends State<TravelDatePage> {
       bool isStart = _startDate != null && _startDate!.isAtSameMomentAs(day);
       bool isEnd = _endDate != null && _endDate!.isAtSameMomentAs(day);
       bool isInRange = _startDate != null && _endDate != null && day.isAfter(_startDate!) && day.isBefore(_endDate!);
-      bool isPast = day.isBefore(today);
+      bool isToday = day.year == today.year && day.month == today.month && day.day == today.day; // 오늘 날짜 확인
+      bool isPast = day.isBefore(today) && !isToday;  // 오늘 날짜는 제외
+
+      // 요일에 따른 색상 설정
+      Color textColor;
+      if (isToday) {
+        textColor = Colors.black;
+      } else if (day.weekday == DateTime.sunday) {
+        textColor = isPast ? Colors.red.withOpacity(0.5) : Colors.red;
+      } else if (day.weekday == DateTime.saturday) {
+        textColor = isPast ? Colors.blue.withOpacity(0.5) : Colors.blue;
+      } else {
+        textColor = isPast ? Colors.grey : Colors.black;
+      }
 
       dayWidgets.add(
         GestureDetector(
@@ -74,8 +87,8 @@ class _TravelDatePageState extends State<TravelDatePage> {
                   : isInRange
                   ? const Color(0xFFBBDDFF).withOpacity(0.3)
                   : Colors.transparent,
-              shape: isStart || isEnd ? BoxShape.circle : BoxShape.rectangle,
-              borderRadius: isInRange ? BorderRadius.circular(10) : null,
+              shape: isStart || isEnd ? BoxShape.rectangle : BoxShape.rectangle,
+              borderRadius: isInRange ? BorderRadius.circular(20) : BorderRadius.circular(20),
             ),
             child: Center(
               child: Text(
@@ -86,10 +99,15 @@ class _TravelDatePageState extends State<TravelDatePage> {
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 )
-                    : isInRange
+                    : isToday
                     ? const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
+                )
+                    : isInRange
+                    ? const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 )
                     : TextStyle(
                   color: isPast ? Colors.grey : Colors.black,

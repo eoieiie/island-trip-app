@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // Color를 위해 추가
+import 'schedule_model.dart';
 import 'package:json_annotation/json_annotation.dart'; // JSON 직렬화/역직렬화를 위한 라이브러리를 가져옵니다.
 
 part 'my_travel_model.g.dart'; // 생성된 파일을 가져옵니다.
@@ -12,6 +13,7 @@ class TravelModel {
   final String island; // 여행지 섬 이름
   final String? imageUrl; // 여행지 이미지 URL
   DateTime updatedAt; // 마지막 업데이트 날짜
+  List<ScheduleModel> schedules = [];
 
   TravelModel({
     required this.id, // 필수 파라미터로 여행 ID를 받습니다.

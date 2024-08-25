@@ -10,6 +10,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'binding/init_binding.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 
 //
 void main() async {
@@ -60,7 +61,7 @@ class _MainPageState extends State<MainPage> {
     MyTravelView(), // 내 일정 페이지
     const FeedView(), // 피드 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
-    const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
+    SearchPage(),// const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
     MyPageView(), // 마이페이지
   ];
 

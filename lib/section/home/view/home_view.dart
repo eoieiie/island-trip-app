@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';  // flutter_svg 패키지 가져오기
 import 'package:get/get.dart';
 import 'package:project_island/section/home/view/island_detail_view.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
@@ -6,180 +7,210 @@ import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-// 홈 화면을 표시하는 StatelessWidget 클래스
 class HomeView extends StatelessWidget {
-  // GetX를 사용하여 HomeViewModel을 초기화
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('홈'),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SvgPicture.asset(
+            'assets/images/isltrip-logo.svg',
+            semanticsLabel: 'Isltrip Logo',
+            fit: BoxFit.contain,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0, // 그림자 제거
       ),
-      // Obx를 사용하여 viewModel의 상태 변화를 감지하고 UI를 업데이트
       body: Obx(() {
-        // 로딩 중일 때 로딩 인디케이터를 표시
         if (viewModel.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
-
-        // 로딩이 완료되면 콘텐츠를 표시
-        return Column(
-          children: [
-            // 상단에 있는 버튼 섹션
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // 버튼 클릭 시 IslandDetailView로 이동
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => IslandDetailView()), // 이동할 화면
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // 버튼 색상
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: Text('섬 자세히 보기'),
-              ),
-            ),
-            //나머지 콘텐츠를 포함하는 확장 가능한 섹션
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // 첫 번째 섹션 - 매거진
-                    Container(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '매거진',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 16.0),
-                          // 매거진 리스트가 비어있지 않으면 매거진 카드들을 가로 스크롤로 표시
-                          if (viewModel.magazines.isNotEmpty)
-                            Container(
-                              height: 250, // 카드의 높이
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: viewModel.magazines.length,
-                                itemBuilder: (context, index) {
-                                  final magazine = viewModel.magazines[index];
-                                  return MagazineCard(magazine: magazine);
-                                },
-                              ),
-                            ),
-                          SizedBox(height: 16.0),
-                        ],
-                      ),
-                    ),
-                    // 두 번째 섹션 - 스노쿨링 - 스쿠버다이빙 명소
-                    Section(
-                      title: '스노쿨링 - 스쿠버다이빙 명소',
-                      contents: viewModel.contents,
-                    ),
-                    // 세 번째 섹션 - 낚시
-                    Section(
-                      title: '낚시',
-                      contents: viewModel.fishingContents,
-                    ),
-                    // 네 번째 섹션 - 전망대
-                    Section(
-                      title: '전망대',
-                      contents: viewModel.viewpointContents,
-                    ),
-                    // 다섯 번째 섹션 - 해수욕장
-                    Section(
-                      title: '해수욕장',
-                      contents: viewModel.beachContents,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
+        return Container();
       }),
+      bottomSheet: DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.2,
+        maxChildSize: 0.8,
+        builder: (context, scrollController) {
+          return BottomSheetContent(
+            viewModel: viewModel,
+            scrollController: scrollController,
+          );
+        },
+      ),
     );
   }
 }
 
-// 매거진 카드를 표시하는 StatelessWidget 클래스
-class MagazineCard extends StatelessWidget {
-  final Magazine magazine;
+class BottomSheetContent extends StatelessWidget {
+  final HomeViewModel viewModel;
+  final ScrollController scrollController;
 
-  MagazineCard({required this.magazine});
+  BottomSheetContent({
+    required this.viewModel,
+    required this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
-      width: 200, // 카드의 너비를 고정
-      child: ClipRRect( // 이미지를 둥글게 클립
-        borderRadius: BorderRadius.circular(16.0),
-        child: Stack(
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: CachedNetworkImage(
-                imageUrl: magazine.thumbnail,
-                fit: BoxFit.cover, // 이미지를 컨테이너에 맞춰 자름
-                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Icon(Icons.image_not_supported),
+            Text(
+              'Magazine',
+              style: TextStyle(
+                color: Color(0xFFC8C8C8),
+                fontSize: 12,
+                fontFamily: 'Lobster',
+                fontWeight: FontWeight.w400,
+                height: 0.11,
               ),
             ),
-            Positioned(
-              bottom: 0, // 텍스트를 하단에 위치
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.black.withOpacity(0.6), // 텍스트 배경 색을 반투명하게
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min, // 텍스트 크기에 맞게 컨테이너 크기 조정
-                  children: [
-                    Text(
-                      magazine.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+            SizedBox(height: 8.0),
+            Text(
+              '지금 인기있는 놓칠 수 없는 섬',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.45 + 50,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: viewModel.magazines.length,
+                itemBuilder: (context, index) {
+                  final magazine = viewModel.magazines[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => IslandDetailView()),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      margin: EdgeInsets.only(right: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.width * 0.45,
+                            child: MagazineCard(magazine: magazine),
+                          ),
+                          SizedBox(height: 4.0),
+                          Text(
+                            magazine.title,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 2.0),
+                          Opacity(
+                            opacity: 0.4,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'by.',
+                                  style: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 12,
+                                    fontFamily: 'Lobster',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                SizedBox(width: 4.0),
+                                Text(
+                                  '아일트립',
+                                  style: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 11,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.10,
+                                  ),
+                                ),
+                                SizedBox(width: 4.0),
+                                Text(
+                                  '.',
+                                  style: TextStyle(
+                                    color: Color(0xFFC8C8C8),
+                                    fontSize: 12,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.11,
+                                  ),
+                                ),
+                                SizedBox(width: 4.0),
+                                Text(
+                                  magazine.title,
+                                  style: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 12,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.10,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
-                      maxLines: 1, // 텍스트 줄 수 제한
                     ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      magazine.description,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
-                      maxLines: 2, // 텍스트 줄 수 제한
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      magazine.hashtags.join(' '),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      overflow: TextOverflow.ellipsis, // 텍스트가 길 경우 ...으로 표시
-                      maxLines: 1, // 텍스트 줄 수 제한
-                    ),
-                  ],
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 16.0), // 추가된 텍스트와의 간격을 줍니다.
+            Opacity(
+              opacity: 0.4,
+              child: Text(
+                'attraction',
+                style: TextStyle(
+                  color: Color(0xFFC8C8C8),
+                  fontSize: 12,
+                  fontFamily: 'Lobster',
+                  fontWeight: FontWeight.w400,
+                  height: 0.11,
                 ),
+              ),
+            ),
+            SizedBox(height: 26.0), // "attraction"과 "추천명소" 간의 간격
+            Text(
+              '추천명소',
+              style: TextStyle(
+                color: Color(0xFF222222),
+                fontSize: 18,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
+                height: 0.09,
               ),
             ),
           ],
@@ -189,42 +220,22 @@ class MagazineCard extends StatelessWidget {
   }
 }
 
-// 각 섹션을 표시하는 StatelessWidget 클래스
-class Section extends StatelessWidget {
-  final String title;
-  final List<Content> contents;
+class MagazineCard extends StatelessWidget {
+  final Magazine magazine;
 
-  Section({required this.title, required this.contents});
+  MagazineCard({required this.magazine});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16.0),
-          Container(
-            height: 300,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: contents.length,
-              itemBuilder: (context, index) {
-                final content = contents[index];
-                return AspectRatio(
-                  aspectRatio: 1 / 2,
-                  child: Card(
-                    child: Center(child: Text(content.title)),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: CachedNetworkImage(
+        imageUrl: magazine.thumbnail,
+        fit: BoxFit.cover,
+        placeholder: (context, url) =>
+            Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) =>
+            Icon(Icons.image_not_supported),
       ),
     );
   }

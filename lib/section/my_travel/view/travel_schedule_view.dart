@@ -99,10 +99,32 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 패딩 설정
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // 배경색 흰색
+              borderRadius: BorderRadius.circular(12), // 둥근 모서리 설정
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26, // 그림자 색상
+                  blurRadius: 3, // 그림자 흐림 정도
+                  offset: Offset(0, 0), // 그림자 위치
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black), // 뒤로가기 아이콘
+              onPressed: () {
+                Navigator.pop(context); // 뒤로가기 기능
+              },
+            ),
+          ),
+        ),
+        /*leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
-        ),
+        ),*/
         title: Text(
           '여행 일정',
           style: TextStyle(

@@ -49,12 +49,34 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('일정 추가'),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 패딩 설정
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // 배경색 흰색
+              borderRadius: BorderRadius.circular(12), // 둥근 모서리 설정
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26, // 그림자 색상
+                  blurRadius: 1.5, // 그림자 흐림 정도
+                  offset: Offset(0, 0), // 그림자 위치
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black), // 뒤로가기 아이콘
+              onPressed: () {
+                Navigator.pop(context); // 뒤로가기 기능
+              },
+            ),
+          ),
+        ),/*
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
           },
-        ),
+        ),*/
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -99,10 +99,32 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 패딩 설정
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // 배경색 흰색
+              borderRadius: BorderRadius.circular(12), // 둥근 모서리 설정
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26, // 그림자 색상
+                  blurRadius: 3, // 그림자 흐림 정도
+                  offset: Offset(0, 0), // 그림자 위치
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black), // 뒤로가기 아이콘
+              onPressed: () {
+                Navigator.pop(context); // 뒤로가기 기능
+              },
+            ),
+          ),
+        ),
+        /*leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
-        ),
+        ),*/
         title: Text(
           '여행 일정',
           style: TextStyle(
@@ -128,7 +150,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      // bottomNavigationBar: _buildBottomNavBar(), // 네비게이션바 생성하고자 하면 이 줄 주석 해제
     );
   }
 
@@ -212,88 +234,83 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   }
 
   Widget _buildDaysTabBar() {
+    // 시작 날짜와 종료 날짜 사이의 전체 날짜 목록을 생성합니다.
+    final days = List.generate(
+      widget.endDate.difference(widget.startDate).inDays + 1,
+          (index) => widget.startDate.add(Duration(days: index)),
+    );
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildDayButton('Day 1', '08.10', _selectedDayIndex == 0, () {
-            setState(() {
-              _selectedDayIndex = 0;
-            });
-          }),
-          SizedBox(width: 8),
-          _buildDayButton('Day 2', '08.11', _selectedDayIndex == 1, () {
-            setState(() {
-              _selectedDayIndex = 1;
-            });
-          }),
-          SizedBox(width: 8),
-          _buildDayButton('Day 3', '08.12', _selectedDayIndex == 2, () {
-            setState(() {
-              _selectedDayIndex = 2;
-            });
-          }),
-        ],
+      height: 75, // 탭바의 높이를 지정
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // 가로 스크롤이 가능하도록 설정
+        itemCount: days.length,
+        itemBuilder: (context, index) {
+          final day = days[index];
+          final isSelected = _selectedDayIndex == index;
+          final dayLabel = 'Day ${index + 1}';
+          final dateLabel = '${day.month.toString().padLeft(2, '0')}.${day.day.toString().padLeft(2, '0')}';
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedDayIndex = index;
+              });
+            },
+            child: Container(
+              width: 100, // 버튼의 너비를 지정
+              height: 0,
+              margin: EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.all(8),
+              decoration: ShapeDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                  begin: Alignment(0.60, -0.80),
+                  end: Alignment(-0.6, 0.8),
+                  colors: [Color(0xFF1BB874), Color(0xFF1BAEB8)],
+                )
+                    : null,
+                color: isSelected ? null : Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: 1,
+                    color: isSelected ? Colors.white.withOpacity(0.5) : Color(0xFFF7F7F7),
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    dayLabel,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Color(0xFF999999),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    dateLabel,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Color(0xFF666666),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildDayButton(String day, String date, bool isSelected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 60,
-          padding: const EdgeInsets.all(8),
-          decoration: ShapeDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-              begin: Alignment(0.60, -0.80),
-              end: Alignment(-0.6, 0.8),
-              colors: [Color(0xFF1BB874), Color(0xFF1BAEB8)],
-            )
-                : null,
-            color: isSelected ? null : Colors.white,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: isSelected ? Colors.white.withOpacity(0.5) : Color(0xFFF7F7F7),
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                day,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Color(0xFF999999),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                date,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Color(0xFF666666),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildMap() {
     return Container(

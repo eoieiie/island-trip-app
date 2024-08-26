@@ -124,7 +124,7 @@ class ProfileUploadController extends GetxController { // GetxController를 상�
     );
     if (imagefile != null && imagefile.containsKey('image_filtered')) { // 필터가 적용된 이미지가 있는 경우
       filteredImage = imagefile['image_filtered']; // 필터된 이미지 설정
-      Get.to(() => const UploadDescription()); // 업로드 설명 페이지로 이동
+      // Get.to(() => const UploadDescription()); // 업로드 설명 페이지로 이동
     }
   }
 

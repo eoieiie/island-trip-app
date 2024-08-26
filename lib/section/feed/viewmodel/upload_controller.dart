@@ -1,5 +1,5 @@
-import 'dart:io'; // 파일 입출력을 위한 패키지
-import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
+/* import 'dart:io'; // 파일 입출력을 위한 패키지
+// import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
 import 'package:flutter/material.dart'; // Flutter UI 패키지
 import 'package:project_island/section/common/feed_my_page common/src/components/message_popup.dart'; // 커스텀 메시지 팝업
 import 'package:project_island/section/feed/viewmodel/auth_controller.dart'; // 인증 컨트롤러
@@ -150,3 +150,4 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
     );
   }
 }
+*/

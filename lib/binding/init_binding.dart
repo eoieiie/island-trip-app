@@ -28,7 +28,7 @@ class InitBinding extends Bindings {
   void dependencies() {
     // Get.put(BottomNavController(), permanent: true);
     Get.put(AuthController(), permanent: true);
-    Get.put(UploadController(), permanent: true);
+    // Get.put(UploadController(), permanent: true);
     Get.put(MypageController(), permanent: true);
     Get.put(ProfileUploadController(), permanent: true);
     Get.put(SearchFocusController(), permanent: true); //feed 부분이므로 주석

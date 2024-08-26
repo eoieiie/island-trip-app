@@ -112,7 +112,7 @@ class ProfileEditView extends StatelessWidget {
     return GestureDetector(
       // GestureDetector는 터치 이벤트를 감지
       onTap: () {
-        Get.to(() => UploadView()); // 프로필 사진을 클릭하면 업로드 화면으로 이동
+        // Get.to(() => UploadView()); // 프로필 사진을 클릭하면 업로드 화면으로 이동
       },
       child: Stack(
         // Stack은 위젯을 겹쳐서 배치하는 위젯

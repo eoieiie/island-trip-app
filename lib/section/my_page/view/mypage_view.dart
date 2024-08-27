@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project_island/section/my_page/mypage_list/view/Cutomer%20Service.dart';
+import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
+import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
+
 import 'package:project_island/section/my_page//view/profile_edit_view.dart';
 import 'package:project_island/section/my_page/view/saved_view.dart';
-import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:confetti/confetti.dart';
 import 'package:project_island/section/my_page/view/setting_view.dart';
 
@@ -74,7 +77,9 @@ class UserProfileSection extends StatelessWidget {
             height: 60, // 프로필 이미지의 높이
             decoration: ShapeDecoration(
               image: DecorationImage(
-                image: NetworkImage(controller.profileImageUrl), // Firebase에서 가져온 이미지
+                // 프로필 이미지를 사용하는 부분
+                image: NetworkImage(controller.profileImageUrl.value), // 수정 전: controller.profileImageUrl
+
                 fit: BoxFit.fill, // 이미지가 컨테이너에 꽉 차도록 설정
               ),
               shape: RoundedRectangleBorder(
@@ -144,14 +149,14 @@ class UserProfileSection extends StatelessWidget {
                 ],
               ),
               Text(
-                controller.userName, // 사용자 이름
+                controller.userName.value, // 사용자 이름
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 4),
-              Text(controller.userDescription), // 한 줄 소개
+              Text(controller.userDescription.value), // 한 줄 소개
             ],
           ),
         ),
@@ -343,8 +348,8 @@ class PointStatusSection extends StatelessWidget {
                   // 현재 상태에 맞는 이미지를 표시
                   Image.asset(
                     controller.currentIconPath,
-                    width: 40, // 이미지 너비 설정 (적절한 크기로 설정)
-                    height: 40, // 이미지 높이 설정 (적절한 크기로 설정)
+                    width: 60, // 이미지 너비 설정 (적절한 크기로 설정)
+                    height: 60, // 이미지 높이 설정 (적절한 크기로 설정)
                   ),
                 ],
               ),
@@ -488,35 +493,35 @@ class MenuListSection extends StatelessWidget {
       children: [
         ListTile(
           title: Text('공지사항'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15,),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
-            // 공지사항 클릭 시 이벤트 처리
+            Get.to(NoticeScreen());
           },
         ),
         ListTile(
           title: Text('고객센터'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15,),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
-            // 고객센터 클릭 시 이벤트 처리
+            Get.to(CustomerServiceScreen());
           },
         ),
         ListTile(
           title: Text('사용 가이드'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15,),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 사용 가이드 클릭 시 이벤트 처리
           },
         ),
         ListTile(
           title: Text('로그아웃'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15,),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 로그아웃 클릭 시 이벤트 처리
           },
         ),
         ListTile(
           title: Text('회원 탈퇴'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15,),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 회원 탈퇴 클릭 시 이벤트 처리
           },

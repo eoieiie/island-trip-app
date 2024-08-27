@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_page/model/saved_model.dart';
-import 'package:flutter/material.dart';
 import 'package:project_island/section/my_page/repository/saved_repository.dart';
 
 class SavedController with ChangeNotifier {

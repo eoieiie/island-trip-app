@@ -1,6 +1,8 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'package:project_island/section/common/kakao_api/views/place_detail_page.dart';
+import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
 import 'package:project_island/section/my_page/view/mypage_view.dart';
 import 'package:project_island/section/feed/view/feed_view.dart';
@@ -60,7 +62,7 @@ class _MainPageState extends State<MainPage> {
     MyTravelView(), // 내 일정 페이지
     const FeedView(), // 피드 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
-    const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
+    SearchPage(), // 여행 도구 페이지
     MyPageView(), // 마이페이지
   ];
 

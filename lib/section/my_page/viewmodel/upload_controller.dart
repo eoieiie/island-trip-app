@@ -1,5 +1,5 @@
 import 'dart:io'; // 파일 입출력을 위한 패키지
-// import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
+import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
 import 'package:flutter/material.dart'; // Flutter UI 패키지
 import 'package:project_island/section/common/feed_my_page common/src/components/message_popup.dart'; // 커스텀 메시지 팝업
 import 'package:project_island/section/feed/viewmodel/auth_controller.dart'; // 인증 컨트롤러
@@ -59,7 +59,7 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
   void _loadData() async { // 데이터 로드 메서드
     changeAlbum(albums.first); // 첫 번째 앨범으로 변경
 
-    // update(); // 상태 업데이트
+     update(); // 상태 업데이트
   }
 
   Future<void> _pagingPhotos(AssetPathEntity album) async { // 페이징으로 사진 로드
@@ -127,15 +127,15 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
       );
     }
   }
-/*
+
   UploadTask uploadFile(File file, String filename) { // 파일 업로드 메서드
-    // var ref = FirebaseStorage.instance.ref().child('instagram').child(filename); // Firebase 참조 생성
+    var ref = FirebaseStorage.instance.ref().child('instagram').child(filename); // Firebase 참조 생성
     final metadata = SettableMetadata(
         contentType: 'image/jpeg',
         customMetadata: {'picked-file-path': file.path}); // 메타데이터 설정
     return ref.putFile(file, metadata); // 파일 업로드
   }
-*/
+
   void _submitPost(Post postData) async { // 포스트 제출 메서드
     await PostRepository.updatePost(postData); // 포스트 데이터 업데이트
     showDialog( // 팝업 메시지

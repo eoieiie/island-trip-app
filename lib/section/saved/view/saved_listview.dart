@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/common/kakao_api/views/place_detail_page.dart';
-import 'package:project_island/section/home/view/place_detail_view.dart';
-import 'package:project_island/section/my_page/viewmodel/saved_controller.dart';
-import 'package:project_island/section/my_page/model/saved_model.dart';
+import 'package:project_island/section/saved/viewmodel/saved_controller.dart';
+import 'package:project_island/section/saved/model/saved_model.dart';
 import 'package:get/get.dart';
 
 class SavedListView extends StatefulWidget {
@@ -63,7 +62,7 @@ class _SavedListItemState extends State<SavedListItem> {
     return ListTile(
       onTap: () {
         // 항목 클릭 시 다른 페이지로 이동
-        //Get.to(StoreInfoView());  바로 네이버지도로 이동시키기? ㄱㄱ
+        //Get.to(StoreInfoView());  //바로 네이버지도로 이동시키기? ㄱㄱ
       },
       leading: ItemImage(imageUrl: widget.item.imageUrl), // 이미지를 ItemImage 위젯으로 분리
       title: Column(

@@ -1,4 +1,4 @@
-import 'package:project_island/section/my_page/model/saved_model.dart';
+import 'package:project_island/section/saved/model/saved_model.dart';
 
 class SavedRepository {
   // 저장소 클래스

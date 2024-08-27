@@ -1,5 +1,5 @@
-/* import 'dart:io'; // 파일 입출력을 위한 패키지
-// import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
+import 'dart:io'; // 파일 입출력을 위한 패키지
+import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
 import 'package:flutter/material.dart'; // Flutter UI 패키지
 import 'package:project_island/section/common/feed_my_page common/src/components/message_popup.dart'; // 커스텀 메시지 팝업
 import 'package:project_island/section/feed/viewmodel/auth_controller.dart'; // 인증 컨트롤러
@@ -8,7 +8,7 @@ import 'package:project_island/section/feed/repository/post_repository.dart'; //
 import 'package:project_island/section/feed/view/upload_description.dart'; // 업로드 설명 뷰
 import 'package:project_island/section/common/feed_my_page common/src/utils/data_util.dart'; // 데이터 유틸리티
 import 'package:get/get.dart'; // GetX 패키지
-import 'package:image_picker/image_picker.dart'; // 이미지 선택기
+// import 'package:image_picker/image_picker.dart'; // 이미지 선택기
 import 'package:photo_manager/photo_manager.dart'; // 사진 관리자
 import 'package:image/image.dart' as imageLib; // 이미지 라이브러리
 import 'package:path/path.dart'; // 경로 관련 유틸리티
@@ -150,4 +150,3 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
     );
   }
 }
-*/

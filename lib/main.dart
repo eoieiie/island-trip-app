@@ -1,17 +1,17 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
-import 'package:project_island/section/common/kakao_api/views/place_detail_page.dart';
-import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
 import 'package:project_island/section/my_page/view/mypage_view.dart';
 import 'package:project_island/section/feed/view/feed_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
+import 'package:project_island/section/map/view/homemap_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'binding/init_binding.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 
 //
 void main() async {
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final int selectedIndex;
 
-  MainPage({this.selectedIndex = 2}); // 디폴트로 2(홈)를 설정
+  MainPage({this.selectedIndex = 0}); // 디폴트로 0(홈)를 설정
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -59,10 +59,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    MyTravelView(), // 내 일정 페이지
-    const FeedView(), // 피드 페이지
+    // const FeedView(), // 피드 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
-    SearchPage(), // 여행 도구 페이지
+    MyTravelView(), // 내 일정 페이지
+    HomeMapView(), // 맵 페이지
+    SearchPage(),// const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
     MyPageView(), // 마이페이지
   ];
 
@@ -82,22 +83,22 @@ class _MainPageState extends State<MainPage> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon_calendar.svg', // SVG 이미지 경로
+                  'assets/images/icon-home-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
                 ),
-                label: '일정',
+                label: '홈',
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon-search-mono.svg', // SVG 이미지 경로
+                  'assets/images/icon_calendar.svg', // SVG 이미지 경로
                   // 'assets/images/icon-home-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
                 ),
-                label: '피드',
+                label: '일정',
               ),
               BottomNavigationBarItem(
                 icon: Container(), // 중앙 버튼은 Stack에서 따로 처리하므로 빈 컨테이너
@@ -126,15 +127,16 @@ class _MainPageState extends State<MainPage> {
             selectedItemColor: Colors.green,
             unselectedItemColor: Colors.grey,
             onTap: _onItemTapped,
-          ),
-          Positioned(
+          ),Positioned(
             top: -30, // 이 값을 조정하여 중앙 아이콘의 높이를 설정하세요.
-            left: MediaQuery
-                .of(context)
-                .size
-                .width / 2 - 50, // 아이콘 크기의 절반만큼 왼쪽으로 이동
+            left: MediaQuery.of(context).size.width / 2 - 50, // 아이콘 크기의 절반만큼 왼쪽으로 이동
             child: GestureDetector(
-              onTap: () => _onItemTapped(2), // 중앙 버튼 탭 처리
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeMapView()),
+                );
+              }, // 중앙 버튼 탭 처리
               child: Container(
                 width: 100,
                 height: 100,

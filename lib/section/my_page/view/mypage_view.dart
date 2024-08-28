@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
+
 import 'package:project_island/section/my_page/mypage_list/view/Cutomer Service.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
-import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:project_island/section/my_page//view/profile_edit_view.dart';
 import 'package:project_island/section/my_page/view/setting_view.dart';
 

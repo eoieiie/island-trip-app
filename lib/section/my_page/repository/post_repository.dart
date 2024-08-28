@@ -1,5 +1,5 @@
-/* import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_island/section/my_page/model/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_island/section/my_page/model/post_model.dart';
 
 class PostRepository {
   static Future<void> updatePost(Post postData) async {
@@ -15,4 +15,3 @@ class PostRepository {
     return data.docs.map<Post>((e) => Post.fromJson(e.id, e.data())).toList();
   }
 }
-*/

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -53,11 +52,11 @@ class MyPageController extends GetxController {
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
 
-      /*
+
       // Firebase Storage에 이미지 업로드
       try {
         String fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.png';
-        // Reference storageRef = FirebaseStorage.instance.ref().child('profiles/$fileName');
+        Reference storageRef = FirebaseStorage.instance.ref().child('profiles/$fileName');
         UploadTask uploadTask = storageRef.putFile(imageFile);
 
         TaskSnapshot snapshot = await uploadTask;
@@ -67,7 +66,7 @@ class MyPageController extends GetxController {
         updateProfileImageUrl(downloadUrl);
       } catch (e) {
         print('이미지 업로드 실패: $e');
-      }*/
+      }
     }
   }
 

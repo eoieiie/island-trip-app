@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
 import 'package:project_island/section/my_page/view/mypage_view.dart';
-import 'package:project_island/section/feed/view/feed_view.dart';
+// import 'package:project_island/section/feed/view/feed_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
 import 'package:project_island/section/map/view/homemap_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,8 +12,9 @@ import 'package:get/get.dart';
 import 'binding/init_binding.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/section/common/kakao_api/views/search_page.dart';
+import 'package:project_island/section/saved/view/saved_view.dart';
 
-//
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
   await dotenv.load(fileName: ".env"); // .env 파일 로드
@@ -63,7 +64,7 @@ class _MainPageState extends State<MainPage> {
     HomeView(), // 섬 모양 홈버튼 페이지
     MyTravelView(), // 내 일정 페이지
     HomeMapView(), // 맵 페이지
-    SearchPage(),// const Scaffold(body: Center(child: Text('내 저장 페이지'))), // 여행 도구 페이지
+    SavedView(), //SearchPage(), // const Scaffold(body: Center(child: Text('내 저장 페이지'))),
     MyPageView(), // 마이페이지
   ];
 

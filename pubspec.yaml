@@ -58,6 +58,8 @@ dependencies:
   flutter_svg: ^1.0.3
   confetti: ^0.7.0
   firebase_core: ^2.24.2
+  url_launcher: ^6.3.0
+  firebase_storage: ^11.6.0
 
 
 dev_dependencies:

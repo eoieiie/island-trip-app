@@ -14,7 +14,8 @@ class UserRepository {
     if (data.size == 0) {
       return null;
     } else {
-      currentUser = IUser.fromJson(data.docs.first.data());
+      var userData = data.docs.first.data();
+      currentUser = IUser.fromJson(userData);
       return currentUser;
     }
   }

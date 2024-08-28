@@ -8,7 +8,7 @@ class Magazine {
     required this.title,
     required this.description,
     required this.hashtags,
-    required this.thumbnail,
+    required this.thumbnail, required address,
   });
 }
 

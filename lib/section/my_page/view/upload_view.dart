@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:project_island/section/common/feed_my_page common/src/components/image_data.dart';
 import 'package:project_island/section/my_page/viewmodel/upload_controller.dart';
 
+import '../viewmodel/upload_controller.dart';
+
 class UploadView extends GetView<UploadController> {
   UploadView({Key? key}) : super(key: key);
 

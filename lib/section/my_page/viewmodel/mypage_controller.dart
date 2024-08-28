@@ -23,27 +23,6 @@ class MyPageController extends GetxController {
     }
   }
 
-  // 상태에 따라 이미지를 반환하는 메서드
-  String get currentIconPath {
-    if (currentPoints < 500) {
-      return 'assets/images/palm_tree.jpeg'; // 야자수 이미지 경로
-    } else if (currentPoints < 1000) {
-      return 'assets/images/lighthouse.jpeg'; // 등대 이미지 경로
-    } else {
-      return 'assets/images/hot_air_balloon.jpeg'; // 열기구 이미지 경로
-    }
-  }
-
-
-// 포인트가 변경될 때 상태 업데이트
-  void updatePoints(int points) {
-    currentPoints = points;
-    remainingPoints = targetPoints - points;
-    update(); // 상태 업데이트
-  }
-
-
-
   // 프로필 이미지 선택 및 업로드
   Future<void> selectAndUploadProfileImage() async {
     final picker = ImagePicker();

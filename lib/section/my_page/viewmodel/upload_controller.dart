@@ -2,10 +2,10 @@ import 'dart:io'; // 파일 입출력을 위한 패키지
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
 import 'package:flutter/material.dart'; // Flutter UI 패키지
 import 'package:project_island/section/common/feed_my_page common/src/components/message_popup.dart'; // 커스텀 메시지 팝업
-import 'package:project_island/section/feed/viewmodel/auth_controller.dart'; // 인증 컨트롤러
-import 'package:project_island/section/feed/model/post_model.dart'; // 포스트 모델
-import 'package:project_island/section/feed/repository/post_repository.dart'; // 포스트 리포지토리
-import 'package:project_island/section/feed/view/upload_description.dart'; // 업로드 설명 뷰
+import 'package:project_island/section/my_page/viewmodel/auth_controller.dart'; // 인증 컨트롤러
+import 'package:project_island/section/my_page/model/post_model.dart'; // 포스트 모델
+import 'package:project_island/section/my_page/repository/post_repository.dart'; // 포스트 리포지토리
+import 'package:project_island/section/my_page/view/upload_description.dart'; // 업로드 설명 뷰
 import 'package:project_island/section/common/feed_my_page common/src/utils/data_util.dart'; // 데이터 유틸리티
 import 'package:get/get.dart'; // GetX 패키지
 import 'package:image_picker/image_picker.dart'; // 이미지 선택기
@@ -150,3 +150,5 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
     );
   }
 }
+
+

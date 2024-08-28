@@ -66,6 +66,8 @@ class Repository {
   int _getContentIdByIslandName(String islandName) {
     // 여기에 다른 섬의 contentId를 추가할 수 있습니다.
     switch (islandName) {
+      case '거문도':
+        return 126283;
       case '신시도':
         return 126293;  // 예시 contentId
       case '실미도':

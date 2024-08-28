@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project_island/section/feed/view/upload_view.dart'; // add_photo_view 파일 가져오기
+import 'package:project_island/section/feed/view/upload_view.dart';
+
+import '../../../my_page/view/upload_view.dart'; // add_photo_view 파일 가져오기
 
 class ProfileEditView extends StatelessWidget {
   @override

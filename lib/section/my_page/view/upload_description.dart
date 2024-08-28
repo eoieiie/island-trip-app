@@ -3,6 +3,8 @@ import 'package:project_island/section/common/feed_my_page common/src/components
 import 'package:project_island/section/feed/viewmodel/upload_controller.dart';
 import 'package:get/get.dart';
 
+import '../viewmodel/upload_controller.dart';
+
 class UploadDescription extends GetView<UploadController> {
   const UploadDescription({Key? key}) : super(key: key);
 

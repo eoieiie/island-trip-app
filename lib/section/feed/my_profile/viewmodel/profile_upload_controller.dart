@@ -14,7 +14,9 @@ import 'package:image/image.dart' as imageLib; // 이미지 라이브러리
 import 'package:path/path.dart'; // 경로 관련 유틸리티
 import 'package:photofilters/filters/preset_filters.dart'; // 사진 필터 프리셋
 import 'package:photofilters/widgets/photo_filter.dart'; // 사진 필터 위젯
-import 'package:http/http.dart' as http; // HTTP 패키지
+import 'package:http/http.dart' as http;
+
+import '../../../my_page/view/upload_description.dart'; // HTTP 패키지
 
 class ProfileUploadController extends GetxController { // GetxController를 상속받아 컨트롤러로 설정
   var albums = <AssetPathEntity>[]; // 사진 앨범 리스트

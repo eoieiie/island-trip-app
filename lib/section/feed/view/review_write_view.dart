@@ -3,6 +3,9 @@ import 'package:project_island/section/feed/view/upload_view.dart'; // add_photo
 import 'package:get/get.dart';
 import 'package:project_island/section/feed/viewmodel/upload_controller.dart';
 
+import '../../my_page/view/upload_view.dart';
+import '../../my_page/viewmodel/upload_controller.dart';
+
 
 class ReviewWriteView extends StatelessWidget {
   @override

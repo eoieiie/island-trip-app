@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
 import 'package:project_island/section/my_page/view/mypage_view.dart';
-// import 'package:project_island/section/feed/view/feed_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
 import 'package:project_island/section/map/view/homemap_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -64,7 +63,7 @@ class _MainPageState extends State<MainPage> {
     HomeView(), // 섬 모양 홈버튼 페이지
     MyTravelView(), // 내 일정 페이지
     HomeMapView(), // 맵 페이지
-    SavedView(), //SearchPage(), // const Scaffold(body: Center(child: Text('내 저장 페이지'))),
+    SavedView(), //SearchPage(),
     MyPageView(), // 마이페이지
   ];
 
@@ -137,6 +136,7 @@ class _MainPageState extends State<MainPage> {
                   context,
                   MaterialPageRoute(builder: (context) => HomeMapView()),
                 );
+
               }, // 중앙 버튼 탭 처리
               child: Container(
                 width: 100,

@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart'; // .env 파일에서 API �
 class KakaoAPI {
   final String apiKey = dotenv.env['KAKAO_API_KEY']!; // .env 파일에서 Kakao API 키를 가져와 apiKey 변수에 저장
 
+
   // 장소를 검색하는 메서드
   // 검색어(query), 위도(latitude), 경도(longitude), 반경(radius)을 인자로 받음
   // latitude와 longitude는 선택적, 반경은 기본값으로 20,000미터를 사용.

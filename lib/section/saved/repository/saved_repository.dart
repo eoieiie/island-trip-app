@@ -1,44 +1,41 @@
-import 'package:project_island/section/saved/model/saved_model.dart';
+import 'package:project_island/section/common/kakao_api/viewmodels/place_view_model.dart';
+import 'package:project_island/section/common/kakao_api/models/place_model.dart';
+import 'package:project_island/section/saved/model/saved_model.dart'; // SavedItem import
 
 class SavedRepository {
-  // 저장소 클래스
-  final List<SavedItem> _savedItems = [
-    // 샘플 데이터 리스트
-    SavedItem(
-      title: "안면도 자연 휴양림",
-      imageUrl: "https://lh5.googleusercontent.com/p/AF1QipPjOOUWd1JMnbeD3ZBmlHIdL3e_pUSo-ydQEWGR=w675-h390-n-k-no",
-      address: "인천 서해 도동1길 5-3",
-      description: "숲길과 바닷길이 아름다운 산책코스",
-      rating: 4.9,
-      category: "명소/놀거리", // 카테고리 지정
-    ),
-    SavedItem(
-      title: "꽃게다리",
-      imageUrl: "http://bbkk.kr/d/t/18/1862_%EB%A9%94%EC%9D%B8%EC%82%AC%EC%A7%84.jpg",
-      address: "인천 서해 도동1길 5-3",
-      description: "숲길과 바닷길이 아름다운 산책코스",
-      rating: 4.8,
-      category: "명소/놀거리", // 카테고리 지정
-    ),
-    // 추가 샘플 데이터
-  ];
+  final PlaceViewModel _placeViewModel = PlaceViewModel();
 
-  List<SavedItem> getSavedItemsByCategory(String category) {
-    // 카테고리별로 필터링된 항목 리스트 반환
-    return _savedItems.where((item) => item.category == category).toList();
-  }
+  Future<List<SavedItem>> getSavedItemsByCategory(String category) async {
+    List<PlaceModel> places = [];
 
-  void updateItem(SavedItem item) {
-    // 특정 아이템 업데이트
-    final index = _savedItems.indexWhere((element) => element.title == item.title);
-    if (index != -1) {
-      _savedItems[index] = item;
+    if (category == '명소/놀거리') {
+      // "명소/놀거리"는 "문화시설"과 "관광명소"를 각각 검색하여 결과를 합침
+      final places1 = await _placeViewModel.searchPlaces('문화시설');
+      final places2 = await _placeViewModel.searchPlaces('관광명소');
+
+      // 두 결과를 합친 후, categoryGroupName이 비어 있는 항목을 추가로 포함
+      places = [
+        ...places1,
+        ...places2,
+        ...places1.where((place) => place.categoryGroupName.isEmpty).toList()
+      ];
+    } else if (category == '섬') {
+      places = await _placeViewModel.searchPlaces('섬');
+    } else if (category == '음식') {
+      places = await _placeViewModel.searchPlaces('음식점');
+    } else if (category == '카페') {
+      places = await _placeViewModel.searchPlaces('카페');
+    } else if (category == '숙소') {
+      places = await _placeViewModel.searchPlaces('숙박');
+    } else {
+      places = await _placeViewModel.searchPlaces(category); // 기본적으로 사용자가 입력한 카테고리를 검색어로 사용
     }
+
+    // 필터링된 장소를 SavedItem으로 변환
+    return places.map((place) => SavedItem.fromPlaceModel(place)).toList();
   }
 
   void toggleBookmark(SavedItem item) {
-    // 북마크 상태를 토글
-    item.isBookmarked = !item.isBookmarked;
-    updateItem(item); // 변경된 상태를 저장
+    item.isBookmarked = !item.isBookmarked; // 북마크 상태를 반전
   }
 }

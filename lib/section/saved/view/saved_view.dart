@@ -1,136 +1,161 @@
 import 'package:flutter/material.dart';
-
-
 import 'package:project_island/section/saved/viewmodel/saved_controller.dart';
 import 'package:project_island/section/saved/view/saved_listview.dart';
+import 'package:project_island/section/saved/model/saved_model.dart';
 
 class SavedView extends StatefulWidget {
+  const SavedView({Key? key}) : super(key: key); // Key 매개변수 추가 및 const 사용
+
   @override
-  _SavedViewState createState() => _SavedViewState();
+  State<SavedView> createState() => SavedViewState(); // 클래스 이름을 공개적으로 변경
 }
 
-class _SavedViewState extends State<SavedView> {
-  final SavedController controller = SavedController(); // SavedController 인스턴스 생성
-  String selectedCategory = '섬'; // 기본 카테고리 설정
+class SavedViewState extends State<SavedView> {
+  final SavedController controller = SavedController();
+  String selectedCategory = '섬';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // 앱바 설정
-        centerTitle: true, // 제목을 중앙에 정렬
-        backgroundColor: Colors.white, // 앱바 배경색 흰색
-        elevation: 0, // 그림자 제거
-        title: Text("관심목록", style: TextStyle(fontSize:20, fontWeight: FontWeight.bold)), // 앱바 제목
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text("관심목록", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), // const 사용
+        automaticallyImplyLeading: false, // 뒤로가기 버튼을 제거
       ),
-      backgroundColor: Colors.white, // 앱바 배경색 흰색
+      backgroundColor: Colors.white,
       body: Column(
-        // 전체 내용을 담는 Column
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // 가로 스크롤 가능
-            child: Row(
-              // 버튼을 담는 Row
-              children: [
-                SizedBox(width: 15), // 왼쪽 벽과의 간격을 추가
-                _buildCategoryButton('섬'), // 섬 카테고리 버튼
-                _buildCategoryButton('명소/놀거리'), // 명소/놀거리 카테고리 버튼
-                _buildCategoryButton('음식'), // 음식 카테고리 버튼
-                _buildCategoryButton('카페'), // 카페 카테고리 버튼
-                _buildCategoryButton('숙소'), // 숙소 카테고리 버튼
-              ],
-            ),
+          CategoryButtons(
+            selectedCategory: selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                selectedCategory = category;
+              });
+            },
           ),
-          Divider( // 카테고리 버튼과 목록 사이에 밑줄 추가
-            color: Colors.grey[200], // 밑줄 색상 연한 회색
-            thickness: 1, // 밑줄 두께
-            height: 15, // 밑줄 높이
+          const Divider( // const 사용
+            color: Colors.grey,
+            thickness: 1,
+            height: 15,
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10), // 패딩 설정
+            padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10), // const 사용
             child: Align(
-              alignment: Alignment.centerLeft, // 왼쪽 정렬
-              child: RichText(
-                // RichText 위젯 사용
-                text: TextSpan(
-                  // TextSpan을 사용해 스타일을 각각 적용
-                  children: [
-                    TextSpan(
-                      text: '목록 ', // "목록" 텍스트
-                      style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold), // 검은색 텍스트 스타일
-                    ),
-                    TextSpan(
-                      text: '${controller.getSavedItems(selectedCategory).length}개', // 목록 개수 텍스트
-                      style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold), // 초록색 텍스트 스타일
-                    ),
-                  ],
-                ),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  const Text( // const 사용
+                    '목록 ',
+                    style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  _buildItemCountText(),
+                ],
               ),
             ),
           ),
-
           Expanded(
-            child: SavedListView(
-              controller: controller,
-              selectedCategory: selectedCategory,
-            ), // 분리된 ListView 위젯 사용
+            child: FutureBuilder<List<SavedItem>>(
+              future: controller.getSavedItems(selectedCategory),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator()); // const 사용
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('오류 발생: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('저장된 항목이 없습니다.')); // const 사용
+                } else {
+                  final items = snapshot.data!;
+                  return SavedListView(items: items, controller: controller);
+                }
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(String category) {
-    // 카테고리 버튼 위젯
-    double buttonWidth;
-
-    // 카테고리 이름에 따라 버튼의 가로 길이 설정
-    switch (category) {
-      case '섬':
-        buttonWidth = 40;
-        break;
-      case '음식':
-        buttonWidth = 50;
-        break;
-      case '카페':
-        buttonWidth = 50;
-        break;
-      case '숙소':
-        buttonWidth = 60;
-        break;
-      case '명소/놀거리':
-        buttonWidth = 70;
-        break;
-      default:
-        buttonWidth = 30; // 기본값
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2.0), // 가로 패딩 설정
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            selectedCategory = category; // 카테고리 선택
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(buttonWidth, 35), // 버튼의 최소 크기 설정 (가로, 세로)
-          backgroundColor: selectedCategory == category ? Colors.green : Colors.white, // 선택되지 않은 버튼의 배경색 흰색
-          foregroundColor: selectedCategory == category ? Colors.white : Colors.black, // 선택된 버튼 텍스트는 흰색, 그렇지 않으면 검정색
-          side: BorderSide( // 버튼 테두리 설정
-            color: selectedCategory == category ? Colors.green : Colors.grey[200]!, // 선택된 버튼은 녹색 테두리, 그렇지 않으면 연한 회색
-            width: 1, // 테두리 두께
-          ),
-          shape: RoundedRectangleBorder( // 버튼 모양 설정
-            borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
-          ),
-        ),
-        child: Text(
-          category,
-          style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500), // 텍스트 크기 조정
-        ), // 버튼 텍스트
-      ),
+  Widget _buildItemCountText() {
+    return FutureBuilder<List<SavedItem>>(
+      future: controller.getSavedItems(selectedCategory),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text( // const 사용
+            '불러오는 중...',
+            style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
+          );
+        } else if (snapshot.hasError) {
+          return const Text( // const 사용
+            '오류 발생',
+            style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text( // const 사용
+            '0개',
+            style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
+          );
+        } else {
+          return Text(
+            '${snapshot.data!.length}개',
+            style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold), // const 사용
+          );
+        }
+      },
     );
   }
 }
 
+class CategoryButtons extends StatelessWidget {
+  final String selectedCategory;
+  final ValueChanged<String> onCategorySelected;
+
+  const CategoryButtons({
+    super.key, // 'key'를 super parameter로 변경
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          const SizedBox(width: 15), // const 사용
+          _buildCategoryButton('섬'),
+          _buildCategoryButton('명소/놀거리'),
+          _buildCategoryButton('음식'),
+          _buildCategoryButton('카페'),
+          _buildCategoryButton('숙소'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton(String category) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1.0), // const 사용
+      child: ElevatedButton(
+        onPressed: () => onCategorySelected(category),
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(40, 28), // const 사용
+          backgroundColor: selectedCategory == category ? Colors.green : Colors.white,
+          foregroundColor: selectedCategory == category ? Colors.white : Colors.black,
+          side: BorderSide(
+            color: selectedCategory == category ? Colors.green : Colors.grey[200]!,
+            width: 1,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        child: Text(
+          category,
+          style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500), // const 사용
+        ),
+      ),
+    );
+  }
+}

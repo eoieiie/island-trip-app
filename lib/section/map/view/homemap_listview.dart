@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:project_island/section/saved/viewmodel/saved_controller.dart';
-import 'package:project_island/section/saved/model/saved_model.dart';
+import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
+import 'package:project_island/section/map/model/island_model.dart';
 
-class SavedListView extends StatelessWidget {
-  final List<SavedItem> items;
-  final SavedController controller;
+class HomemapListView extends StatelessWidget {
+  final List<IslandModel> items;
+  final HomemapListController controller;
 
-  const SavedListView({
+  const HomemapListView({
     super.key, // 'key'를 super parameter로 변경
     required this.items,
     required this.controller,
@@ -30,14 +30,10 @@ class SavedListView extends StatelessWidget {
                   ItemDescription(description: item.phone.isNotEmpty ? item.phone : item.website), // 설명 위젯: 전화번호 없으면 웹사이트
                 ],
               ),
-              trailing: BookmarkButton(
-                item: item,
-                controller: controller,
-                onUpdate: () => controller.toggleBookmark(item),
-              ),
+              trailing: BookmarkButton(item: item, controller: controller, onUpdate: () => controller.toggleBookmark(item)),
               onTap: () {
-                // 상세 페이지로 이동하는 로직
-                // Get.to(() => PlaceDetailPage(place: item));
+                // 상세 페이지로 이동하는 로직 구현
+                //Get.to(() => PlaceDetailPage(place: item));
               },
             ),
             if (index != items.length - 1)
@@ -64,11 +60,11 @@ class ItemAddress extends StatelessWidget {
     return Row(
       children: [
         const Icon(Icons.location_pin, color: Colors.grey, size: 14), // const 사용
-        const SizedBox(width: 4), // SizedBox 사용
+        const SizedBox(width: 4), // Container 대신 SizedBox 사용
         Expanded(
           child: Text(
             address,
-            style: const TextStyle(fontSize: 14, color: Colors.grey), // 주소 텍스트 스타일, const 사용
+            style: const TextStyle(fontSize: 14, color: Colors.grey), // 주소 텍스트 스타일
             overflow: TextOverflow.ellipsis, // 텍스트가 넘칠 경우 생략 부호로 표시
           ),
         ),
@@ -87,7 +83,7 @@ class ItemTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // 장소 이름 텍스트 스타일, const 사용
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // 장소 이름 텍스트 스타일
       overflow: TextOverflow.ellipsis, // 텍스트가 넘칠 경우 생략 부호로 표시
     );
   }
@@ -103,7 +99,7 @@ class ItemDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       description,
-      style: const TextStyle(fontSize: 14, color: Colors.grey), // 설명 텍스트 스타일, const 사용
+      style: const TextStyle(fontSize: 14, color: Colors.grey), // 설명 텍스트 스타일
       overflow: TextOverflow.ellipsis, // 텍스트가 넘칠 경우 생략 부호로 표시
     );
   }
@@ -117,7 +113,7 @@ class ItemImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox( // Container 대신 SizedBox 사용
+    return Container(
       width: 70,
       height: 70,
       child: ClipRRect(
@@ -130,8 +126,8 @@ class ItemImage extends StatelessWidget {
 
 // 북마크 버튼 위젯
 class BookmarkButton extends StatelessWidget {
-  final SavedItem item;
-  final SavedController controller;
+  final IslandModel item;
+  final HomemapListController controller;
   final VoidCallback onUpdate;
 
   const BookmarkButton({

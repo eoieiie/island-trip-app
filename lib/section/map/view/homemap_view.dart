@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:project_island/section/map/view/homemap_list.dart';
 import '../viewmodel/island_viewmodel.dart';
 import '../model/island_model.dart';
 
@@ -130,7 +131,7 @@ class _HomeMapViewState extends State<HomeMapView> {
             right: 16,
             child: ElevatedButton.icon(
               onPressed: () {
-                // 여기서 리스트 보기를 추가
+                Get.to(HomemapList());
               },
               icon: Icon(Icons.list, color: Colors.white),
               label: Text(

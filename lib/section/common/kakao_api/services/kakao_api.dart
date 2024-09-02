@@ -8,18 +8,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart'; // .env 파일에서 API �
 class KakaoAPI {
   final String apiKey = dotenv.env['KAKAO_API_KEY']!; // .env 파일에서 Kakao API 키를 가져와 apiKey 변수에 저장
 
-
   // 장소를 검색하는 메서드
-  // 검색어(query), 위도(latitude), 경도(longitude), 반경(radius)을 인자로 받음
-  // latitude와 longitude는 선택적, 반경은 기본값으로 20,000미터를 사용.
+  // 검색어(query), 위도(latitude), 경도(longitude), 반경(radius), 페이지(page), 크기(size)를 인자로 받음
+  // latitude와 longitude는 선택적, 반경은 기본값으로 20,000미터를 사용. 페이지와 크기도 기본값 설정.
   Future<List<Map<String, dynamic>>> searchPlaces(String query,
-      {double? latitude, double? longitude, int radius = 20000}) async {
+      {double? latitude, double? longitude, int radius = 20000, int page = 3, int size = 15}) async {
 
     // Kakao API의 기본 URL
     final String url = 'https://dapi.kakao.com/v2/local/search/keyword.json';
 
-    // 기본적으로 검색어와 반경을 포함한 요청 URL, 형식은 바뀔 수 있음.(맨 아래 적어둠)
-    String requestUrl = '$url?query=$query&radius=$radius';
+    // 기본적으로 검색어와 반경을 포함한 요청 URL, 페이지와 크기도 포함됨.
+    String requestUrl = '$url?query=$query&radius=$radius&page=$page&size=$size';
 
     // 위도와 경도가 제공된 경우, 이를 요청 URL에 추가
     if (latitude != null && longitude != null) {
@@ -45,34 +44,3 @@ class KakaoAPI {
     }
   }
 }
-
-
-// 특정 카데고리로 검색
-// String requestUrl = '$url?query=$query&category_group_code=FD6&radius=$radius';
-//FD6대신에 아래와 같은 애들을 사용 가능
-// MT1	대형마트
-// CS2	편의점
-// PS3	어린이집, 유치원
-// SC4	학교
-// AC5	학원
-// PK6	주차장
-// OL7	주유소, 충전소
-// SW8	지하철역
-// BK9	은행
-// CT1	문화시설
-// AG2	중개업소
-// PO3	공공기관
-// AT4	관광명소
-// AD5	숙박
-// FD6	음식점
-// CE7	카페
-// HP8	병원
-// PM9	약국
-
-//정확도와 거리순으로 정렬
-//String requestUrl = '$url?query=$query&radius=$radius&sort=distance';
-//accuracy: 정확도순 정렬
-//distance: 거리순 정렬
-
-//한 페이지당 결과 수정
-// String requestUrl = '$url?query=$query&radius=$radius&page=2&size=10';

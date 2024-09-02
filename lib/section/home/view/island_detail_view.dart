@@ -1,247 +1,328 @@
-// view/island_detail_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart'; // 클립보드 사용을 위해 추가
+import 'package:flutter_svg/flutter_svg.dart';
 import '../viewmodel/island_detail_viewmodel.dart';
-import 'magazine_view.dart';
-import 'place_detail_view.dart';
+import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 
-// 울릉도 상세 화면을 표시하는 StatelessWidget 클래스
-class IslandDetailView extends StatelessWidget {
-  // GetX를 사용하여 IslandDetailViewModel을 초기화
-  final IslandDetailViewModel viewModel = Get.put(IslandDetailViewModel());
+class IslandDetailView extends StatefulWidget {
+  final String islandName; // 섬 이름을 받는 매개변수
+  IslandDetailView({required this.islandName});
+  @override
+  _IslandDetailViewState createState() => _IslandDetailViewState();
+}
+
+class _IslandDetailViewState extends State<IslandDetailView>
+    with SingleTickerProviderStateMixin {
+  final PageController _pageController = PageController();
+  final IslandDetailViewModel viewModel = Get.find<IslandDetailViewModel>();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this); // 탭 수를 2로 변경
+    _pageController.addListener(() {
+      setState(() {});
+    });
+    // 섬의 세부 정보를 초기화합니다.
+    viewModel.fetchIslandDetails(widget.islandName); // 예를 들어, 섬의 이름를 전달할 수 있습니다.
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // 특정 섬의 상세 정보를 가져오기
-    viewModel.fetchIslandDetails('울릉도');
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('울릉도'),
-      ),
-      // Obx를 사용하여 viewModel의 상태 변화를 감지하고 UI를 업데이트
+      backgroundColor: Colors.white, // 페이지 배경색을 흰색으로 설정
       body: Obx(() {
-        // 로딩 중일 때 로딩 인디케이터를 표시
-        if (viewModel.island == null) {
+        if (viewModel.isLoading.value) {
           return Center(child: CircularProgressIndicator());
-        }
+        } else if (viewModel.errorMessage.isNotEmpty) {
+          return Center(child: Text(viewModel.errorMessage.value));
+        } else {
+          int currentPage = _pageController.hasClients ? _pageController.page!.toInt() : 0;
 
-        // 로딩이 완료되면 콘텐츠를 표시
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          return Stack(
             children: [
-              // 첫 번째 섹션 - 울릉도 관련 매거진
-              _buildSection(
-                context,
-                title: '울릉도 관련 매거진(눌러봐)',
-                child: Container(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: viewModel.island?.magazines.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final magazine = viewModel.island!.magazines[index];
-                      return GestureDetector(
-                        onTap: () {
-                          // 매거진 클릭 시 MagazineView로 이동
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => MagazineView()),
-                          );
-                        },
-                        child: Container(
-                          width: 160,
-                          margin: EdgeInsets.symmetric(horizontal: 8.0),
-                          color: Colors.grey[300],
-                          child: Center(child: Text(magazine.title)),
+              Column(
+                children: [
+                  // 사진 영역을 화면 상단에 배치
+                  Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.4, // 화면 높이에 비례한 높이
+                        color: Colors.white, // 배경을 흰색으로 설정
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: viewModel.islandImages.length,
+                          itemBuilder: (context, index) {
+                            final imageUrl = viewModel.islandImages[index];
+                            return Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              // 두 번째 섹션 - 울릉도 찐 후기
-              _buildSection(
-                context,
-                title: '울릉도 찐 후기',
-                child: Container(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: viewModel.island?.reviews.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final review = viewModel.island!.reviews[index];
-                      return Container(
-                        width: 160,
-                        margin: EdgeInsets.symmetric(horizontal: 8.0),
-                        color: Colors.grey[300],
-                        child: Center(child: Text(review)),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              // 세 번째 섹션 - 울릉도 맛집
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '울릉도 맛집',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        _showFullScreenDialog(context, '울릉도 맛집 전체보기');
-                      },
-                      child: Text('전체보기'),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8.0),
-              // 카테고리 선택 섹션
-              _buildCategorySelector(viewModel),
-              SizedBox(height: 16.0),
-              // 맛집 리스트 섹션
-              _buildStoreGrid(viewModel),
-              SizedBox(height: 16.0),
-            ],
-          ),
-        );
-      }),
-    );
-  }
-
-  // 각 섹션을 빌드하는 메서드
-  Widget _buildSection(BuildContext context, {required String title, required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.0),
-          child,
-        ],
-      ),
-    );
-  }
-
-  // 카테고리 선택 위젯을 빌드하는 메서드
-  Widget _buildCategorySelector(IslandDetailViewModel viewModel) {
-    final categories = ['전체', '한식', '중식', '일식', '양식', '카페'];
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = category == viewModel.selectedCategory;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: ChoiceChip(
-              label: Text(category),
-              selected: isSelected,
-              onSelected: (selected) {
-                viewModel.setSelectedCategory(category);
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  // 맛집 리스트를 그리드로 빌드하는 메서드
-  Widget _buildStoreGrid(IslandDetailViewModel viewModel) {
-    return Container(
-      height: 400,
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-        ),
-        scrollDirection: Axis.vertical,
-        itemCount: viewModel.filteredStores.length,
-        itemBuilder: (context, index) {
-          final store = viewModel.filteredStores[index];
-          return GestureDetector(
-            onTap: () {
-              // 맛집 클릭 시 PlaceDetailView로 이동
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PlaceDetailView()),
-              );
-            },
-            child: Obx(() {
-              final isSaved = viewModel.savedStores.contains(store.name);
-              return Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      store.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 4.0),
-                    Text('위치: ${store.location}'),
-                    SizedBox(height: 4.0),
-                    Text('별점: ${store.rating}'),
-                    Spacer(),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (isSaved) {
-                            viewModel.removeSavedStore(store.name);
-                          } else {
-                            viewModel.addSavedStore(store.name);
-                          }
-                        },
-                        child: Text(isSaved ? '저장됨' : '저장'),
                       ),
+                      // 인디케이터를 사진 내부 하단에 배치
+                      Positioned(
+                        bottom: 16.0, // 사진의 아래쪽에 위치
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(viewModel.islandImages.length, (index) {
+                              return AnimatedContainer(
+                                duration: Duration(milliseconds: 300), // 애니메이션 적용
+                                margin: EdgeInsets.symmetric(horizontal: 4.0),
+                                width: currentPage == index ? 16.0 : 8.0,
+                                height: 8.0,
+                                decoration: BoxDecoration(
+                                  color: currentPage == index ? Colors.green : Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(4.0), // 둥근 모서리 설정
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // 섬 이름, 별점, 저장 버튼
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              viewModel.islandName1.value ?? '섬 이름', // 섬 이름을 여기에 넣으세요
+                              style: TextStyle(
+                                color: Color(0xFF222222),
+                                fontSize: 20,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w700,
+                                height: 0.08,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                // 저장 버튼을 눌렀을 때의 동작을 여기에 추가하세요
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: ShapeDecoration(
+                                  color: Colors.white.withOpacity(0.35),
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(width: 1, color: Color(0xFFF1F1F1)),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/book_mark_off_icon.jpg', // 저장 아이콘 이미지 경로
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                    SizedBox(width: 8), // 아이콘과 텍스트 사이의 간격
+                                    Text(
+                                      '저장',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        color: Color(0xFF666666),
+                                        fontSize: 12,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0.11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Color(0xFFFFD700),
+                              size: 16.0,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              '5.0', // 별점 나중에 viewModel.islandRating.value ?? '5.0',
+                              style: TextStyle(
+                                color: Color(0xFF666666),
+                                fontSize: 12,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w700,
+                                height: 0.11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  // 탭바
+                  TabBar(
+                    controller: _tabController,
+                    labelColor: Color(0xFF222222),
+                    unselectedLabelColor: Color(0xFF999999),
+                    labelStyle: TextStyle(
+                      color: Color(0xFF222222),
+                      fontSize: 13,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w700,
+                      height: 0.12,
+                    ),
+                    unselectedLabelStyle: TextStyle(
+                      color: Color(0xFF999999),
+                      fontSize: 13,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
+                      height: 0.12,
+                    ),
+                    indicatorColor: Color(0xFF222222),
+                    tabs: [
+                      Tab(text: '섬정보'),
+                      Tab(text: '매거진'),
+                    ],
+                  ),
+                  // 탭바 하단 화면
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        // '섬정보' 탭 화면
+                        SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '길찾기',
+                                      style: TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        // 복사 버튼 클릭 시 클립보드에 주소 복사
+                                        Clipboard.setData(ClipboardData(text: viewModel.islandAddress.value ?? '주소 없음'));
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('주소가 복사되었습니다.')),
+                                        );
+                                      },
+                                      icon: SvgPicture.asset(
+                                        'assets/images/boksa.svg', // 복사 아이콘 이미지 경로
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 16.0),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/images/icon-pin-location-mono.svg', // 핀 아이콘 이미지 경로
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      viewModel.islandAddress.value ?? '주소를 여기에 입력하세요', // 주소를 여기에 입력하세요
+                                      style: TextStyle(
+                                        color: Color(0xFF999999),
+                                        fontSize: 12,
+                                        fontFamily: 'Pretendard',
+                                        fontWeight: FontWeight.w400,
+                                        height: 0.11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 16.0),
+                                Text(
+                                  viewModel.islandDescription.value ?? '여기에 섬에 대한 상세 정보를 입력하세요. 예를 들어 섬의 역사, 주요 명소, 활동 정보 등을 추가할 수 있습니다.',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // '매거진' 탭 화면
+                        SingleChildScrollView(
+                          child: Center(
+                            child: Text(
+                              '매거진 내용이 여기에 표시됩니다.',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Positioned(
+                top: 28.0, // 상단에 위치
+                left: -9.0, // 왼쪽에 위치
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(); // 뒤로가기 기능
+                  },
+                  child: SvgPicture.asset(
+                    'assets/images/backbutton.svg', // 뒤로가기 버튼 이미지 경로
+                    width: 60,
+                    height: 60,
+                  ),
                 ),
-              );
-            }),
+              ),
+              // 오른쪽 상단에 저장 버튼 추가
+              Positioned(
+                top: 28.0, // 상단에 위치
+                right: 9.0, // 오른쪽에 위치
+                child: GestureDetector(
+                  onTap: () {
+                    // 저장 버튼을 눌렀을 때의 동작을 여기에 추가하세요
+                  },
+                  child: SvgPicture.asset(
+                    'assets/images/islanddetailsave.svg', // 저장 버튼 이미지 경로
+                    width: 60,
+                    height: 60,
+                  ),
+                ),
+              ),
+            ],
           );
-        },
-      ),
-    );
-  }
-
-  // 전체보기 버튼 클릭 시 표시할 전체 화면 다이얼로그
-  void _showFullScreenDialog(BuildContext context, String title) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-          ),
-          body: Center(
-            child: Text('$title 내용'),
-          ),
-        );
-      },
+        }
+      }),
     );
   }
 }

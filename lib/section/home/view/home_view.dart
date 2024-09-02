@@ -5,17 +5,44 @@ import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:project_island/section/login/model/login_model.dart' as google_auth; // AuthService 불러오기
+import 'package:project_island/section/login/view/login_view.dart'; // 로그인 화면으로 리다이렉트할 수 있도록 불러오기
+import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 
 // 홈 화면을 표시하는 StatelessWidget 클래스
 class HomeView extends StatelessWidget {
   // GetX를 사용하여 HomeViewModel을 초기화
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
+  final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
+  final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('홈'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              final googleUser = _googleAuthService.googleGetCurrentUser();
+              final kakaoUser = _kakaoAuthService.kakaoGetCurrentUser();
+
+              if (googleUser != null) {
+                // Google 계정으로 로그인된 경우
+                await _googleAuthService.googleSignOut();
+              } else if (kakaoUser != null) {
+                // Kakao 계정으로 로그인된 경우
+                await _kakaoAuthService.kakaoSignOut(); // Kakao 로그아웃
+              }
+
+              // 로그아웃 후 로그인 화면으로 이동
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            },
+          ),
+        ],
       ),
       // Obx를 사용하여 viewModel의 상태 변화를 감지하고 UI를 업데이트
       body: Obx(() {

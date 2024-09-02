@@ -1,6 +1,6 @@
 import '../model/home_model.dart';
-import 'dart:convert'; // JSON 파싱을 위해 필요
-import 'package:http/http.dart' as http; // HTTP 요청을 위해 필요
+import 'dart:convert';  // JSON 파싱을 위해 필요
+import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Repository {
@@ -21,43 +21,44 @@ class Repository {
 
   // 실제 API에서 매거진 데이터를 가져오는 함수
   Future<List<Magazine>> fetchMagazinesFromApi(String islandName) async {
-    try {
-      // API 요청 URL 구성
-      final response = await http.get(
-        Uri.parse('http://apis.data.go.kr/B551011/KorService1/searchKeyword1'
-            '?ServiceKey=$apiKey'
-            '&keyword=$islandName'
-            '&MobileOS=ETC'
-            '&MobileApp=AppTest'
-            '&arrange=A'
-            '&numOfRows=10'
-            '&pageNo=1'
-            '&listYN=Y'
-            '&_type=json'),
-      );
+    // 섬에 따라 contentId를 다르게 설정
+    int contentId = _getContentIdByIslandName(islandName);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes)); // UTF-8로 디코딩
-        final items = data['response']['body']['items']['item'];
+    final response = await http.get(
+      Uri.parse('http://apis.data.go.kr/B551011/KorService1/detailCommon1'
+          '?ServiceKey=$apiKey'
+          '&contentTypeId=12'
+          '&contentId=$contentId'
+          '&MobileOS=ETC'
+          '&MobileApp=AppTest'
+          '&defaultYN=Y'
+          '&firstImageYN=Y'
+          '&areacodeYN=Y'
+          '&catcodeYN=Y'
+          '&addrinfoYN=Y'
+          '&mapinfoYN=Y'
+          '&overviewYN=Y'
+          '&_type=json'),
+    );
 
-        List<Magazine> magazines = [];
-        for (var item in items) {
-          magazines.add(Magazine(
-            title: item['title'] ?? '제목 없음',
-            description: item['overview'] ?? '설명 없음',
-            hashtags: ['#여행', '#힐링', '#명소'],
-            thumbnail: item['firstimage'] ?? '',
-            address: item['addr1'], // address 필드를 설정
-          ));
-        }
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)); // UTF-8로 디코딩
+      final items = data['response']['body']['items']['item'];
 
-        return magazines;
-      } else {
-        throw Exception('Failed to load magazines from API');
+      List<Magazine> magazines = [];
+      for (var item in items) {
+        magazines.add(Magazine(
+          title: item['title'] ?? '제목 없음',
+          description: item['overview'] ?? '설명 없음',
+          hashtags: ['#여행', '#힐링', '#명소'],
+          thumbnail: item['firstimage'] ?? '',
+          address: item['addr1'], // address 필드를 설정
+        ));
       }
-    } catch (e) {
-      print('Error fetching magazines: $e');
-      return [];
+
+      return magazines;
+    } else {
+      throw Exception('Failed to load magazines from API');
     }
   }
 
@@ -100,50 +101,46 @@ class Repository {
 
   // 더미 데이터 - 물속체험 목록
   List<Content> fetchContents() {
-    return List.generate(
-        20,
-            (index) => Content(
-            title: '물속체험 $index',
-            description: '물속체험 설명 $index',
-            category: '물속체험'));
+    return List.generate(20,
+            (index) =>
+            Content(title: '물속체험 $index',
+                description: '물속체험 설명 $index',
+                category: '물속체험'));
   }
 
   // 더미 데이터 - 크루즈 목록
   List<Content> fetchCruisetripContents() {
-    return List.generate(
-        20,
-            (index) => Content(
-            title: '크루즈 여행 $index',
-            description: '크루즈 여행 $index',
-            category: '크루즈 여행'));
+    return List.generate(20,
+            (index) =>
+            Content(title: '크루즈 여행 $index',
+                description: '크루즈 여행 $index',
+                category: '크루즈 여행'));
   }
 
   // 더미 데이터 - 낚시 콘텐츠 목록
   List<Content> fetchFishingContents() {
-    return List.generate(
-        20,
-            (index) => Content(
-            title: '낚시 $index', description: '낚시 $index', category: '낚시'));
+    return List.generate(20,
+            (index) =>
+            Content(
+                title: '낚시 $index', description: '낚시 $index', category: '낚시'));
   }
 
   // 더미 데이터 - 전망대 콘텐츠 목록
   List<Content> fetchViewpointContents() {
-    return List.generate(
-        20,
-            (index) => Content(
-            title: '전망대 $index',
-            description: '전망대 설명 $index',
-            category: '전망대'));
+    return List.generate(20,
+            (index) =>
+            Content(title: '전망대 $index',
+                description: '전망대 설명 $index',
+                category: '전망대'));
   }
 
   // 더미 데이터 - 포토존 콘텐츠 목록
   List<Content> fetchPhotozoneContents() {
-    return List.generate(
-        20,
-            (index) => Content(
-            title: '포토존 $index',
-            description: '포토존 설명 $index',
-            category: '포토존'));
+    return List.generate(20,
+            (index) =>
+            Content(title: '포토존 $index',
+                description: '포토존 설명 $index',
+                category: '포토존'));
   }
 
   // 더미 데이터 - 특정 섬에 대한 세부 정보
@@ -203,6 +200,7 @@ class Repository {
       );
     }
   }
+
 
   // 카테고리별로 음식점 필터링
   List<Store> filterStoresByCategory(List<Store> stores, String category) {

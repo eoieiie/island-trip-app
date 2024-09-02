@@ -3,12 +3,14 @@ class Magazine {
   final String description;
   final List<String> hashtags;
   final String thumbnail;
+  final String? address; // 추가: 주소는 null이 될 수 있으므로 String?로 정의
 
   Magazine({
     required this.title,
     required this.description,
     required this.hashtags,
     required this.thumbnail,
+    this.address, // 생성자에서 필드를 optional로 변경
   });
 }
 
@@ -43,15 +45,13 @@ class IslandDetail {
   final String description;
   final List<Magazine> magazines;
   final List<String> reviews;
-  final List<Store> stores;
-  final List<Content> contents;
+  final String? address; // 추가: 주소는 null이 될 수 있으므로 String?로 정의
 
   IslandDetail({
     required this.name,
     required this.description,
     required this.magazines,
     required this.reviews,
-    required this.stores,
-    required this.contents,
+    this.address, // 생성자에서 필드를 optional로 변경
   });
 }

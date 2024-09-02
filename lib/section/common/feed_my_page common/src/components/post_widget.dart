@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+/* 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:project_island/section/common/feed_my_page common/src/components/avatar_widget.dart';
@@ -87,7 +87,7 @@ class PostWidget extends StatelessWidget {
             post.description ?? '',
             prefixText: post.userInfo!.nickname,
             onPrefixTap: () {
-              print('개발하는남자 페이지 이동');
+              print('유림쓰 페이지 이동');
             },
             prefixStyle: const TextStyle(fontWeight: FontWeight.bold),
             expandText: '더보기',
@@ -148,3 +148,4 @@ class PostWidget extends StatelessWidget {
     );
   }
 }
+*/

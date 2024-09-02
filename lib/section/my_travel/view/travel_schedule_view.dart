@@ -1,259 +1,384 @@
 // lib/section/my_travel/view/travel_schedule_view.dart
 
-import 'dart:async'; // 비동기 프로그래밍을 위한 라이브러리를 가져옵니다.
-import 'package:flutter/material.dart'; // Flutter의 Material 디자인 라이브러리를 가져옵니다.
-import 'package:flutter_naver_map/flutter_naver_map.dart'; // 네이버 지도를 사용하기 위한 라이브러리를 가져옵니다.
-import 'package:get/get.dart'; // GetX 라이브러리를 가져옵니다.
-import '../viewmodel/my_travel_viewmodel.dart'; // MyTravelViewModel을 가져옵니다.
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:get/get.dart';
+import '../viewmodel/my_travel_viewmodel.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:project_island/main.dart';
+import 'schedule_add_view.dart';
 
 class TravelScheduleView extends StatefulWidget {
-  final String travelId; // 여행 ID를 저장하는 변수
+  final String travelId;
+  final String selectedIsland;
+  final DateTime startDate;
+  final DateTime endDate;
 
   TravelScheduleView({
-    required this.travelId, required String selectedIsland, required DateTime startDate, required DateTime endDate, // 여행 ID를 필수 인자로 받습니다.
+    required this.travelId,
+    required this.selectedIsland,
+    required this.startDate,
+    required this.endDate,
   });
 
   @override
-  _TravelScheduleViewState createState() => _TravelScheduleViewState(); // 상태를 생성합니다.
+  _TravelScheduleViewState createState() => _TravelScheduleViewState();
 }
 
 class _TravelScheduleViewState extends State<TravelScheduleView> {
-  final Completer<NaverMapController> _controller = Completer(); // NaverMapController를 완성합니다.
-  Future<void>? _initialization; // 네이버 지도 초기화를 저장하는 변수
-  int _selectedDayIndex = 0; // 선택된 날짜 인덱스를 저장하는 변수
-  late MyTravelViewModel travelViewModel; // MyTravelViewModel 인스턴스 저장 변수
+  int _selectedIndex = 0;
+  final Completer<NaverMapController> _controller = Completer();
+  Future<void>? _initialization;
+  int _selectedDayIndex = 0;
+  late MyTravelViewModel travelViewModel;
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MainPage(selectedIndex: index),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    travelViewModel = Get.find<MyTravelViewModel>(); // MyTravelViewModel 인스턴스를 가져옵니다.
-    _initialization = _initializeNaverMap(); // 네이버 지도 초기화를 설정합니다.
+    travelViewModel = Get.find<MyTravelViewModel>();
+    _initialization = _initializeNaverMap();
   }
 
   Future<void> _initializeNaverMap() async {
-    WidgetsFlutterBinding.ensureInitialized(); // Flutter 위젯 바인딩을 초기화합니다.
+    WidgetsFlutterBinding.ensureInitialized();
     await NaverMapSdk.instance.initialize(
-      clientId: 'YOUR_NAVER_MAP_CLIENT_ID', // 네이버 지도 클라이언트 ID를 설정합니다.
+      clientId: 'YOUR_NAVER_MAP_CLIENT_ID',
       onAuthFailed: (e) {
-        print('네이버맵 인증오류: $e'); // 인증 실패 시 오류 메시지를 출력합니다.
+        print('네이버맵 인증오류: $e');
       },
     );
   }
 
   void _onMapReady(NaverMapController controller) {
-    _controller.complete(controller); // NaverMapController를 완료합니다.
+    _controller.complete(controller);
 
     final marker1 = NMarker(
       id: '1',
-      position: const NLatLng(37.5665, 126.9780), // 예시 좌표 (서울)
+      position: const NLatLng(37.5665, 126.9780),
     );
     final marker2 = NMarker(
       id: '2',
-      position: const NLatLng(37.5765, 126.9880), // 예시 좌표 (서울)
+      position: const NLatLng(37.5765, 126.9880),
     );
 
-    controller.addOverlayAll({marker1, marker2}); // 지도에 마커 추가
+    controller.addOverlayAll({marker1, marker2});
+  }
+
+  void _addSchedule(String title, String startTime, String endTime, String memo) {
+    final selectedDate = widget.startDate.add(Duration(days: _selectedDayIndex));
+    travelViewModel.addSchedule(
+      travelId: widget.travelId,
+      date: selectedDate,
+      title: title,
+      startTime: startTime,
+      endTime: endTime,
+      memo: memo,
+    );
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('여행 일정 짜기'), // 앱바 제목 설정
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(), // 뒤로 가기 버튼
-        ),
-        backgroundColor: Colors.white, // 앱바 배경 색상 설정
-        iconTheme: IconThemeData(color: Colors.black), // 아이콘 색상 설정
-        titleTextStyle: TextStyle(color: Colors.black, fontSize: 18), // 제목 텍스트 스타일 설정
-      ),
-      body: Stack(
-        children: [
-          _buildMap(), // 네이버 지도 위젯
-          Column(
-            children: [
-              _buildIslandInfo(), // 섬 정보 위젯
-              Expanded(child: _buildBottomSheet(context)), // 바텀 시트 위젯
-            ],
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 패딩 설정
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // 배경색 흰색
+              borderRadius: BorderRadius.circular(12), // 둥근 모서리 설정
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26, // 그림자 색상
+                  blurRadius: 3, // 그림자 흐림 정도
+                  offset: Offset(0, 0), // 그림자 위치
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black), // 뒤로가기 아이콘
+              onPressed: () {
+                Navigator.pop(context); // 뒤로가기 기능
+              },
+            ),
           ),
-        ],
+        ),
+        /*leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),*/
+        title: Text(
+          '여행 일정',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
-      bottomNavigationBar: _buildBottomNavBar(), // 바텀 네비게이션 바
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildIslandInfo(),
+            _buildDaysTabBar(),
+            _buildMap(),
+            _buildDaySchedule(),
+            _buildAddScheduleButton(),
+            _buildAISuggestions(), // AI 추천 부분은 양옆 여백 없이
+            _buildSavedPlaces(),
+          ],
+        ),
+      ),
+      // bottomNavigationBar: _buildBottomNavBar(), // 네비게이션바 생성하고자 하면 이 줄 주석 해제
     );
   }
 
   Widget _buildIslandInfo() {
-    // 여행 ID를 사용해 TravelModel을 가져옵니다.
     final travel = travelViewModel.travels.firstWhere((t) => t.id == widget.travelId);
 
     return Container(
-      color: Colors.white, // 배경 색상 설정
-      width: double.infinity, // 너비를 화면 전체로 설정
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0), // 패딩 설정
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+      color: Colors.white,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            travel.island,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue), // 섬 이름 텍스트 스타일 설정
-          ),
-          Text(
-            "${travel.startDate.year}.${travel.startDate.month.toString().padLeft(2, '0')}.${travel.startDate.day.toString().padLeft(2, '0')} ~ ${travel.endDate.year}.${travel.endDate.month.toString().padLeft(2, '0')}.${travel.endDate.day.toString().padLeft(2, '0')}",
-            style: TextStyle(fontSize: 16, color: Colors.blue.withOpacity(0.7)), // 날짜 텍스트 스타일 설정
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMap() {
-    return FutureBuilder<void>(
-      future: _initialization, // 네이버 지도 초기화 Future
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // 초기화 중 로딩 인디케이터 표시
-        } else if (snapshot.hasError) {
-          return Center(child: Text('네이버 지도 초기화 실패: ${snapshot.error}')); // 초기화 실패 시 오류 메시지 표시
-        } else {
-          return NaverMap(
-            onMapReady: _onMapReady, // 지도 준비 완료 시 호출되는 함수
-            options: NaverMapViewOptions(
-              initialCameraPosition: NCameraPosition(
-                target: NLatLng(37.5665, 126.9780), // 예시 좌표 (서울)
-                zoom: 10, // 초기 줌 레벨 설정
-              ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.0),
+            child: Image.network(
+              travel.imageUrl?.isNotEmpty == true
+                  ? travel.imageUrl!
+                  : 'assets/images/island.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/island.png',
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildBottomSheet(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.4, // 초기 크기 설정
-      minChildSize: 0.2, // 최소 크기 설정
-      maxChildSize: 0.8, // 최대 크기 설정
-      builder: (BuildContext context, ScrollController scrollController) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque, // 투명한 부분도 터치 가능하도록 설정
-          onVerticalDragUpdate: (details) {
-            scrollController.position.moveTo(scrollController.position.pixels - details.primaryDelta!); // 드래그 업데이트
-          },
-          child: Container(
-            color: Colors.white, // 배경 색상 설정
+          ),
+          SizedBox(width: 16),
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onVerticalDragUpdate: (details) {
-                    scrollController.position.moveTo(scrollController.position.pixels - details.primaryDelta!); // 드래그 업데이트
-                  },
-                  child: Container(
-                    width: double.infinity, // 너비를 화면 전체로 설정
-                    padding: const EdgeInsets.all(16.0), // 패딩 설정
-                    decoration: BoxDecoration(
-                      color: Colors.white, // 배경 색상 설정
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)), // 상단 모서리 둥글게 설정
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12, // 그림자 색상 설정
-                          offset: Offset(0, -1), // 그림자 위치 설정
-                          blurRadius: 5.0, // 그림자 블러 크기 설정
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300], // 색상 설정
-                            borderRadius: BorderRadius.circular(10), // 모서리 둥글게 설정
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        _buildDaysTabBar(), // 탭바 위젯
-                      ],
-                    ),
+                Text(
+                  travel.island,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Expanded(
-                  child: ListView(
-                    controller: scrollController, // 스크롤 컨트롤러 설정
-                    children: [
-                      _buildDaySchedule(), // 일정 위젯
-                    ],
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 20),
+                    SizedBox(width: 4),
+                    Text(
+                      "4.9",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      "#천연기념물  #민가시산호류",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "${travel.startDate.year}.${travel.startDate.month.toString().padLeft(2, '0')}.${travel.startDate.day.toString().padLeft(2, '0')} ~ ${travel.endDate.year}.${travel.endDate.month.toString().padLeft(2, '0')}.${travel.endDate.day.toString().padLeft(2, '0')}",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
                   ),
                 ),
               ],
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
   Widget _buildDaysTabBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
-      children: List.generate(3, (index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          child: ChoiceChip(
-            label: Text('Day ${index + 1}'), // 탭 라벨 설정
-            selected: _selectedDayIndex == index, // 선택된 상태 확인
-            selectedColor: Colors.blue, // 선택된 탭 색상
-            onSelected: (selected) {
+    // 시작 날짜와 종료 날짜 사이의 전체 날짜 목록을 생성합니다.
+    final days = List.generate(
+      widget.endDate.difference(widget.startDate).inDays + 1,
+          (index) => widget.startDate.add(Duration(days: index)),
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      color: Colors.white,
+      height: 75, // 탭바의 높이를 지정
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // 가로 스크롤이 가능하도록 설정
+        itemCount: days.length,
+        itemBuilder: (context, index) {
+          final day = days[index];
+          final isSelected = _selectedDayIndex == index;
+          final dayLabel = 'Day ${index + 1}';
+          final dateLabel = '${day.month.toString().padLeft(2, '0')}.${day.day.toString().padLeft(2, '0')}';
+
+          return GestureDetector(
+            onTap: () {
               setState(() {
-                _selectedDayIndex = index; // 선택된 탭 인덱스 업데이트
+                _selectedDayIndex = index;
               });
             },
-            backgroundColor: Colors.blue.withOpacity(0.2), // 배경 색상 설정
-            labelStyle: TextStyle(
-              color: _selectedDayIndex == index ? Colors.white : Colors.black, // 선택된 탭 텍스트 색상 설정
+            child: Container(
+              width: 100, // 버튼의 너비를 지정
+              height: 0,
+              margin: EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.all(8),
+              decoration: ShapeDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                  begin: Alignment(0.60, -0.80),
+                  end: Alignment(-0.6, 0.8),
+                  colors: [Color(0xFF1BB874), Color(0xFF1BAEB8)],
+                )
+                    : null,
+                color: isSelected ? null : Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: 1,
+                    color: isSelected ? Colors.white.withOpacity(0.5) : Color(0xFFF7F7F7),
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    dayLabel,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Color(0xFF999999),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    dateLabel,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Color(0xFF666666),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),],
+              ),
             ),
-          ),
+          );
+        },
+      ),
+    );
+  }
+
+
+  Widget _buildMap() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      height: 200,
+      child: FutureBuilder<void>(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('네이버 지도 초기화 실패: ${snapshot.error}'));
+          } else {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: NaverMap(
+                onMapReady: _onMapReady,
+                options: const NaverMapViewOptions(
+                  initialCameraPosition: NCameraPosition(
+                    target: NLatLng(36.0665, 127.2780),
+                    zoom: 5.8,
+                  ),
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildDaySchedule() {
+    final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex);
+
+    return Column(
+      children: schedules.map((schedule) {
+        return _buildScheduleItem(
+          schedule.title,
+          "${schedule.startTime} ~ ${schedule.endTime}",
+          schedule.memo ?? '',
         );
       }).toList(),
     );
   }
 
-  Widget _buildDaySchedule() {
-    return Column(
-      children: [
-        _buildScheduleItem("호리네민박", "9:00 ~ 11:00", "메모"), // 일정 항목
-        _buildScheduleItem("식당", "11:00 ~ 12:00", ""), // 일정 항목
-        _buildAddPlaceButton(), // 장소 추가 버튼
-        _buildAISuggestions(), // AI 추천 섹션
-        _buildSavedPlaces(), // 저장된 장소 섹션
-      ],
-    );
-  }
-
   Widget _buildScheduleItem(String place, String time, String memo) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0), // 마진 설정
-      padding: const EdgeInsets.all(8.0), // 패딩 설정
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!), // 테두리 설정
-        borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게 설정
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.white,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$place $time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 장소와 시간 텍스트 설정
+          Text('$place $time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           if (memo.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0), // 패딩 설정
-              child: Text(memo, style: TextStyle(fontSize: 14)), // 메모 텍스트 설정
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Text(memo, style: TextStyle(fontSize: 14)),
             ),
           Row(
             children: [
-              _buildWhiteButton('교통편 보기', () {}), // 버튼 설정
+              _buildWhiteButton('교통편 보기', () {}),
               SizedBox(width: 10),
-              _buildWhiteButton('메모 추가', () {}), // 버튼 설정
+              _buildWhiteButton('메모 추가', () {}),
             ],
           ),
         ],
@@ -264,34 +389,52 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   Widget _buildWhiteButton(String text, VoidCallback onPressed) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0), // 마진 설정
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextButton(
-          onPressed: onPressed, // 버튼 클릭 시 호출될 함수
+          onPressed: onPressed,
           style: TextButton.styleFrom(
-            backgroundColor: Colors.white, // 배경 색상 설정
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게 설정
-              side: BorderSide(color: Colors.grey[300]!), // 테두리 색상 설정
+              borderRadius: BorderRadius.circular(8.0),
+              side: BorderSide(color: Colors.grey[300]!),
             ),
           ),
           child: Text(
             text,
-            style: TextStyle(color: Colors.black), // 텍스트 색상 설정
+            style: TextStyle(color: Colors.black),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAddPlaceButton() {
+  Widget _buildAddScheduleButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0), // 패딩 설정
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
         children: [
           TextButton.icon(
-            onPressed: () {},
-            icon: Icon(Icons.add), // 아이콘 설정
-            label: Text('장소 추가'), // 라벨 설정
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScheduleAddView(
+                    travelId: widget.travelId, // travelId 전달
+                    selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)), // 선택된 날짜 전달
+                    travelViewModel: travelViewModel,  // ViewModel 인스턴스 전달
+                  ),
+                ),
+              );
+              if (result == true) {
+                await travelViewModel.loadSchedules(widget.travelId).then((_) {
+                  setState(() {
+                    // 이 부분에서 화면을 다시 빌드하여 추가된 일정을 반영합니다.
+                  });
+                });
+              }
+            },
+            icon: Icon(Icons.add),
+            label: Text('일정 추가'),
           ),
         ],
       ),
@@ -299,55 +442,55 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   }
 
   Widget _buildAISuggestions() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0), // 패딩 설정
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
-        children: [
-          Text('AI 추천', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 섹션 제목 설정
-          SizedBox(height: 10),
-          Container(
-            height: 150,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal, // 가로 스크롤 설정
-              itemCount: 5, // 아이템 개수
-              itemBuilder: (context, index) {
-                return _buildAICard(index); // AI 카드 위젯
-              },
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text('AI 추천', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
+        SizedBox(height: 10),
+        Container(
+          height: 150,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return _buildAICard(index);
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildAICard(int index) {
     return Container(
-      width: 150, // 너비 설정
-      margin: EdgeInsets.only(right: 10), // 마진 설정
+      width: 150,
+      margin: EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
-        color: Colors.grey[300], // 배경 색상 설정
-        borderRadius: BorderRadius.circular(8), // 모서리 둥글게 설정
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey[400], // 배경 색상 설정
-              child: Center(child: Text('사진', style: TextStyle(fontSize: 16))), // 예시 텍스트
+              color: Colors.grey[400],
+              child: Center(child: Text('사진', style: TextStyle(fontSize: 16))),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0), // 패딩 설정
+            padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('장소명', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)), // 장소명 텍스트 설정
+                Text('장소명', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 SizedBox(height: 4),
-                Text('별점: ★★★☆☆', style: TextStyle(fontSize: 12)), // 별점 텍스트 설정
+                Text('별점: ★★★☆☆', style: TextStyle(fontSize: 12)),
                 SizedBox(height: 2),
-                Text('거리: 1.2km', style: TextStyle(fontSize: 12)), // 거리 텍스트 설정
+                Text('거리: 1.2km', style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -358,19 +501,22 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
   Widget _buildSavedPlaces() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0), // 패딩 설정
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('내 저장 장소', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 섹션 제목 설정
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text('내 저장 장소', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
           SizedBox(height: 10),
           Container(
             height: 150,
             child: ListView.builder(
-              scrollDirection: Axis.horizontal, // 가로 스크롤 설정
-              itemCount: 5, // 아이템 개수
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
               itemBuilder: (context, index) {
-                return _buildSavedPlaceCard(index); // 저장된 장소 카드 위젯
+                return _buildSavedPlaceCard(index);
               },
             ),
           ),
@@ -381,31 +527,31 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
   Widget _buildSavedPlaceCard(int index) {
     return Container(
-      width: 150, // 너비 설정
-      margin: EdgeInsets.only(right: 10), // 마진 설정
+      width: 150,
+      margin: EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
-        color: Colors.grey[300], // 배경 색상 설정
-        borderRadius: BorderRadius.circular(8), // 모서리 둥글게 설정
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey[400], // 배경 색상 설정
-              child: Center(child: Text('사진', style: TextStyle(fontSize: 16))), // 예시 텍스트
+              color: Colors.grey[400],
+              child: Center(child: Text('사진', style: TextStyle(fontSize: 16))),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0), // 패딩 설정
+            padding: const EdgeInsets.all(8.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 정렬을 왼쪽으로 설정
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('장소명', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)), // 장소명 텍스트 설정
+                Text('장소명', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 SizedBox(height: 4),
-                Text('별점: ★★★☆☆', style: TextStyle(fontSize: 12)), // 별점 텍스트 설정
+                Text('별점: ★★★☆☆', style: TextStyle(fontSize: 12)),
                 SizedBox(height: 2),
-                Text('거리: 1.2km', style: TextStyle(fontSize: 12)), // 거리 텍스트 설정
+                Text('거리: 1.2km', style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -415,36 +561,77 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   }
 
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.location_on), // 아이콘 설정
-          label: '내 일정', // 라벨 설정
+    return Stack(
+      children: [
+        BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/icon_calendar.svg',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              ),
+              label: '일정',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/icon-search-mono.svg',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              ),
+              label: '피드',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/icon-stack-up-square-mono.svg',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              ),
+              label: '저장',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/images/icon-user-mono.svg',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              ),
+              label: '마이페이지',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.grey,
+          onTap: _onItemTapped,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.travel_explore), // 아이콘 설정
-          label: '여행 도구', // 라벨 설정
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home), // 아이콘 설정
-          label: '섬 모양 홈버튼', // 라벨 설정
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.feed), // 아이콘 설정
-          label: '피드', // 라벨 설정
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person), // 아이콘 설정
-          label: '마이페이지', // 라벨 설정
+        Positioned(
+          top: -30,
+          left: MediaQuery.of(context).size.width / 2 - 50,
+          child: GestureDetector(
+            onTap: () => _onItemTapped(2),
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [],
+              ),
+              child: Image.asset(
+                'assets/images/icon_compass.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
       ],
-      currentIndex: 0, // 첫 번째 아이템 선택된 상태로 설정
-      selectedItemColor: Colors.blue, // 선택된 아이템 색상 설정
-      unselectedItemColor: Colors.grey, // 선택되지 않은 아이템 색상 설정
-      backgroundColor: Colors.white, // 배경 색상 설정
-      onTap: (index) {
-        // 네비게이션 동작 구현
-      },
+      clipBehavior: Clip.none,
     );
   }
 }

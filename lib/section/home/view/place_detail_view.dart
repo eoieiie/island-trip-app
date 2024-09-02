@@ -69,8 +69,11 @@ class _PlaceDetailViewState extends State<PlaceDetailView> {
               color: Colors.white,
               child: TabBar(
                 tabs: [
-                  Tab(text: '자세한정보'),
-                  Tab(text: '리뷰'),
+                  Tab(text: '물속 체험'),
+                  Tab(text: '크루즈 여행'),
+                  Tab(text: '낚시'),
+                  Tab(text: '전망대'),
+                  Tab(text: '포토존'),
                 ],
               ),
             ),

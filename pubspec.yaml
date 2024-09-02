@@ -51,10 +51,6 @@ dependencies:
   path: ^1.9.0
   photofilters: ^3.0.1
   http: ^1.2.2 #한국관광공사 Open api 호출을 위해 사용
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.16.0
-  kakao_flutter_sdk_user: ^1.9.2
-  cloud_functions: ^4.6.0
 
 
 dev_dependencies:

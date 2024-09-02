@@ -16,10 +16,18 @@ class _TravelDatePageState extends State<TravelDatePage> {
   DateTime _focusedDate = DateTime.now();
   DateTime? _startDate;
   DateTime? _endDate;
+  late String _selectedIsland;
 
   List<String> _daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedIsland = widget.selectedIsland;
+  }
+
   void _onDaySelected(DateTime selectedDay) {
+    if (selectedDay.isBefore(DateTime.now().subtract(Duration(days: 1)))) return;
     setState(() {
       if (_startDate == null || (_startDate != null && _endDate != null)) {
         _startDate = selectedDay;
@@ -43,7 +51,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
     List<Widget> dayWidgets = [];
 
     for (int i = 0; i < firstDayWeekday; i++) {
-      dayWidgets.add(Container()); // 첫 주의 공백을 채우기 위한 빈 컨테이너
+      dayWidgets.add(Container());
     }
 
     for (int i = 1; i <= daysInMonth; i++) {
@@ -51,7 +59,20 @@ class _TravelDatePageState extends State<TravelDatePage> {
       bool isStart = _startDate != null && _startDate!.isAtSameMomentAs(day);
       bool isEnd = _endDate != null && _endDate!.isAtSameMomentAs(day);
       bool isInRange = _startDate != null && _endDate != null && day.isAfter(_startDate!) && day.isBefore(_endDate!);
-      bool isPast = day.isBefore(today);
+      bool isToday = day.year == today.year && day.month == today.month && day.day == today.day; // 오늘 날짜 확인
+      bool isPast = day.isBefore(today) && !isToday;  // 오늘 날짜는 제외
+
+      // 요일에 따른 색상 설정
+      Color textColor;
+      if (isToday) {
+        textColor = Colors.black;
+      } else if (day.weekday == DateTime.sunday) {
+        textColor = isPast ? Colors.red.withOpacity(0.5) : Colors.red;
+      } else if (day.weekday == DateTime.saturday) {
+        textColor = isPast ? Colors.blue.withOpacity(0.5) : Colors.blue;
+      } else {
+        textColor = isPast ? Colors.grey : Colors.black;
+      }
 
       dayWidgets.add(
         GestureDetector(
@@ -66,8 +87,8 @@ class _TravelDatePageState extends State<TravelDatePage> {
                   : isInRange
                   ? const Color(0xFFBBDDFF).withOpacity(0.3)
                   : Colors.transparent,
-              shape: isStart || isEnd ? BoxShape.circle : BoxShape.rectangle,
-              borderRadius: isInRange ? BorderRadius.circular(10) : null,
+              shape: isStart || isEnd ? BoxShape.rectangle : BoxShape.rectangle,
+              borderRadius: isInRange ? BorderRadius.circular(20) : BorderRadius.circular(20),
             ),
             child: Center(
               child: Text(
@@ -78,10 +99,15 @@ class _TravelDatePageState extends State<TravelDatePage> {
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 )
-                    : isInRange
+                    : isToday
                     ? const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
+                )
+                    : isInRange
+                    ? const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 )
                     : TextStyle(
                   color: isPast ? Colors.grey : Colors.black,
@@ -103,7 +129,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 setState(() {
-                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1); // 이전 달로 이동
+                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
                 });
               },
             ),
@@ -115,7 +141,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
               icon: Icon(Icons.arrow_forward),
               onPressed: () {
                 setState(() {
-                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1); // 다음 달로 이동
+                  _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
                 });
               },
             ),
@@ -124,127 +150,179 @@ class _TravelDatePageState extends State<TravelDatePage> {
         GridView.count(
           shrinkWrap: true,
           crossAxisCount: 7,
-          children: _daysOfWeek
-              .map((day) => Center(child: Text(day, style: TextStyle(fontWeight: FontWeight.bold))))
-              .toList(), // 요일 헤더를 그리드뷰로 생성
+          children: _daysOfWeek.map((day) => Center(child: Text(day, style: TextStyle(fontWeight: FontWeight.bold)))).toList(),
         ),
         GridView.count(
           shrinkWrap: true,
           crossAxisCount: 7,
-          children: dayWidgets, // 날짜를 그리드뷰로 생성
+          children: dayWidgets,
         ),
       ],
     );
   }
 
   String _formatDate(DateTime? date) {
-    if (date == null) return '선택되지 않음'; // 날짜가 선택되지 않았을 때 표시할 텍스트
-    return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} (${_getDayOfWeek(date)})"; // 날짜를 형식에 맞춰 문자열로 변환
+    if (date == null) return '선택되지 않음';
+    return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} (${_getDayOfWeek(date)})";
   }
 
   String _getDayOfWeek(DateTime date) {
-    List<String> days = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 리스트
-    return days[date.weekday % 7]; // 날짜의 요일을 반환
+    List<String> days = ['일', '월', '화', '수', '목', '금', '토'];
+    return days[date.weekday % 7];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('여행 날짜'), // 앱바 제목 설정
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(), // 뒤로 가기 버튼
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0), // 전체 패딩 설정
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '여행 일정을 입력하세요.',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+        backgroundColor: Colors.white,
+        title: Text(''),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 패딩 설정
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // 배경색 흰색
+              borderRadius: BorderRadius.circular(12), // 둥근 모서리 설정
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26, // 그림자 색상
+                  blurRadius: 1.5, // 그림자 흐림 정도
+                  offset: Offset(0, 0), // 그림자 위치
                 ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('내 섬 pick!', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 15),
-                  DropdownButton<String>(
-                    value: widget.selectedIsland, // 선택된 섬
-                    items: <String>['거제도', '우도', '외도', '홍도', '무의도', '진도']
-                        .map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {}, // 선택된 섬 변경 이벤트 핸들러
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_startDate), style: TextStyle(fontSize: 16, color: Colors.black)),
-                        Text('AM 09:00', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ),
-                  Icon(Icons.arrow_forward, color: Colors.black, size: 24),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Text(_formatDate(_endDate), style: TextStyle(fontSize: 16, color: Colors.black)),
-                        Text('AM 09:00', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              _buildCalendar(), // 캘린더 위젯 생성
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_startDate != null && _endDate != null) {
-                    // 여행 데이터를 추가하고 스케줄 뷰로 이동
-                    final travelId = Get.find<MyTravelViewModel>().addTravel(
-                      widget.selectedIsland,
-                      _startDate!,
-                      _endDate!,
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TravelScheduleView(travelId: travelId, selectedIsland: widget.selectedIsland, startDate: _startDate!, endDate: _endDate!),
-                      ),
-                    );
-                  }
-                },
-                child: Text('다음', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 48), // 버튼 크기 설정
-                  backgroundColor: Colors.blueAccent, // 버튼 배경 색상 설정
-                ),
-              ),
-            ],
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black), // 뒤로가기 아이콘
+              onPressed: () {
+                Navigator.pop(context); // 뒤로가기 기능
+              },
+            ),
           ),
         ),
+      ),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 100),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text('내 섬 pick!', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 15),
+                            DropdownButton<String>(
+                              value: _selectedIsland,
+                              items: <String>['거제도', '우도', '외도', '홍도', '무의도', '진도'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  if (newValue != null) {
+                                    _selectedIsland = newValue;
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        _buildCalendar(),
+                        SizedBox(height: 100),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 30.0, top: 0.0, right: 16.0, bottom: 10.0),
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '여행을',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '언제 떠나시나요?',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          '기간을 선택해 주세요.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: _startDate != null && _endDate != null
+                  ? () {
+                if (_startDate != null && _endDate != null) {
+                  final travelId = Get.find<MyTravelViewModel>().addTravel(
+                    _selectedIsland,
+                    _startDate!,
+                    _endDate!,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TravelScheduleView(
+                        travelId: travelId,
+                        selectedIsland: _selectedIsland,
+                        startDate: _startDate!,
+                        endDate: _endDate!,
+                      ),
+                    ),
+                  );
+                }
+              }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _startDate != null && _endDate != null ? Color(0XFF1BB874) : Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+              ),
+              child: Center(
+                child: Text(
+                  '다음',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

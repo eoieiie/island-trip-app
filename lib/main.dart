@@ -13,6 +13,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 import 'package:project_island/section/saved/view/saved_view.dart';
 import 'package:project_island/section/home/view/island_detail_view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:project_island/section/login/view/splash.dart';
+import 'package:project_island/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -25,6 +29,8 @@ void main() async {
       print('네이버맵 인증오류: $e');
     },
   ); // 네이버 지도 SDK 초기화
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  KakaoSdk.init(nativeAppKey: 'f7f5aa7d9be3f42d6274a97fd8e92bab');
 
   Get.put(Repository()); // Repository 인스턴스 등록
   Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
@@ -41,7 +47,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
+      home: SplashScreen(), // 앱의 시작 페이지를 MainPage로 설정합니다.
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth; // 구글 로그인용 AuthService
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth; // 카카오 로그인용 AuthService
-import 'package:project_island/section/home/view/home_view.dart';
+import '../../../main.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeView()),
+        MaterialPageRoute(builder: (context) => MainPage(selectedIndex: 0)),
       );
     }
   }
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeView()),
+        MaterialPageRoute(builder: (context) =>MainPage(selectedIndex: 0)),
       );
     }
   }

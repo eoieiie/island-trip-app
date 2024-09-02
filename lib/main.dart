@@ -65,11 +65,12 @@ class _MainPageState extends State<MainPage> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    HomeView(),
-    MyTravelView(),
-    HomeMapView(),
-    SavedView(),
-    MyPageView(),
+    // const FeedView(), // 피드 페이지
+    HomeView(), // 섬 모양 홈버튼 페이지
+    MyTravelView(), // 내 일정 페이지
+    HomeMapView(), // 맵 페이지
+    SavedView(), //SearchPage(),
+    MyPageView(), // 마이페이지
   ];
 
   void _onItemTapped(int index) {
@@ -88,7 +89,7 @@ class _MainPageState extends State<MainPage> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon-home-mono.svg',
+                  'assets/images/icon-home-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
@@ -97,7 +98,8 @@ class _MainPageState extends State<MainPage> {
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon_calendar.svg',
+                  'assets/images/icon_calendar.svg', // SVG 이미지 경로
+                  // 'assets/images/icon-home-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
@@ -110,7 +112,7 @@ class _MainPageState extends State<MainPage> {
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon-stack-up-square-mono.svg',
+                  'assets/images/icon-stack-up-square-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
@@ -119,7 +121,7 @@ class _MainPageState extends State<MainPage> {
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  'assets/images/icon-user-mono.svg',
+                  'assets/images/icon-user-mono.svg', // SVG 이미지 경로
                   width: 24,
                   height: 24,
                   color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
@@ -131,25 +133,32 @@ class _MainPageState extends State<MainPage> {
             selectedItemColor: Colors.green,
             unselectedItemColor: Colors.grey,
             onTap: _onItemTapped,
-          ),
-          Positioned(
-            top: -30, // 중앙 아이콘의 높이를 설정
-            left: MediaQuery.of(context).size.width / 2 - 50, // 중앙 아이콘 위치 조정
+          ),Positioned(
+            top: -30, // 이 값을 조정하여 중앙 아이콘의 높이를 설정하세요.
+            left: MediaQuery.of(context).size.width / 2 - 50, // 아이콘 크기의 절반만큼 왼쪽으로 이동
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomeMapView()),
                 );
-              },
+
+              }, // 중앙 버튼 탭 처리
               child: Container(
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    // BoxShadow(
+                    // color: Colors.black.withOpacity(0.2),
+                    // blurRadius: 8,
+                    // offset: Offset(0, 4),
+                    // ),
+                  ],
                 ),
                 child: Image.asset(
-                  'assets/images/icon_compass.png',
+                  'assets/images/icon_compass.png', // PNG 이미지 경로
                   fit: BoxFit.cover,
                 ),
               ),

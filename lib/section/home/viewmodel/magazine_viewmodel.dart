@@ -1,5 +1,5 @@
 // viewmodel/magazine_viewmodel.dart
-
+/*
 import 'package:get/get.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';

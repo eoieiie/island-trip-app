@@ -1,6 +1,6 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
+import 'package:project_island/section/home/repository/home_repository.dart';
+import 'package:project_island/section/home/viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
 import 'package:project_island/section/my_page/view/mypage_view.dart';
 import 'package:project_island/section/home/view/home_view.dart';
@@ -12,28 +12,34 @@ import 'binding/init_binding.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/section/common/kakao_api/views/search_page.dart';
 import 'package:project_island/section/saved/view/saved_view.dart';
-
+import 'package:project_island/section/home/view/island_detail_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
+
   await dotenv.load(fileName: ".env"); // .env 파일 로드
+
   await NaverMapSdk.instance.initialize(
     clientId: dotenv.env['NAVER_MAP_CLIENT_ID']!,
     onAuthFailed: (e) {
       print('네이버맵 인증오류: $e');
     },
   ); // 네이버 지도 SDK 초기화
+
+  Get.put(Repository()); // Repository 인스턴스 등록
+  Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
+
   runApp(MyApp()); // MyApp 위젯을 실행합니다.
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp( //GetMaterialApp으로 수정
-      initialBinding: InitBinding(), // InitBinding으로 초기 바인딩 설정 (추가햇슴니다)
-      title: 'Island Travel App', // 앱의 제목을 설정합니다.
+    return GetMaterialApp(
+      initialBinding: InitBinding(),
+      title: 'Island Travel App',
       theme: ThemeData(
-        primarySwatch: Colors.blue, // 앱의 기본 색상을 파란색으로 설정합니다.
+        primarySwatch: Colors.blue,
       ),
       home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
     );
@@ -43,7 +49,7 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final int selectedIndex;
 
-  MainPage({this.selectedIndex = 0}); // 디폴트로 0(홈)를 설정
+  MainPage({this.selectedIndex = 0});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -55,7 +61,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.selectedIndex; // 전달받은 인덱스로 초기화
+    _selectedIndex = widget.selectedIndex;
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
@@ -69,7 +75,7 @@ class _MainPageState extends State<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // 선택된 페이지 인덱스를 업데이트합니다.
+      _selectedIndex = index;
     });
   }
 

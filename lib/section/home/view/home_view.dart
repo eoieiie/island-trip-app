@@ -7,6 +7,15 @@ import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
+import 'package:project_island/section/home/view/island_detail_view.dart';
+import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
+import '../model/home_model.dart';
+import '../repository/home_repository.dart';
+
 class HomeView extends StatelessWidget {
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
 
@@ -71,7 +80,9 @@ class MagazineListView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => IslandDetailView(),
+                builder: (context) => IslandDetailView(
+                  islandName: magazine.title, // 섬 이름을 전달
+                ),
               ),
             );
           },
@@ -85,6 +96,7 @@ class MagazineListView extends StatelessWidget {
     );
   }
 }
+
 
 class BottomSheetContent extends StatefulWidget {
   final HomeViewModel viewModel;

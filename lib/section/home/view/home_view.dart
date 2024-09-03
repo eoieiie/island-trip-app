@@ -342,77 +342,103 @@ class MagazineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게 설정
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          CachedNetworkImage(
-            imageUrl: magazine.thumbnail,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+    return GestureDetector(
+      onTap: () {
+        // 클릭 시 IslandDetailView로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IslandDetailView(
+              islandName: magazine.title, // 섬 이름을 전달
+            ),
           ),
-          if (isFirst) // 첫 번째 카드에만 텍스트 추가
-            Positioned(
-              bottom: 21.0,
-              left: 16.0,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '[',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.4),
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w300,
-                      ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게 설정
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedNetworkImage(
+              imageUrl: magazine.thumbnail,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.white, // 흰색 배경
+                child: Center(
+                  child: Text(
+                    "사진이 없어요!", // 썸네일 없는 경우 대체 텍스트
+                    style: TextStyle(
+                      color: Colors.black, // 텍스트 색상
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                    TextSpan(
-                      text: '내 마음을 물들이다.',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ']\n',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.4),
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '거문도',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '\n맑은 바다와 울창한 숲이 어우러진 거문도,\n자연의 숨결을 느껴보세요',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 13,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w300,
-                        height: 1.5, // 줄 높이 조절
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                textAlign: TextAlign.left,
               ),
             ),
-        ],
+            if (isFirst) // 첫 번째 카드에만 텍스트 추가
+              Positioned(
+                bottom: 21.0,
+                left: 16.0,
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '[',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '내 마음을 물들이다.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ']\n',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '거문도',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '\n맑은 바다와 울창한 숲이 어우러진 거문도,\n자연의 숨결을 느껴보세요',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 13,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                          height: 1.5, // 줄 높이 조절
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 }
+

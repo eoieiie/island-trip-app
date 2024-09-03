@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
-
 import 'package:project_island/section/my_page/mypage_list/view/Cutomer Service.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
 import 'package:project_island/section/my_page//view/profile_edit_view.dart';
 import 'package:project_island/section/my_page/view/setting_view.dart';
+import 'package:project_island/section/login/model/login_model.dart' as google_auth;
+import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
+import '../../login/view/login_view.dart';
 
 class MyPageView extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,6 +167,8 @@ class UserProfileSection extends StatelessWidget {
 
 // 메뉴 리스트 섹션
 class MenuListSection extends StatelessWidget {
+  final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
+  final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -195,8 +199,20 @@ class MenuListSection extends StatelessWidget {
         ListTile(
           title: Text('로그아웃'),
           trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
-          onTap: () {
+          onTap: () async {
             // 로그아웃 클릭 시 이벤트 처리
+            final googleUser = _googleAuthService.googleGetCurrentUser();
+            final kakaoUser = _kakaoAuthService.kakaoGetCurrentUser();
+
+            if (googleUser != null) {
+              await _googleAuthService.googleSignOut();
+            } else if (kakaoUser != null) {
+              await _kakaoAuthService.kakaoSignOut();
+            }
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
           },
         ),
         ListTile(

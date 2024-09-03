@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth; // 구글 로그인용 AuthService
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth; // 카카오 로그인용 AuthService
 import '../../../main.dart';
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/thumbnail.png'),
+                image: AssetImage('assets/images/splashImage.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -66,8 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                       ),
                     ),
-                    Image.asset(
-                      'assets/images/isletrip.png',
+                    SvgPicture.asset(
+                      'assets/images/isletrip.svg',
                       width: 150,
                       height: 80,
                     ),
@@ -85,18 +86,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 // 구글 로그인 버튼
                 GestureDetector(
                   onTap: _handleGoogleSignIn, // 구글 로그인 처리
-                  child: Image.asset(
-                    'assets/images/android_light_rd_ctn@2x.png',
-                    height: 60,
+                  child: SvgPicture.asset(
+                    'assets/images/google_Login.svg',
                   ),
                 ),
                 SizedBox(height: 8),
                 // 카카오 로그인 버튼
                 GestureDetector(
                   onTap: _handleKakaoSignIn, // 카카오 로그인 처리
-                  child: Image.asset(
-                    'assets/images/kakao_login_medium_narrow.png',
-                    height: 60,
+                  child: SvgPicture.asset(
+                    'assets/images/kakao_Login.svg',
                   ),
                 ),
                 Spacer(flex: 3),

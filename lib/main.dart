@@ -34,7 +34,6 @@ void main() async {
 
   Get.put(Repository()); // Repository 인스턴스 등록
   Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
-
   runApp(MyApp()); // MyApp 위젯을 실행합니다.
 }
 

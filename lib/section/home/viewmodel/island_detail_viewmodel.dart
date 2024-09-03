@@ -73,6 +73,18 @@ class IslandDetailViewModel extends GetxController {
         return 2767625;
       case '장자도':
         return 126299;
+      case '우도(해양도립공원)':
+        return 127336;
+      case '홍도':
+        return 126300;
+      case '고군산군도':
+        return 131279;
+      case '진도':
+        return 126307;
+      case '무의도':
+        return 126797;
+      case '거제도':
+        return 126972; // 예시 contentId
       default:
         return 0; // 기본 contentId, 또는 예외 처리
     }

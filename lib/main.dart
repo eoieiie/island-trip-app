@@ -90,88 +90,88 @@ class _MainPageState extends State<MainPage> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Stack(
         children: [
-          BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-home-mono.svg', // SVG 이미지 경로
-                  width: 24,
-                  height: 24,
-                  color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+          Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Colors.white,  // BottomNavigationBar 배경색을 흰색으로 설정
+            ),
+            child: BottomNavigationBar(
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-home-mono.svg',
+                    width: 24,
+                    height: 24,
+                    color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  label: '홈',
                 ),
-                label: '홈',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/images/icon_calendar.svg', // SVG 이미지 경로
-                  // 'assets/images/icon-home-mono.svg', // SVG 이미지 경로
-                  width: 24,
-                  height: 24,
-                  color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon_calendar.svg',
+                    width: 24,
+                    height: 24,
+                    color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  label: '일정',
                 ),
-                label: '일정',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(), // 중앙 버튼은 Stack에서 따로 처리하므로 빈 컨테이너
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-stack-up-square-mono.svg', // SVG 이미지 경로
-                  width: 24,
-                  height: 24,
-                  color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                BottomNavigationBarItem(
+                  icon: Container(),
+                  label: '',
                 ),
-                label: '저장',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-user-mono.svg', // SVG 이미지 경로
-                  width: 24,
-                  height: 24,
-                  color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-stack-up-square-mono.svg',
+                    width: 24,
+                    height: 24,
+                    color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  label: '저장',
                 ),
-                label: '마이페이지',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.green,
-            unselectedItemColor: Colors.grey,
-            onTap: _onItemTapped,
-          ),Positioned(
-            top: -30, // 이 값을 조정하여 중앙 아이콘의 높이를 설정하세요.
-            left: MediaQuery.of(context).size.width / 2 - 50, // 아이콘 크기의 절반만큼 왼쪽으로 이동
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-user-mono.svg',
+                    width: 24,
+                    height: 24,
+                    color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  label: '마이페이지',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.green,
+              unselectedItemColor: Colors.grey,
+              onTap: _onItemTapped,
+            ),
+          ),
+          Positioned(
+            top: -30,
+            left: MediaQuery.of(context).size.width / 2 - 35,
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomeMapView()),
                 );
-
-              }, // 중앙 버튼 탭 처리
+              },
               child: Container(
-                width: 100,
-                height: 100,
+                width: 70,
+                height: 70,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    // BoxShadow(
-                    // color: Colors.black.withOpacity(0.2),
-                    // blurRadius: 8,
-                    // offset: Offset(0, 4),
-                    // ),
-                  ],
                 ),
-                child: Image.asset(
-                  'assets/images/icon_compass.png', // PNG 이미지 경로
+                child: SvgPicture.asset(
+                  'assets/images/mapIcon.svg',
+                  width: 52,
+                  height: 52,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
         ],
-        clipBehavior: Clip.none, // 상단에 겹치는 아이콘이 잘리지 않도록 설정
+        clipBehavior: Clip.none,
       ),
     );
   }
 }
+

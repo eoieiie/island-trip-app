@@ -2,14 +2,20 @@ import 'package:get/get.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:project_island/section/login/model/login_model.dart' as google_auth;
+import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 
 class MyPageController extends GetxController {
   var profileImageUrl = 'https://example.com/profile.jpg'; // 프로필 이미지 URL
   var userName = '김대한'; // 사용자 이름
+
   var userDescription = '낭만 넘치는 여행을 좋아합니다람쥐.'; // 사용자 한 줄 소개
   int remainingPoints = 180; // 목표까지 남은 포인트
   int currentPoints = 156; // 현재 포인트
   int targetPoints = 1000; // 목표 포인트
+
 
 
   // 사용자 타이틀을 반환하는 getter
@@ -62,6 +68,7 @@ class MyPageController extends GetxController {
     userDescription = description;
     update(); // 상태 업데이트
   }
+
 
   // 프로필 이미지 업데이트
   void updateProfileImageUrl(String url) {

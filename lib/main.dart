@@ -95,6 +95,7 @@ class _MainPageState extends State<MainPage> {
               canvasColor: Colors.white,  // BottomNavigationBar 배경색을 흰색으로 설정
             ),
             child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
@@ -141,11 +142,13 @@ class _MainPageState extends State<MainPage> {
               selectedItemColor: Colors.green,
               unselectedItemColor: Colors.grey,
               onTap: _onItemTapped,
+              showSelectedLabels: false,  // 선택된 아이템의 label을 숨깁니다.
+              showUnselectedLabels: false,  // 선택되지 않은 아이템의 label을 숨깁니다.
             ),
           ),
           Positioned(
-            top: -30,
-            left: MediaQuery.of(context).size.width / 2 - 35,
+            top: -25,
+            left: MediaQuery.of(context).size.width / 2 - 33,
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -154,10 +157,18 @@ class _MainPageState extends State<MainPage> {
                 );
               },
               child: Container(
-                width: 70,
-                height: 70,
+                width: 66,
+                height: 66,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3), // 그림자의 색상과 투명도
+                      spreadRadius: 2, // 그림자 퍼짐의 정도
+                      blurRadius: 5,   // 그림자의 흐림 정도
+                      offset: Offset(0, 5), // 그림자의 위치 (x, y)
+                    ),
+                  ],
                 ),
                 child: SvgPicture.asset(
                   'assets/images/mapIcon.svg',
@@ -174,4 +185,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-

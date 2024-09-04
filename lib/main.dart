@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_island/section/common/google_api/views/google_search_page.dart';
 import 'package:project_island/section/home/repository/home_repository.dart';
 import 'package:project_island/section/home/viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
@@ -70,7 +71,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    // const FeedView(), // 피드 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
     MyTravelView(), // 내 일정 페이지
     HomeMapView(), // 맵 페이지

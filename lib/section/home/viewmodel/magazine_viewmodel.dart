@@ -47,4 +47,4 @@ class MagazineViewModel extends GetxController {
       print('Error fetching stores: $e');
     }
   }
-}
+} */

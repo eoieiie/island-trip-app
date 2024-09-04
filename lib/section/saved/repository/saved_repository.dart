@@ -1,38 +1,36 @@
-import 'package:project_island/section/common/kakao_api/viewmodels/place_view_model.dart';
-import 'package:project_island/section/common/kakao_api/models/place_model.dart';
-import 'package:project_island/section/saved/model/saved_model.dart'; // SavedItem import
+import 'package:project_island/section/common/google_api/viewmodels/google_place_view_model.dart';
+import 'package:project_island/section/common/google_api/models/google_place_model.dart';
+import 'package:project_island/section/saved/model/saved_model.dart';
 
 class SavedRepository {
-  final PlaceViewModel _placeViewModel = PlaceViewModel();
+  final GooglePlaceViewModel _googlePlaceViewModel = GooglePlaceViewModel();
 
   Future<List<SavedItem>> getSavedItemsByCategory(String category) async {
-    List<PlaceModel> places = [];
+    List<GooglePlaceModel> places = [];
 
+    // 카테고리별로 API 호출
     if (category == '명소/놀거리') {
-      // "명소/놀거리"는 "문화시설"과 "관광명소"를 각각 검색하여 결과를 합침
-      final places1 = await _placeViewModel.searchPlaces('문화시설');
-      final places2 = await _placeViewModel.searchPlaces('관광명소');
-
-      // 두 결과를 합친 후, categoryGroupName이 비어 있는 항목을 추가로 포함
-      places = [
-        ...places1,
-        ...places2,
-        ...places1.where((place) => place.categoryGroupName.isEmpty).toList()
-      ];
+      // "명소/놀거리"로 장소 검색
+      final places1 = await _googlePlaceViewModel.searchPlaces('명소');
+      final places2 = await _googlePlaceViewModel.searchPlaces('놀거리');
+      places = [...places1, ...places2];
     } else if (category == '섬') {
-      places = await _placeViewModel.searchPlaces('섬');
+      places = await _googlePlaceViewModel.searchPlaces('island'); // 섬 카테고리 검색
     } else if (category == '음식') {
-      places = await _placeViewModel.searchPlaces('음식점');
+      places = await _googlePlaceViewModel.searchPlaces('음식점');
     } else if (category == '카페') {
-      places = await _placeViewModel.searchPlaces('카페');
+      places = await _googlePlaceViewModel.searchPlaces('카페');
     } else if (category == '숙소') {
-      places = await _placeViewModel.searchPlaces('숙박');
+      places = await _googlePlaceViewModel.searchPlaces('숙박');
     } else {
-      places = await _placeViewModel.searchPlaces(category); // 기본적으로 사용자가 입력한 카테고리를 검색어로 사용
+      places = await _googlePlaceViewModel.searchPlaces(category); // 기본 카테고리 검색
     }
 
+    // 평점 순으로 정렬 (높은 평점이 상위에 오도록)
+    //places.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
+
     // 필터링된 장소를 SavedItem으로 변환
-    return places.map((place) => SavedItem.fromPlaceModel(place)).toList();
+    return places.map((place) => SavedItem.fromGooglePlaceModel(place)).toList();
   }
 
   void toggleBookmark(SavedItem item) {

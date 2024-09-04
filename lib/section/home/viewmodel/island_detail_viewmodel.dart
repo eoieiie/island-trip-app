@@ -22,7 +22,7 @@ class IslandDetailViewModel extends GetxController {
   void onInit() {
     super.onInit();
     // 섬 이름을 동적으로 받아서 세부 정보를 가져오는 방식으로 변경
-    fetchIslandDetails('거문도'); // 예시로 '거문도'를 사용. 실제로는 동적 값 사용
+    fetchIslandDetails('안면도'); // 예시로 '거문도'를 사용. 실제로는 동적 값 사용
   }
 
   Future<void> fetchIslandDetails(String islandName) async {
@@ -65,26 +65,16 @@ class IslandDetailViewModel extends GetxController {
   int _getContentIdByIslandName(String islandName) {
     // 여기에 다른 섬의 contentId를 추가할 수 있습니다.
     switch (islandName) {
-      case '거문도':
-        return 126283;
-      case '신시도':
-        return 126293; // 예시 contentId
-      case '실미도':
-        return 2767625;
-      case '장자도':
-        return 126299;
-      case '우도(해양도립공원)':
-        return 127336;
-      case '홍도':
-        return 126300;
-      case '고군산군도':
-        return 131279;
+      case '안면도':
+        return 125850;
+      case '울릉도':
+        return 126101; // 예시 contentId
+      case '덕적도 비조봉':
+        return 2664734;
+      case '거제도':
+        return 126972;
       case '진도':
         return 126307;
-      case '무의도':
-        return 126797;
-      case '거제도':
-        return 126972; // 예시 contentId
       default:
         return 0; // 기본 contentId, 또는 예외 처리
     }

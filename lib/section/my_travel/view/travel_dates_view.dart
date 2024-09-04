@@ -220,7 +220,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
                             SizedBox(width: 15),
                             DropdownButton<String>(
                               value: _selectedIsland,
-                              items: <String>['거제도', '우도', '외도', '홍도', '무의도', '진도'].map((String value) {
+                              items: <String>['거제도', '우도', '외도', '홍도', '무의도', '진도', '고군산군도'].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),

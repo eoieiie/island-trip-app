@@ -222,7 +222,7 @@ class MyTravelView extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Card 안쪽 여백 조절
+            padding: const EdgeInsets.symmetric(vertical: 9.0, horizontal: 16.0), // Card 안쪽 여백 조절
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -239,10 +239,11 @@ class MyTravelView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        travel.island,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        '️${travel.island}',
+                        style: TextStyle(fontSize: 14, color: Colors.black54,fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                       ),
+                      SizedBox(height: 2),
                       Text(
                         travel.title,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

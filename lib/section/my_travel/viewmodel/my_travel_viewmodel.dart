@@ -36,7 +36,7 @@ class MyTravelViewModel extends GetxController {
 
     final newTravel = TravelModel(
       id: uuid.v4(),
-      title: '$island 여행',
+      title: '$island 섬캉스️️🍹',
       startDate: startDate,
       endDate: endDate,
       island: island,

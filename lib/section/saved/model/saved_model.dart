@@ -1,13 +1,16 @@
-import 'package:project_island/section/common/kakao_api/models/place_model.dart';
+import 'package:project_island/section/common/google_api/models/google_place_model.dart';
+
 class SavedItem {
-  final String title; // 장소 이름
-  final String imageUrl; // 이미지 URL
-  final String address; // 주소
-  final String description; // 설명 (전화번호와 웹사이트 포함)
-  final String category; // 카테고리
-  final String phone; // 전화번호
-  final String website; // 웹사이트
-  bool isBookmarked; // 북마크 여부
+  final String title;
+  final String imageUrl;
+  final String address;
+  final String description;
+  final String category;
+  final String phone;
+  final String website;
+  final double? rating; // 평점 추가
+  final bool? isOpenNow; // 영업 중 여부 추가
+  bool isBookmarked;
 
   SavedItem({
     required this.title,
@@ -17,21 +20,24 @@ class SavedItem {
     required this.category,
     required this.phone,
     required this.website,
+    this.rating,
+    this.isOpenNow,
     this.isBookmarked = false,
   });
 
-  // PlaceModel을 SavedItem으로 변환하는 메서드
-  factory SavedItem.fromPlaceModel(PlaceModel place) {
+  // GooglePlaceModel을 SavedItem으로 변환하는 메서드
+  factory SavedItem.fromGooglePlaceModel(GooglePlaceModel place) {
     return SavedItem(
-      title: place.placeName,
-      imageUrl: place.placeUrl,
-      address: place.addressName,
-      description: '전화번호: ${place.phone.isNotEmpty ? place.phone : place.placeUrl}',
-      category: place.categoryGroupName,
-      phone: place.phone,
-      website: place.placeUrl,
-      isBookmarked: false, // 기본값으로 북마크 설정
+      title: place.name,
+      imageUrl: place.photoUrls?.first ?? '', // 첫 번째 이미지 URL 사용, 없으면 빈 문자열
+      address: place.address,
+      description: place.rating != null ? '평점: ${place.rating} ${place.isOpenNow != null ? (place.isOpenNow! ? "영업 중" : "영업 종료") : ""}' : '정보 없음',
+      category: '섬', // 필요에 따라 설정
+      phone: place.phoneNumber ?? '전화번호 없음',
+      website: place.website ?? '웹사이트 없음',
+      rating: place.rating,
+      isOpenNow: place.isOpenNow,
+      isBookmarked: false,
     );
   }
 }
-

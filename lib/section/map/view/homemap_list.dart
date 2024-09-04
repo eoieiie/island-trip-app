@@ -91,22 +91,39 @@ class HomemapListState extends State<HomemapList> {
         alignment: Alignment.bottomCenter,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
-          child: FloatingActionButton.extended(
-            onPressed: () {
+          child: GestureDetector(
+            onTap: () {
               Get.to(HomeMapView());
             },
-            label: const Text('지도 보기', style: TextStyle(color: Colors.white, fontSize: 14)),
-            icon: const Icon(Icons.pin_drop_sharp, color: Colors.white, size: 15),
-            backgroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), // 패딩 조정
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.pin_drop_sharp,
+                    color: Colors.white,
+                    size: 18, // 아이콘 크기
+                  ),
+                  const SizedBox(width: 8), // 아이콘과 텍스트 사이의 간격
+                  const Text(
+                    '지도보기',
+                    style: TextStyle(color: Colors.white, fontSize: 18), // 텍스트 크기
+                  ),
+                ],
+              ),
             ),
-            extendedPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+
+
   }
 
   Widget _buildItemCountText() {

@@ -239,38 +239,45 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
             bottom: 16,
             left: 16,
             right: 16,
-            child: Visibility(
-              visible: _currentSelectedIsland != null, // 선택된 섬이 있으면 버튼을 보여줌
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (_currentSelectedIsland != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
-                      ),
-                    ).then((dates) {
-                      if (dates != null) {
-                        travelViewModel.addTravel(_selectedIsland, dates['startDate'], dates['endDate']);
-                      }
-                    });
-                  }
-                },
-                icon: Icon(Icons.map, color: Colors.white),
-                label: Text(
-                  '$_selectedIsland로 결정하기!',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+            child: ElevatedButton.icon(
+              // 선택된 섬에 따라 버튼의 동작과 스타일이 변경
+              onPressed: () {
+                if (_currentSelectedIsland != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TravelDatePage(selectedIsland: _selectedIsland),
+                    ),
+                  ).then((dates) {
+                    if (dates != null) {
+                      travelViewModel.addTravel(_selectedIsland, dates['startDate'], dates['endDate']);
+                    }
+                  });
+                }
+              },
+              icon: Icon(
+                Icons.map,
+                color: Colors.white,
+              ),
+              // 섬이 선택되지 않았을 때는 '섬을 선택해주세요!' 문구를 표시
+              label: Text(
+                _currentSelectedIsland == null
+                    ? '섬을 선택해주세요!' // 섬이 선택되지 않았을 때 표시되는 문구
+                    : '$_selectedIsland로 결정하기!', // 섬이 선택되었을 때 표시되는 문구
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0XFF1BB874),
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+              ),
+              // 섬이 선택되지 않았을 때 회색으로, 선택되면 기본 색상으로 설정
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _currentSelectedIsland == null
+                    ? Colors.grey // 섬이 선택되지 않았을 때 회색
+                    : Color(0XFF1BB874), // 섬이 선택되었을 때는 초록색
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),

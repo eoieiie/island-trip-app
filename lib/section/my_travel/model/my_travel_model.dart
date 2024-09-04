@@ -37,36 +37,72 @@ class TravelModel {
   // 여행 상태를 계산하는 getter
   String get travelStatus {
     final today = DateTime.now();
-    if (today.isBefore(startDate)) {
-      return '출발 ${startDate.difference(today).inDays}일 전';
-    } else if (today.isAfter(endDate)) {
-      return '다녀온 지 ${today.difference(endDate).inDays}일';
-    } else {
+    final startOfToday = DateTime(today.year, today.month, today.day);  // 오늘 날짜 시작 시점
+    final startOfTravel = DateTime(startDate.year, startDate.month, startDate.day);  // 출발일 시작 시점
+    final endOfTravel = DateTime(endDate.year, endDate.month, endDate.day).add(Duration(hours: 23, minutes: 59));  // 종료일 자정까지
+
+    // 출발 전 상태
+    if (startOfToday.isBefore(startOfTravel)) {
+      final daysUntilStart = startOfTravel.difference(startOfToday).inDays;
+      return '출발 ${daysUntilStart}일 전';
+    }
+    // 여행 중 상태
+    else if (startOfToday.isAfter(startOfTravel.subtract(Duration(days: 1))) && startOfToday.isBefore(endOfTravel)) {
       return '여행 중';
     }
+    // 여행이 끝난 후 상태
+    else if (startOfToday.isAfter(endOfTravel)) {
+      final daysSinceEnd = startOfToday.difference(endOfTravel).inDays;
+      return '다녀온 지 ${daysSinceEnd}일';
+    }
+
+    return ''; // 기본적으로 빈 문자열 반환
   }
 
   // 여행 상태에 따른 텍스트 색상
   Color get statusColor {
     final today = DateTime.now();
-    if (today.isBefore(startDate)) {
-      return Colors.green; // 출발 전: 초록색
-    } else if (today.isAfter(endDate)) {
-      return Colors.grey; // 다녀온 후: 회색
-    } else {
-      return Colors.orange; // 여행 중: 주황색
+    final startOfToday = DateTime(today.year, today.month, today.day);
+    final startOfTravel = DateTime(startDate.year, startDate.month, startDate.day);
+    final endOfTravel = DateTime(endDate.year, endDate.month, endDate.day).add(Duration(hours: 23, minutes: 59));
+
+    // 출발 전 상태
+    if (startOfToday.isBefore(startOfTravel)) {
+      return Colors.blueAccent; // 출발 전: 파란색
     }
+    // 여행 중 상태
+    else if (startOfToday.isAfter(startOfTravel.subtract(Duration(days: 1))) && startOfToday.isBefore(endOfTravel)) {
+      return Colors.orange; // Color(0XFFff5500); // 여행 중: 주황색
+    }
+    // 여행이 끝난 후 상태
+    else if (startOfToday.isAfter(endOfTravel)) {
+      return Colors.grey; // 다녀온 후: 회색
+    }
+    return Colors.black; // 기본값
   }
 
   // 여행 상태에 따른 텍스트
   String get statusText {
     final today = DateTime.now();
-    if (today.isBefore(startDate)) {
-      return '출발 ${startDate.difference(today).inDays}일 전';
-    } else if (today.isAfter(endDate)) {
-      return '다녀온 지 ${today.difference(endDate).inDays}일';
-    } else {
+    final startOfToday = DateTime(today.year, today.month, today.day);
+    final startOfTravel = DateTime(startDate.year, startDate.month, startDate.day);
+    final endOfTravel = DateTime(endDate.year, endDate.month, endDate.day).add(Duration(hours: 23, minutes: 59));
+
+    // 출발 전 상태
+    if (startOfToday.isBefore(startOfTravel)) {
+      final daysUntilStart = startOfTravel.difference(startOfToday).inDays;
+      return '출발 ${daysUntilStart}일 전';
+    }
+    // 여행 중 상태
+    else if (startOfToday.isAfter(startOfTravel.subtract(Duration(days: 1))) && startOfToday.isBefore(endOfTravel)) {
       return '여행 중';
     }
+    // 여행이 끝난 후 상태
+    else if (startOfToday.isAfter(endOfTravel)) {
+      final daysSinceEnd = startOfToday.difference(endOfTravel).inDays;
+      return '다녀온 지 ${daysSinceEnd}일';
+    }
+
+    return ''; // 기본값
   }
 }

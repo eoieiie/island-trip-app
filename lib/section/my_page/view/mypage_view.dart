@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
@@ -70,29 +72,45 @@ class UserProfileSection extends StatelessWidget {
         // Positioned으로 프로필 이미지를 배치
         Positioned(
           left: 0,
-          top: 20, // userTitle과 userName 사이의 간격 조정
-          child: Container(
-            width: 60, // 프로필 이미지의 너비
-            height: 60, // 프로필 이미지의 높이
-            decoration: ShapeDecoration(
-              image: DecorationImage(
-                // 프로필 이미지를 사용하는 부분
-                image: NetworkImage(controller.profileImageUrl), // 수정 전: controller.profileImageUrl
+          top: 20,
+          child: Obx(() {
+            return CircleAvatar(
+              radius: 30,
+              backgroundImage: controller.profileImagePath.value.contains('assets')
+                  ? AssetImage(controller.profileImagePath.value) as ImageProvider
+                  : FileImage(File(controller.profileImagePath.value)),
+              onBackgroundImageError: (_, __) async {
+                // 오류 발생 시 기본 이미지로 교체
+                await controller.setDefaultProfileImage();
+              },
+            );
+          }),
+        ),
+        // 수정 버튼
+        Positioned(
+          left: 40, // 버튼을 프로필 이미지 오른쪽 하단에 배치하기 위한 위치 조정
+          top: 60, // 프로필 이미지 하단에 위치하도록 조정
+          child: GestureDetector( // GestureDetector로 변경
+            onTap: () {
+              // 버튼을 클릭했을 때 실행될 함수
+              log('프로필 수정 버튼 클릭됨', name: 'UserProfileSection');
+              print('프로필 수정 버튼 클릭됨');
 
-                fit: BoxFit.fill, // 이미지가 컨테이너에 꽉 차도록 설정
+              showProfileEditOptions(context, controller);
+            },
+            child: Container(
+              width: 24, // 버튼 크기 설정 (좀 더 크게 변경)
+              height: 24,
+              decoration: BoxDecoration(
+                color: Colors.blue, // 버튼 배경 색상
+                shape: BoxShape.circle, // 동그란 버튼
+                border: Border.all(color: Colors.white, width: 2), // 흰색 테두리
               ),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 2, color: Colors.white), // 흰색 테두리 추가
-                borderRadius: BorderRadius.circular(30), // 둥근 테두리 설정 (반지름을 30으로 설정)
+              child: Icon(
+                Icons.edit, // 수정 아이콘
+                color: Colors.white, // 아이콘 색상
+                size: 12, // 아이콘 크기
               ),
-              shadows: [
-                BoxShadow(
-                  color: Colors.grey[200]!, // 그림자의 색상
-                  blurRadius: 20, // 그림자의 흐림 정도
-                  offset: Offset(0, 8), // 그림자의 위치 조정
-                  spreadRadius: 0, // 그림자의 확산 정도
-                )
-              ],
             ),
           ),
         ),
@@ -104,7 +122,8 @@ class UserProfileSection extends StatelessWidget {
             children: [
               // userTitle과 profileEditButton을 한 줄에 정렬
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center, // userTitle과 profileEditButton을 정렬
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // userTitle과 profileEditButton을 정렬
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -123,28 +142,6 @@ class UserProfileSection extends StatelessWidget {
                     ),
                   ),
                   Spacer(), // userTitle을 왼쪽에 고정하고 나머지 공간 확보
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      backgroundColor: Colors.grey[200], // 버튼 배경색을 회색으로 설정
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
-                      ),
-                      minimumSize: Size(60, 30), // 버튼의 width와 height를 조정
-                    ),
-                    onPressed: () {
-                      Get.to(() => ProfileEditView()); // 프로필 편집 페이지로 이동
-                    },
-                    child: Text(
-                      '프로필 편집',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black, // 텍스트 색상을 검정으로 설정
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
                 ],
               ),
               Text(
@@ -155,11 +152,42 @@ class UserProfileSection extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 4),
-              Text(controller.userDescription), // 한 줄 소개
             ],
           ),
         ),
       ],
+    );
+  }
+
+  // 프로필 수정 옵션 표시
+  void showProfileEditOptions(BuildContext context, MyPageController controller) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('기본 프로필 사진으로 변경'),
+                onTap: () {
+                  controller.setDefaultProfileImage();
+                  Navigator.of(context).pop(); // 모달 닫기
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('갤러리에서 사진 선택'),
+                onTap: () async {
+                  await controller.pickImageFromGallery();
+                  Navigator.of(context).pop(); // 모달 닫기
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

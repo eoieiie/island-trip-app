@@ -123,8 +123,8 @@ class _HomeMapViewState extends State<HomeMapView> {
             onMapReady: _onMapReady,
             options: NaverMapViewOptions(
               initialCameraPosition: NCameraPosition(
-                target: NLatLng(36.0, 127.0),
-                zoom: 6,
+                target: NLatLng(36.0, 128.2),
+                zoom: 5.6,
               ),
             ),
           ),

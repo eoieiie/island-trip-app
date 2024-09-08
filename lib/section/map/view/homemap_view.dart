@@ -6,6 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:project_island/section/map/view/homemap_list.dart';
 import '../viewmodel/island_viewmodel.dart';
 import '../model/island_model.dart';
+import 'package:project_island/section/home/view/island_detail_view.dart';
+
 
 class HomeMapView extends StatefulWidget {
   @override
@@ -57,6 +59,7 @@ class _HomeMapViewState extends State<HomeMapView> {
       controller.addOverlay(marker);
 
       marker.setOnTapListener((overlay) {
+        // Get.to(() => IslandDetailView(islandName: '안면도'/*island.name*/)); // 페이지 전환 코드
         _showIslandDetails(island);
       });
     });

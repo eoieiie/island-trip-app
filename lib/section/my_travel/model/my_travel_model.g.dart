@@ -7,16 +7,21 @@ part of 'my_travel_model.dart';
 // **************************************************************************
 
 TravelModel _$TravelModelFromJson(Map<String, dynamic> json) => TravelModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: DateTime.parse(json['endDate'] as String),
-      island: json['island'] as String,
-      imageUrl: json['imageUrl'] as String,
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+      id: json['id'] as String? ?? '', // null이면 빈 문자열로 처리
+      title: json['title'] as String? ?? 'Untitled', // null이면 기본 제목 설정
+      startDate: json['startDate'] != null
+          ? DateTime.parse(json['startDate'] as String)
+          : DateTime.now(), // null이면 현재 날짜로 처리
+      endDate: json['endDate'] != null
+          ? DateTime.parse(json['endDate'] as String)
+          : DateTime.now(), // null이면 현재 날짜로 처리
+      island: json['island'] as String? ?? 'Unknown', // null이면 기본 섬 이름 설정
+      imageUrl: json['imageUrl'] as String?, // null 허용
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now(), // null이면 현재 날짜로 처리
+);
+
 
 Map<String, dynamic> _$TravelModelToJson(TravelModel instance) =>
     <String, dynamic>{

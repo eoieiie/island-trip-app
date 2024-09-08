@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>kakaof7f5aa7d9be3f42d6274a97fd8e92bab</string>
+            </array>
+        </dict>
+    </array>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>앱에서 사진을 업로드하기 위해 사진 라이브러리에 접근합니다.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>

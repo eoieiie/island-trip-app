@@ -30,7 +30,6 @@ class _MyTravelViewState extends State<MyTravelView> {
     print("Parsed Islands: $islands"); // 파싱된 섬 리스트 출력
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,8 +66,7 @@ class _MyTravelViewState extends State<MyTravelView> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 0, top: 100.0, right: 50.0, bottom: 0.0),
+                  padding: const EdgeInsets.only(left: 0, top: 100.0, right: 50.0, bottom: 0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -114,17 +112,16 @@ class _MyTravelViewState extends State<MyTravelView> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      IslandSelectionView()),
+                              MaterialPageRoute(builder: (context) => IslandSelectionView()),
                             );
                           },
                           child: Text(
                             '+ 일정 추가',
                             style: TextStyle(
-                                fontSize: 14, // 버튼 텍스트 크기 설정
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                              fontSize: 14, // 버튼 텍스트 크기 설정
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(130, 38),
@@ -137,10 +134,16 @@ class _MyTravelViewState extends State<MyTravelView> {
                       : Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ListView.builder(
-                      itemCount: travelViewModel.travels.length,
+                      itemCount: travelViewModel.travels.length + 1,
                       itemBuilder: (context, index) {
-                        final travel =
-                        travelViewModel.travels[index];
+                        if (index == travelViewModel.travels.length) {
+                          // 마지막에 빈 공간을 추가
+                          return SizedBox(
+                            height: 110, // 카드 한 개 크기만큼의 빈 공간 추가
+                          );
+                        }
+
+                        final travel = travelViewModel.travels[index];
                         return Dismissible(
                           key: Key(travel.id),
                           direction: DismissDirection.endToStart,
@@ -148,8 +151,7 @@ class _MyTravelViewState extends State<MyTravelView> {
                             color: Colors.red,
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             alignment: Alignment.centerRight,
-                            child:
-                            Icon(Icons.delete, color: Colors.white),
+                            child: Icon(Icons.delete, color: Colors.white),
                           ),
                           confirmDismiss: (direction) async {
                             return await showDialog(
@@ -157,19 +159,14 @@ class _MyTravelViewState extends State<MyTravelView> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text('삭제 확인'),
-                                  content: Text(
-                                      '정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'),
+                                  content: Text('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'),
                                   actions: <Widget>[
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context)
-                                              .pop(false),
+                                      onPressed: () => Navigator.of(context).pop(false),
                                       child: Text('취소'),
                                     ),
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context)
-                                              .pop(true),
+                                      onPressed: () => Navigator.of(context).pop(true),
                                       child: Text('삭제'),
                                     ),
                                   ],
@@ -178,14 +175,12 @@ class _MyTravelViewState extends State<MyTravelView> {
                             );
                           },
                           onDismissed: (direction) {
-                            travelViewModel
-                                .deleteTravel(travel.id);
+                            travelViewModel.deleteTravel(travel.id);
                           },
                           child: TravelCard(
                             travel: travel,
                             onSave: (updatedTravel) {
-                              travelViewModel.updateTravel(
-                                  index, updatedTravel);
+                              travelViewModel.updateTravel(index, updatedTravel);
                             },
                             islands: islands,
                           ),
@@ -204,13 +199,11 @@ class _MyTravelViewState extends State<MyTravelView> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => IslandSelectionView()),
+                      MaterialPageRoute(builder: (context) => IslandSelectionView()),
                     );
                   },
                   icon: Icon(Icons.add, color: Colors.white),
-                  label: Text('일정 추가',
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                  label: Text('일정 추가', style: TextStyle(color: Colors.white, fontSize: 15)),
                   backgroundColor: Color(0XFF292929),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -238,24 +231,21 @@ class TravelCard extends StatelessWidget {
   // 섬 이름에 따른 이미지 경로를 반환하는 함수
   String getIslandImage(String islandName) {
     switch (islandName) {
+      case '덕적도':
+        return 'assets/icons/3dcamping.png'; // 덕적도: 캠핑 이미지
       case '거제도':
-        return 'assets/icons/3disland.png';
-      case '우도':
-        return 'assets/icons/3dshrimp.png';
-      case '홍도':
-        return 'assets/icons/3ddiving.png';
-      case '고군산군도':
-        return 'assets/icons/3dsurf.png';
-      case '무의도':
-        return 'assets/images/muuido.png';
-      case '진도':
-        return 'assets/icons/3dfish.png';
+        return 'assets/icons/3dsurf.png'; // 거제도: 서핑 이미지
       case '울릉도':
-        return 'assets/icons/3dtube.png';
+        return 'assets/icons/3ddiving.png'; // 울릉도: 다이빙 이미지
+      case '안면도':
+        return 'assets/icons/3dflower.png'; // 안면도: 꽃 관련 이미지
+      case '진도':
+        return 'assets/icons/3dbluefish.png'; // 진도: 파란 물고기 이미지
       default:
-        return 'assets/icons/default_image.png'; // 기본 이미지 설정
+        return 'assets/icons/3disland.png'; // 기본 이미지 설정
     }
   }
+
 
   String getFormattedDate(DateTime date) {
     final weekday = ['월', '화', '수', '목', '금', '토', '일'];
@@ -294,30 +284,31 @@ class TravelCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.grey[300],
+                  backgroundColor: Color(0XFFf7f7f7),
                   backgroundImage: AssetImage(islandImage), // 섬 이름에 맞는 이미지 경로 사용
-                  radius: 30,
+                  radius: 36,
                 ),
-                SizedBox(width: 16),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: 6),
                       Text(
                         '️${travel.island}',
                         style: TextStyle(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 2),
+                      SizedBox(height: 1),
                       Text(
                         travel.title,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 8),
+                      SizedBox(height: 7),
                       Text(
                         '${getFormattedDate(travel.startDate)} ~ ${getFormattedDate(travel.endDate)}', // 날짜 형식에 한글 요일 추가
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -368,7 +359,6 @@ class TravelCard extends StatelessWidget {
     );
   }
 }
-
 
 class EditTravelDialog extends StatefulWidget {
   final TravelModel travel;
@@ -432,7 +422,15 @@ class _EditTravelDialogState extends State<EditTravelDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('여행 정보 수정'),
+      title: Text(
+        '여행 정보 수정',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24,  // 제목 폰트 크기 크게
+          fontWeight: FontWeight.w500, // 제목 폰트 굵게
+          color: Colors.black87, // 제목 색상 변경
+        ),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -449,10 +447,39 @@ class _EditTravelDialogState extends State<EditTravelDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(DateFormat('yyyy-MM-dd').format(_startDate)),
-                  Text('도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(DateFormat('yyyy-MM-dd').format(_endDate)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 80),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('     출발', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          Text(DateFormat('yyyy-MM-dd').format(_startDate)),
+                        ],
+                      ),
+                      SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('     도착', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          Text(DateFormat('yyyy-MM-dd').format(_endDate)),
+                        ],
+                      ),
+                      SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          _selectDateRange(context);
+                        },
+                        icon: Icon(Icons.edit, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -464,7 +491,14 @@ class _EditTravelDialogState extends State<EditTravelDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('취소'),
+          child: Text(
+            '취소',
+            style: TextStyle(
+              color: Colors.grey[800], // 색상 변경
+              fontWeight: FontWeight.w200, // 글씨체 변경
+              fontSize: 16, // 글씨 크기 조정
+            ),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -474,13 +508,23 @@ class _EditTravelDialogState extends State<EditTravelDialog> {
               island: widget.travel.island,
               startDate: _startDate,
               endDate: _endDate,
-              imageUrl: widget.travel.imageUrl,  // 수정: 기존의 imageUrl 값을 유지합니다.
+              imageUrl: widget.travel.imageUrl, // 수정: 기존의 imageUrl 값을 유지합니다.
               updatedAt: DateTime.now(),
             );
             widget.onSave(updatedTravel);
             Navigator.of(context).pop();
           },
-          child: Text('저장'),
+          child: Text(
+            '저장',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16, // 글씨 크기 조정
+              fontWeight: FontWeight.w200, // 글씨체 변경
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent, // 버튼 배경 색상 변경
+          ),
         ),
       ],
     );

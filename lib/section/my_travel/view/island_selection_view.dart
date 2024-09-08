@@ -69,7 +69,7 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
           haloColor: Colors.white,
         ),
         icon: NOverlayImage.fromAssetImage(island.iconUrl), // 섬 아이콘 설정
-        size: Size(50, 50),
+        size: Size(60, 60),
       );
       controller.addOverlay(marker);
 
@@ -183,8 +183,8 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
               onMapReady: _onMapReady,
               options: NaverMapViewOptions(
                 initialCameraPosition: NCameraPosition(
-                  target: NLatLng(36.0, 127.0),
-                  zoom: 6,
+                  target: NLatLng(36.5, 128.45),
+                  zoom: 5.7,
                 ),
               ),
             )

@@ -66,38 +66,33 @@ class Repository {
   int _getContentIdByIslandName(String islandName) {
     // 여기에 다른 섬의 contentId를 추가할 수 있습니다.
     switch (islandName) {
-      case '거문도':
-        return 126283;
-      case '신시도':
-        return 126293; // 예시 contentId
-      case '실미도':
-        return 2767625;
-      case '장자도':
-        return 126299;
+      case '안면도':
+        return 125850;
+      case '울릉도':
+        return 126101;
+      case '덕적도 비조봉':
+        return 2664734;
+      case '거제도':
+        return 126972; // 예시 contentId
+      case '진도':
+        return 126307;
       default:
         return 0; // 기본 contentId, 또는 예외 처리
     }
   }
 
-  // 더미 데이터 - 매거진 목록
-  List<Magazine> fetchMagazines() {
-    return [
-      Magazine(
-        title: '갈매기 까까, 울릉도',
-        description: '사진 울릉도 고슴도치길 226-11',
-        hashtags: ['#가성비', '#스쿠버다이빙', '#탁트인바다'],
-        thumbnail: '',
-        address: null,
-      ),
-      Magazine(
-        title: '울릉도 여행의 모든 것',
-        description: '울릉도의 숨은 명소들을 소개합니다.',
-        hashtags: ['#여행', '#힐링', '#명소'],
-        thumbnail: '',
-        address: null,
-      ),
-    ];
+  // 섬 이름을 받아 매거진 데이터를 가져오는 함수
+  Future<List<Magazine>> fetchMagazines(List<String> islandNames) async {
+    try {
+      // 여러 섬의 매거진 데이터를 가져오는 메서드를 호출
+      List<Magazine> magazines = await fetchMagazinesFromMultipleIslands(islandNames);
+      return magazines; // 가져온 매거진 데이터를 반환
+    } catch (e) {
+      print('Error fetching magazines: $e'); // 에러 처리
+      return []; // 에러 발생 시 빈 리스트 반환
+    }
   }
+
 
   // 더미 데이터 - 물속체험 목록
   List<Content> fetchContents() {

@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../model/my_travel_model.dart';
 import '../model/schedule_model.dart';
 import '../repository/my_travel_repository.dart';
+import 'dart:math';
 
 class MyTravelViewModel extends GetxController {
   var travels = <TravelModel>[].obs;
@@ -32,15 +33,15 @@ class MyTravelViewModel extends GetxController {
   }
 
   String addTravel(String island, DateTime startDate, DateTime endDate) {
-    final String imageUrl = _getImageUrlForIsland(island); // 섬 ID에 연결된 이미지 URL 가져오기
-
+    final List<String> icons = ['😆','☺️', '😚','😘','🥳','🫶', '🍹','🍹','🍹','🍹','🍹','⛱️', '️🐡']; // 사용할 아이콘 리스트
+    final random = Random();
+    final randomIcon = icons[random.nextInt(icons.length)];
     final newTravel = TravelModel(
       id: uuid.v4(),
-      title: '$island 여행',
+      title: '$island 섬캉스️️$randomIcon',
       startDate: startDate,
       endDate: endDate,
       island: island,
-      imageUrl: imageUrl, // 이미지 URL 추가
     );
     travels.add(newTravel);
     saveTravels(); // 여행 데이터 저장
@@ -72,21 +73,6 @@ class MyTravelViewModel extends GetxController {
     saveSchedules(travelId); // 스케줄 데이터 저장
     saveTravels(); // 여행 데이터 저장
     update(); // 상태 업데이트
-  }
-
-  // 섬 ID에 연결된 이미지 URL을 가져오는 메서드 (예시)
-  String _getImageUrlForIsland(String island) {
-    // 실제 URL 로직에 따라 수정 필요
-    switch (island) {
-      case '우도':
-        return 'https://example.com/images/u-do.jpg';
-      case '거제도':
-        return 'https://example.com/images/geoje-do.jpg';
-      case '외도':
-        return 'https://example.com/images/oedo.jpg';
-      default:
-        return ''; // 이미지가 없는 경우 빈 문자열 반환
-    }
   }
 
   Future<void> updateTravel(int index, TravelModel updatedTravel) async {

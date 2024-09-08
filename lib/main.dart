@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_island/section/common/google_api/views/google_search_page.dart';
 import 'package:project_island/section/home/repository/home_repository.dart';
 import 'package:project_island/section/home/viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
@@ -17,6 +18,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/login/view/splash.dart';
 import 'package:project_island/firebase_options.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -34,6 +36,7 @@ void main() async {
 
   Get.put(Repository()); // Repository 인스턴스 등록
   Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
+  await Hive.initFlutter();
   runApp(MyApp()); // MyApp 위젯을 실행합니다.
 }
 
@@ -70,7 +73,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    // const FeedView(), // 피드 페이지
     HomeView(), // 섬 모양 홈버튼 페이지
     MyTravelView(), // 내 일정 페이지
     HomeMapView(), // 맵 페이지

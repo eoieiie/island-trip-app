@@ -18,6 +18,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/login/view/splash.dart';
 import 'package:project_island/firebase_options.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -35,6 +36,7 @@ void main() async {
 
   Get.put(Repository()); // Repository 인스턴스 등록
   Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
+  await Hive.initFlutter();
   runApp(MyApp()); // MyApp 위젯을 실행합니다.
 }
 

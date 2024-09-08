@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_island/section/map/view/homemap_view.dart';
-import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart'; // ViewModel 클래스 변경
-import 'package:project_island/section/map/model/island_model.dart';
+import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
 import 'package:project_island/section/map/view/homemap_listview.dart';
+import 'package:project_island/section/map/widget/custom_appbar.dart'; // CustomAppBar 위젯이 정의된 파일 경로로 수정
+import 'package:project_island/section/map/widget/category_buttons.dart'; // CategoryButtons 위젯이 정의된 파일 경로로 수정
+import 'package:project_island/section/map/model/island_model.dart'; // IslandModel이 정의된 파일 경로로 수정
 
 class HomemapList extends StatefulWidget {
-  const HomemapList({super.key}); // 'key'를 super parameter로 변경
+  const HomemapList({super.key});
 
   @override
   HomemapListState createState() => HomemapListState();
 }
 
 class HomemapListState extends State<HomemapList> {
-  final HomemapListController controller = HomemapListController(); // HomemapListController 인스턴스 생성
-  String selectedCategory = '관심'; // 기본 카테고리 설정 없음, String? selectedCategory;면 기본 카테고리 설정 X
-  String selectedSubCategory = ''; // 하위 카테고리 설정
+  final HomemapListController controller = HomemapListController();
+  String selectedCategory = '관심';
+  String selectedSubCategory = '';
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class HomemapListState extends State<HomemapList> {
             onCategorySelected: (category) {
               setState(() {
                 selectedCategory = category;
-                selectedSubCategory = ''; // 메인 카테고리를 선택하면 하위 카테고리 초기화
+                selectedSubCategory = '';
               });
             },
           ),
@@ -96,7 +98,7 @@ class HomemapListState extends State<HomemapList> {
               Get.to(HomeMapView());
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), // 패딩 조정
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(30),
@@ -107,12 +109,12 @@ class HomemapListState extends State<HomemapList> {
                   const Icon(
                     Icons.pin_drop_sharp,
                     color: Colors.white,
-                    size: 18, // 아이콘 크기
+                    size: 18,
                   ),
-                  const SizedBox(width: 8), // 아이콘과 텍스트 사이의 간격
+                  const SizedBox(width: 8),
                   const Text(
                     '지도보기',
-                    style: TextStyle(color: Colors.white, fontSize: 18), // 텍스트 크기
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ],
               ),
@@ -122,8 +124,6 @@ class HomemapListState extends State<HomemapList> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
-
-
   }
 
   Widget _buildItemCountText() {
@@ -152,136 +152,6 @@ class HomemapListState extends State<HomemapList> {
           );
         }
       },
-    );
-  }
-}
-
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key}); // 'key'를 super parameter로 변경
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      title: const Text('관심 목록', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
-      centerTitle: true,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 3,
-                offset: Offset(0, 0),
-              ),
-            ],
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class CategoryButtons extends StatelessWidget {
-  final String? selectedCategory;
-  final ValueChanged<String> onCategorySelected;
-
-  const CategoryButtons({super.key, required this.selectedCategory, required this.onCategorySelected}); // 'key'를 super parameter로 변경
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          const SizedBox(width: 15),
-          _buildCategoryButton('관심'),
-          _buildCategoryButton('명소/놀거리'),
-          _buildCategoryButton('음식'),
-          _buildCategoryButton('카페'),
-          _buildCategoryButton('숙소'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton(String category) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 1.0),
-      child: ElevatedButton(
-        onPressed: () => onCategorySelected(category),
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(40, 28),
-          backgroundColor: Colors.white,
-          foregroundColor: selectedCategory == category ? Colors.green : Colors.black,
-          side: BorderSide(
-            color: selectedCategory == category ? Colors.green : Colors.grey[200]!,
-            width: 1,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: Text(
-          category,
-          style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500),
-        ),
-      ),
-    );
-  }
-}
-
-class SubCategoryButtons extends StatelessWidget {
-  final String selectedSubCategory;
-  final ValueChanged<String> onSubCategorySelected;
-
-  const SubCategoryButtons({super.key, required this.selectedSubCategory, required this.onSubCategorySelected}); // 'key'를 super parameter로 변경
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          const SizedBox(width: 15),
-          ...['섬', '명소/놀거리', '음식', '카페', '숙소'].map((subCategory) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1.0),
-              child: ElevatedButton(
-                onPressed: () => onSubCategorySelected(subCategory),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(40, 28),
-                  backgroundColor: selectedSubCategory == subCategory ? Colors.green : Colors.white,
-                  foregroundColor: selectedSubCategory == subCategory ? Colors.white : Colors.black,
-                  side: BorderSide(
-                    color: selectedSubCategory == subCategory ? Colors.green : Colors.grey[200]!,
-                    width: 1,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  subCategory,
-                  style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
     );
   }
 }

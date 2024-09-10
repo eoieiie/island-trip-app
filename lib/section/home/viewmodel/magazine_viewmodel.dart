@@ -1,50 +1,81 @@
-// viewmodel/magazine_viewmodel.dart
-/*
 import 'package:get/get.dart';
 import '../model/home_model.dart';
-import '../repository/home_repository.dart';
+import '../repository/home_repository.dart'; // Repository를 가져오기 위한 import
 
-// 매거진 뷰모델 클래스
 class MagazineViewModel extends GetxController {
-  // 리포지토리 인스턴스를 저장할 변수
-  final Repository repository;
+  final Magazine magazine; // Magazine 객체
+  var islandImages = <String>[].obs; // 섬 이미지 목록
+  var isLoading = true.obs; // 로딩 상태
+  var errorMessage = ''.obs; // 오류 메시지
 
-  // 매거진과 가게 리스트를 관리하기 위한 Observable 리스트
-  var magazines = <Magazine>[].obs;
-  var stores = <Store>[].obs;
+  var jsonMagazines = <Magazine1>[].obs; // JSON에서 가져온 매거진 목록
+  final Repository repository; // Repository 객체
 
-  // 생성자에서 리포지토리를 받아옴
-  MagazineViewModel({required this.repository});
+  MagazineViewModel(this.magazine, this.repository);
 
-  // 컨트롤러가 초기화될 때 호출되는 메서드
   @override
   void onInit() {
     super.onInit();
-    fetchMagazines();  // 컨트롤러가 초기화될 때 매거진을 가져옴
-    fetchStores();    // 컨트롤러가 초기화될 때 가게를 가져옴
+    fetchIslandImages(); // 섬 이미지 가져오기
+    fetchMagazinesFromJson(); // JSON에서 매거진 데이터 가져오기
   }
 
-  // 매거진을 가져와서 Observable 리스트를 업데이트하는 메서드
-  void fetchMagazines() async {
+  // 섬의 이미지 데이터를 가져오는 메서드
+  Future<void> fetchIslandImages() async {
     try {
-      // 리포지토리에서 매거진을 가져와서 리스트에 할당
-      var fetchedMagazines = await repository.fetchMagazines();
-      magazines.assignAll(fetchedMagazines);
+      isLoading(true);
+
+      // 섬의 contentId를 가져오기 위한 로직
+      final contentId = _getContentIdByIslandName(magazine.title);
+
+      // contentId가 유효한지 확인합니다.
+      if (contentId == 0) {
+        throw Exception('Invalid content ID for island: ${magazine.address}'); // 오류 메시지 개선
+      }
+
+      // 섬의 이미지 가져오기
+      List<String> images = await repository.fetchIslandImages(contentId);
+      islandImages.assignAll(images);
+
     } catch (e) {
-      // 에러 발생 시 콘솔에 출력
-      print('Error fetching magazines: $e');
+      errorMessage('An error occurred: $e');
+    } finally {
+      isLoading(false);
     }
   }
 
-  // 가게를 가져와서 Observable 리스트를 업데이트하는 메서드
-  void fetchStores() async {
+  // JSON에서 섬의 매거진 데이터를 가져오는 메서드
+  Future<void> fetchMagazinesFromJson() async {
     try {
-      // 리포지토리에서 울릉도 상세 정보를 가져와서 가게 리스트에 할당
-      var fetchedStores = await repository.fetchIslandDetails('울릉도').stores;
-      stores.assignAll(fetchedStores);
+      isLoading(true);
+
+      // JSON 파일에서 해당 섬 이름에 맞는 매거진 데이터를 가져옵니다.
+      List<Magazine1> magazines = await repository.fetchMagazinesByIslandName(magazine.title);
+
+      // 가져온 데이터를 상태 변수에 할당합니다.
+      jsonMagazines.assignAll(magazines);
     } catch (e) {
-      // 에러 발생 시 콘솔에 출력
-      print('Error fetching stores: $e');
+      errorMessage('An error occurred while fetching magazines from JSON: $e');
+    } finally {
+      isLoading(false);
     }
   }
-} */
+
+  // 섬 이름에 따라 contentId를 반환하는 메서드
+  int _getContentIdByIslandName(String islandName) {
+    switch (islandName) {
+      case '안면도':
+        return 125850;
+      case '울릉도':
+        return 126101;
+      case '덕적도 비조봉':
+        return 2664734;
+      case '거제도':
+        return 126972;
+      case '진도':
+        return 126307;
+      default:
+        return 0; // 기본 contentId 또는 예외 처리
+    }
+  }
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart'; // 클립보드 사용을 위해 추가
 import 'package:flutter_svg/flutter_svg.dart';
+import '../repository/home_repository.dart';
 import '../viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
@@ -18,7 +19,7 @@ class IslandDetailView extends StatefulWidget {
 class _IslandDetailViewState extends State<IslandDetailView>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
-  final IslandDetailViewModel viewModel = Get.find<IslandDetailViewModel>();
+  late IslandDetailViewModel viewModel;
   final HomeViewModel homeViewModel = Get.find<HomeViewModel>(); // HomeViewModel 인스턴스 추가
   late TabController _tabController;
 
@@ -30,8 +31,9 @@ class _IslandDetailViewState extends State<IslandDetailView>
       setState(() {});
     });
 
-    // 섬의 세부 정보를 초기화합니다.
-    viewModel.fetchIslandDetails(widget.islandName);
+    // ViewModel 초기화 및 섬 정보 로드
+    viewModel = Get.put(IslandDetailViewModel(Repository()));
+    viewModel.fetchIslandDetails(widget.islandName); // 동적으로 섬 정보를 로드
 
     // 섬에 대한 매거진 데이터를 가져옵니다.
     homeViewModel.fetchMagazinesForIsland(widget.islandName);
@@ -54,10 +56,6 @@ class _IslandDetailViewState extends State<IslandDetailView>
         } else if (viewModel.errorMessage.isNotEmpty) {
           return Center(child: Text(viewModel.errorMessage.value));
         } else {
-          // Debugging 추가
-          print("Island Address: ${viewModel.islandAddress.value}");
-          print("Island Description: ${viewModel.islandDescription.value}");
-
           int currentPage = _pageController.hasClients ? _pageController.page!.toInt() : 0;
 
           return Stack(
@@ -295,7 +293,7 @@ class _IslandDetailViewState extends State<IslandDetailView>
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Obx(() {
-                                  if (homeViewModel.magazines.isEmpty) {
+                                  if (viewModel.islandMagazines.isEmpty) {
                                     return Text(
                                       '매거진 내용이 없습니다.',
                                       style: TextStyle(
@@ -304,37 +302,78 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                       ),
                                     );
                                   } else {
-                                    final magazine = homeViewModel.magazines.first; // 해당 섬의 첫 번째 매거진만 표시
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // 매거진 카드 탭 시 MagazineView로 이동
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MagazineView(magazine: magazine),
-                                          ),
-                                        );
-                                      },
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Image.network(
-                                            magazine.thumbnail,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: 200.0,
-                                          ),
-                                          SizedBox(height: 10.0),
-                                          Text(
-                                            magazine.title,
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
+                                    return Column(
+                                      children: viewModel.islandMagazines.map((magazine) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            // 매거진 카드 탭 시 MagazineView로 이동
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => MagazineView(magazine: magazine),
+                                              ),
+                                            );
+                                          },
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(16.0), // 카드 모서리를 둥글게
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white, // 카드 배경색
+                                                borderRadius: BorderRadius.circular(16.0), // 둥근 모서리 설정
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 5.0,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)), // 이미지 모서리를 둥글게
+                                                    child: Image.network(
+                                                      magazine.thumbnail,
+                                                      fit: BoxFit.cover,
+                                                      width: double.infinity,
+                                                      height: 200.0,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(16.0), // 내부 여백 추가
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          magazine.title,
+                                                          style: TextStyle(
+                                                            fontSize: 20.0,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 5.0), // 간격 조정
+                                                        Text(
+                                                          magazine.description,
+                                                          maxLines: 2, // 최대 두 줄까지만 표시
+                                                          overflow: TextOverflow.ellipsis, // 넘치는 텍스트는 "..."으로 표시
+                                                          style: TextStyle(
+                                                            color: Color(0xFF666666),
+                                                            fontSize: 12,
+                                                            fontFamily: 'Pretendard',
+                                                            fontWeight: FontWeight.w400,
+                                                            height: 1.5, // 줄 간격을 넓혀서 텍스트가 겹치지 않도록 함
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          SizedBox(height: 10.0),
-                                        ],
-                                      ),
+                                        );
+                                      }).toList(),
                                     );
                                   }
                                 }),

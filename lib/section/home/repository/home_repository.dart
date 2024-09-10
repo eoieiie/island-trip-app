@@ -2,8 +2,26 @@ import '../model/home_model.dart';
 import 'dart:convert';  // JSON 파싱을 위해 필요
 import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';  // 로컬 JSON 파일을 불러오기 위해 필요
 
 class Repository {
+
+  // JSON 파일을 로드하고 Magazine1 목록을 반환하는 메서드
+  Future<List<Magazine1>> fetchMagazinesFromJson() async {
+    final String response = await rootBundle.loadString('assets/magazines.json');
+    final List<dynamic> data = json.decode(response);
+
+    // JSON 데이터를 Magazine1 객체의 목록으로 변환
+    return data.map((json) => Magazine1.fromJson(json)).toList();
+  }
+
+  // 특정 섬 이름에 대한 매거진 데이터를 가져오는 메서드
+  Future<List<Magazine1>> fetchMagazinesByIslandName(String islandName) async {
+    List<Magazine1> magazines = await fetchMagazinesFromJson();
+
+    // 섬 이름이 매거진 제목에 포함된 항목 필터링
+    return magazines.where((magazine) => magazine.title.contains(islandName)).toList();
+  }
   final String apiKey = dotenv.env['TOUR_API_KEY'] ?? ''; // 환경 변수에서 API 키 가져오기
 
   // 여러 섬의 매거진 데이터를 가져오는 함수
@@ -61,6 +79,7 @@ class Repository {
       throw Exception('Failed to load magazines from API');
     }
   }
+
 
   // 섬에 따라 contentId를 반환하는 함수
   int _getContentIdByIslandName(String islandName) {

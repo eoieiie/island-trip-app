@@ -13,6 +13,30 @@ class Magazine {
     this.address, // 생성자에서 필드를 optional로 변경
   });
 }
+class Magazine1 {
+  final String title;
+  final String littletitle;
+  final List<String> hashtags;
+  final String content;
+
+  Magazine1({
+    required this.title,
+    required this.littletitle,
+    required this.hashtags,
+    required this.content,
+  });
+
+  // JSON 데이터를 Magazine 객체로 변환하는 팩토리 메서드
+  factory Magazine1.fromJson(Map<String, dynamic> json) {
+    return Magazine1(
+      title: json['_magazinetitle'] as String,
+      littletitle: json['_magazinelittletitle'] as String,
+      hashtags: List<String>.from(json['_magazinehashtags']),
+      content: json['_magazinecontent'] as String,
+    );
+  }
+}
+
 
 class Content {
   final String title;

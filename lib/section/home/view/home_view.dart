@@ -40,8 +40,8 @@ class HomeView extends StatelessWidget {
             ),
             // 바텀 시트 영역
             DraggableScrollableSheet(
-              initialChildSize: 0.445,
-              minChildSize: 0.445,
+              initialChildSize: 0.40,
+              minChildSize: 0.40,
               maxChildSize: 1.0, // 화면 끝까지 올라갈 수 있도록 설정
               builder: (context, scrollController) {
                 return BottomSheetContent(
@@ -78,7 +78,7 @@ class _MagazineSectionState extends State<MagazineSection> {
       child: Stack(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.45, // 화면의 45%를 차지하도록 설정
+            height: MediaQuery.of(context).size.height * 0.555, // 바텀 시트 높이 0.445에 맞게 매거진 높이 조정
             child: MagazineListView(
               viewModel: widget.viewModel,
               onPageChanged: (index) {
@@ -102,7 +102,6 @@ class _MagazineSectionState extends State<MagazineSection> {
     );
   }
 }
-
 class MagazineListView extends StatelessWidget {
   final HomeViewModel viewModel;
   final Function(int) onPageChanged;

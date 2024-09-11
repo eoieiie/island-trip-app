@@ -183,27 +183,27 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     switch (travel.island) {
       case '덕적도':
         imageUrl = 'assets/icons/3dcamping.png';
-        tags = ['#캠핑', '#해변', '#트레킹', '#수영', '#자연경관'];
+        tags = ['#캠핑', '#해변', '#트레킹'];
         rating = 4.7;
         break;
       case '거제도':
         imageUrl = 'assets/icons/3dsurf.png';
-        tags = ['#스노쿨링', '#낚시', '#해변', '#해산물', '#힐링'];
+        tags = ['#해양스포츠', '#스노쿨링', '#낚시', '#해변'];
         rating = 4.8;
         break;
       case '울릉도':
         imageUrl = 'assets/icons/3ddiving.png';
-        tags = ['#등산', '#낚시', '#자연경관', '#해양스포츠', '#해산물'];
+        tags = ['#스노쿨링', '#낚시', '#자연경관'];
         rating = 4.9;
         break;
       case '안면도':
         imageUrl = 'assets/icons/3dflower.png';
-        tags = ['#해변', '#해양스포츠', '#낚시', '#캠핑', '#힐링'];
+        tags = ['#꽃축제', '#액티비티', '#힐링'];
         rating = 4.6;
         break;
       case '진도':
         imageUrl = 'assets/icons/3dbluefish.png';
-        tags = ['#물회', '#낚시', '#전통시장', '#역사', '#진도대교', '#문화유적'];
+        tags = ['#물회', '#낚시', '#전통시장'];
         rating = 4.5;
         break;
       default:
@@ -369,24 +369,24 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     // 섬 이름에 따른 지도 초기 위치와 줌 레벨을 설정
     switch (widget.selectedIsland) {
       case '덕적도':
-        initialPosition = NLatLng(37.2298, 126.1444); // 덕적도 좌표
-        initialZoom = 10.0; // 줌 레벨
+        initialPosition = NLatLng(37.2338, 126.1344); // 덕적도 좌표
+        initialZoom = 10.2; // 줌 레벨
         break;
       case '거제도':
         initialPosition = NLatLng(34.8806, 128.6217); // 거제도 좌표
         initialZoom = 9.0;
         break;
       case '울릉도':
-        initialPosition = NLatLng(37.4886, 130.9055); // 울릉도 좌표
+        initialPosition = NLatLng(37.4986, 130.8655); // 울릉도 좌표
         initialZoom = 10.0;
         break;
       case '안면도':
-        initialPosition = NLatLng(36.5262, 126.2967); // 안면도 좌표
-        initialZoom = 11.0;
+        initialPosition = NLatLng(36.5062, 126.2967); // 안면도 좌표
+        initialZoom = 9.0;
         break;
       case '진도':
-        initialPosition = NLatLng(34.4887, 126.2630); // 진도 좌표
-        initialZoom = 11.0;
+        initialPosition = NLatLng(34.4687, 126.2230); // 진도 좌표
+        initialZoom = 8.8;
         break;
       default:
         initialPosition = NLatLng(36.0665, 127.2780); // 기본 위치 (서울)
@@ -432,7 +432,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       children: schedules.map((schedule) {
         return _buildScheduleItem(
           schedule.title,
-          "${schedule.startTime} ~ ${schedule.endTime}",
+          "${schedule.startTime}",
           schedule.memo ?? '',
         );
       }).toList(),
@@ -452,7 +452,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
         children: [
-          Text('$place $time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 장소 및 시간 표시
+          Text('  $place', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 장소 및 시간 표시
+          Text('  $time', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w100)), // 장소 및 시간 표시
           if (memo.isNotEmpty) // 메모가 있을 경우에만 표시
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -462,7 +463,31 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
             children: [
               _buildWhiteButton('교통편 보기', () {}), // 교통편 보기 버튼
               SizedBox(width: 10), // 간격
-              _buildWhiteButton('메모 추가', () {}), // 메모 추가 버튼
+              _buildWhiteButton('메모 추가', () async {
+                // 메모 추가 버튼 클릭 시 스케줄 추가 뷰로 이동
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ScheduleAddView(
+                      travelId: widget.travelId, // travelId 전달
+                      selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)), // 선택된 날짜 전달
+                      travelViewModel: travelViewModel,  // ViewModel 인스턴스 전달
+                      title: place,
+                      startTime: time,
+                      endTime: "23:59", // 기존 종료 시간 예시
+                      memo: memo,
+                    ),
+                  ),
+                );
+                if (result == true) {
+                  // 돌아온 후 화면 갱신
+                  await travelViewModel.loadSchedules(widget.travelId).then((_) {
+                    setState(() {
+                      // 일정 업데이트
+                    });
+                  });
+                }
+              }),
             ],
           ),
         ],

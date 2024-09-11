@@ -10,6 +10,7 @@ import 'package:project_island/section/my_page/view/setting_view.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth;
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 import '../../login/view/login_view.dart';
+import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 
 class MyPageView extends StatelessWidget {
 
@@ -76,17 +77,12 @@ class UserProfileSection extends StatelessWidget {
           child: Obx(() {
             return CircleAvatar(
               radius: 30,
-              backgroundImage: controller.profileImagePath.value.contains('assets')
-                  ? AssetImage(controller.profileImagePath.value) as ImageProvider
-                  : FileImage(File(controller.profileImagePath.value)),
-              onBackgroundImageError: (_, __) async {
-                // 오류 발생 시 기본 이미지로 교체
-                await controller.setDefaultProfileImage();
-              },
+              backgroundImage: AssetImage(controller.profileImagePath.value),
             );
           }),
         ),
         // 수정 버튼
+        /*
         Positioned(
           left: 40, // 버튼을 프로필 이미지 오른쪽 하단에 배치하기 위한 위치 조정
           top: 60, // 프로필 이미지 하단에 위치하도록 조정
@@ -114,6 +110,7 @@ class UserProfileSection extends StatelessWidget {
             ),
           ),
         ),
+         */
         // 프로필 사진 우측에 텍스트와 버튼을 배치
         Padding(
           padding: const EdgeInsets.only(left: 75.0), // 프로필 사진 크기만큼 패딩 추가
@@ -145,7 +142,7 @@ class UserProfileSection extends StatelessWidget {
                 ],
               ),
               Text(
-                controller.userName, // 사용자 이름
+                controller.userName.value, // 사용자 이름
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -160,6 +157,7 @@ class UserProfileSection extends StatelessWidget {
   }
 
   // 프로필 수정 옵션 표시
+  /*
   void showProfileEditOptions(BuildContext context, MyPageController controller) {
     showModalBottomSheet(
       context: context,
@@ -190,6 +188,8 @@ class UserProfileSection extends StatelessWidget {
       },
     );
   }
+
+   */
 }
 
 
@@ -197,6 +197,7 @@ class UserProfileSection extends StatelessWidget {
 class MenuListSection extends StatelessWidget {
   final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
   final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
+  final MyPageController _myPageController = MyPageController();
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -237,6 +238,7 @@ class MenuListSection extends StatelessWidget {
             } else if (kakaoUser != null) {
               await _kakaoAuthService.kakaoSignOut();
             }
+            _myPageController.clearUserData();
 
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => LoginScreen()),

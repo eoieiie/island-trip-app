@@ -18,12 +18,7 @@ class IslandDetailViewModel extends GetxController {
 
   IslandDetailViewModel(this.repository);
 
-  @override
-  void onInit() {
-    super.onInit();
-    // 섬 이름을 동적으로 받아서 세부 정보를 가져오는 방식으로 변경
-    fetchIslandDetails('안면도'); // 예시로 '거문도'를 사용. 실제로는 동적 값 사용
-  }
+  // 초기화 로직 제거
 
   Future<void> fetchIslandDetails(String islandName) async {
     try {
@@ -31,7 +26,6 @@ class IslandDetailViewModel extends GetxController {
 
       // 섬의 contentId를 가져오기 위한 API 호출
       final contentId = _getContentIdByIslandName(islandName);
-
 
       // contentId가 유효한지 확인합니다.
       if (contentId == 0) {

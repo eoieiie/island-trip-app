@@ -6,38 +6,35 @@ class IslandRepository {
   final GooglePlaceViewModel _googlePlaceViewModel = GooglePlaceViewModel(); // 구글 API 사용을 위한 ViewModel 인스턴스 생성
   List<IslandModel> _savedItems = []; // 저장된 항목들을 관리하는 리스트
 
-  // 로컬 JSON 파일에서 섬 데이터를 로드하는 메서드
+  // 5개의 섬의 정보 (위도, 경도, 주소 앞부분 포함)
+  final List<IslandModel> _fiveIslands = [
+    IslandModel(name: '덕적도', latitude: 37.2100, longitude: 126.1157, address: '인천 옹진군 덕적면', imageUrl: '', iconUrl: '', tags: [], title: '', description: '', category: '', phone: '', website: '', rating: null, isOpenNow: null),
+    IslandModel(name: '안면도', latitude: 36.5294, longitude: 126.3109, address: '충남 태안군 안면읍', imageUrl: '', iconUrl: '', tags: [], title: '', description: '', category: '', phone: '', website: '', rating: null, isOpenNow: null),
+    IslandModel(name: '진도', latitude: 34.4869, longitude: 126.2639, address: '전남 진도군', imageUrl: '', iconUrl: '', tags: [], title: '', description: '', category: '', phone: '', website: '', rating: null, isOpenNow: null),
+    IslandModel(name: '거제도', latitude: 34.8809, longitude: 128.6217, address: '경남 거제시', imageUrl: '', iconUrl: '', tags: [], title: '', description: '', category: '', phone: '', website: '', rating: null, isOpenNow: null),
+    IslandModel(name: '울릉도', latitude: 37.4914, longitude: 130.9053, address: '경북 울릉군', imageUrl: '', iconUrl: '', tags: [], title: '', description: '', category: '', phone: '', website: '', rating: null, isOpenNow: null),
+  ];
+
+  // 5개의 섬 목록을 반환하는 메서드
+  List<IslandModel> getFiveIslands() {
+    return _fiveIslands;
+  }
+
+// 로컬 JSON 파일에서 섬 데이터를 로드하는 메서드
   Future<List<IslandModel>> loadIslands() async {
-    // 로컬 데이터를 로드하는 로직 (필요 시)
     return []; // 여기서는 빈 리스트 반환 (예제 목적)
   }
 
-  // 카테고리에 따른 섬(장소) 데이터를 가져오는 메서드
+  // 카테고리에 따른 항목을 비동기로 가져오는 메서드
   Future<List<IslandModel>> getItemsByCategory(String category) async {
-    List<GooglePlaceModel> places = [];
+    List<GooglePlaceModel> places = await _googlePlaceViewModel.searchPlaces(category);
 
-    // 카테고리에 따라 구글 API로 장소 검색
-    if (category == '명소/놀거리') {
-      final places1 = await _googlePlaceViewModel.searchPlaces('명소');
-      final places2 = await _googlePlaceViewModel.searchPlaces('놀거리');
-      places = [...places1, ...places2];
-    } else if (category == '섬') {
-      places = await _googlePlaceViewModel.searchPlaces('island'); // "섬" 검색
-    } else if (category == '음식') {
-      places = await _googlePlaceViewModel.searchPlaces('음식점');
-    } else if (category == '카페') {
-      places = await _googlePlaceViewModel.searchPlaces('카페');
-    } else if (category == '숙소') {
-      places = await _googlePlaceViewModel.searchPlaces('숙박');
-    } else {
-      places = await _googlePlaceViewModel.searchPlaces(category);
-    }
-
-    // 평점 순으로 정렬 (높은 평점이 상위에 오도록)
-    places.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
-
-    // 필터링된 장소를 IslandModel로 변환
-    return places.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();
+    // 각 섬의 주소 앞부분으로 필터링
+    return places
+        .where((place) =>
+        _fiveIslands.any((island) => place.address.contains(island.address))) // 주소 앞부분으로 필터링
+        .map((place) => IslandModel.fromGooglePlaceModel(place))
+        .toList();
   }
 
   // 저장된 항목들을 반환하는 메서드
@@ -55,3 +52,7 @@ class IslandRepository {
     }
   }
 }
+
+
+
+

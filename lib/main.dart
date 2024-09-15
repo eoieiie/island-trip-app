@@ -158,7 +158,7 @@ class _MainPageState extends State<MainPage> {
               child: Container(
                 width: 70,
                 height: 70,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
                 child: SvgPicture.asset(

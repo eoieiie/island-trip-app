@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project_island/section/map/view/homemap_listview.dart';
+import 'package:project_island/section/map/view/homemap_view.dart';
 import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
-import 'package:project_island/section/map/widget/custom_appbar.dart';
-import 'package:project_island/section/map/widget/category_buttons.dart';
-import 'package:project_island/section/map/model/island_model.dart';
+import 'package:project_island/section/map/view/homemap_listview.dart';
+import 'package:project_island/section/map/widget/custom_appbar.dart'; // CustomAppBar 위젯이 정의된 파일 경로로 수정
+import 'package:project_island/section/map/widget/category_buttons.dart'; // CategoryButtons 위젯이 정의된 파일 경로로 수정
+import 'package:project_island/section/map/model/island_model.dart'; // IslandModel이 정의된 파일 경로로 수정
 
 class HomemapList extends StatefulWidget {
   const HomemapList({super.key});
@@ -14,9 +15,9 @@ class HomemapList extends StatefulWidget {
 }
 
 class HomemapListState extends State<HomemapList> {
-  final HomemapListController controller = HomemapListController(); // controller 선언
-  String selectedCategory = ''; // 기본 카테고리 설정
-  String selectedSubCategory = ''; // 기본 하위 카테고리 설정
+  final HomemapListController controller = HomemapListController();
+  String selectedCategory = '관심';
+  String selectedSubCategory = '';
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +72,7 @@ class HomemapListState extends State<HomemapList> {
           ),
           Expanded(
             child: FutureBuilder<List<IslandModel>>(
-              future: selectedCategory.isEmpty
-                  ? controller.getFiveIslands()
-                  : controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
-
+              future: controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -84,26 +82,53 @@ class HomemapListState extends State<HomemapList> {
                   return const Center(child: Text('저장된 항목이 없습니다.'));
                 } else {
                   final items = snapshot.data!;
-                  return HomemapListView(
-                    items: items,
-                    controller: controller, // controller 전달
-                    selectedCategory: selectedCategory, // selectedCategory 전달
-                  );
+                  return HomemapListView(items: items, controller: controller); // IslandModel을 SavedListView에 전달
                 }
               },
             ),
           ),
         ],
       ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: GestureDetector(
+            onTap: () {
+              Get.to(HomeMapView());
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.pin_drop_sharp,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '지도보기',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
   Widget _buildItemCountText() {
     return FutureBuilder<List<IslandModel>>(
-      // 기본 카테고리 선택이 없으면 5개의 섬 목록을, 카테고리가 선택되면 해당 카테고리의 장소 목록을 불러옴
-      future: selectedCategory.isEmpty
-          ? controller.getFiveIslands() // 기본 카테고리 선택 안됨 -> 5개의 섬 목록 불러옴
-          : controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
+      future: controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text(

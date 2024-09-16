@@ -38,7 +38,6 @@ class MyPageView extends StatelessWidget {
       ),
       backgroundColor: Colors.white, // 전체 배경 색상 흰색으로 설정
       body: GetBuilder<MyPageController>(
-        init: MyPageController(),
         builder: (controller) {
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
@@ -141,6 +140,7 @@ class UserProfileSection extends StatelessWidget {
                   Spacer(), // userTitle을 왼쪽에 고정하고 나머지 공간 확보
                 ],
               ),
+              SizedBox(height: 10),
               Text(
                 controller.userName.value, // 사용자 이름
                 style: TextStyle(
@@ -188,7 +188,6 @@ class UserProfileSection extends StatelessWidget {
       },
     );
   }
-
    */
 }
 
@@ -238,11 +237,16 @@ class MenuListSection extends StatelessWidget {
             } else if (kakaoUser != null) {
               await _kakaoAuthService.kakaoSignOut();
             }
-            _myPageController.clearUserData();
 
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => LoginScreen()),
-            );
+
+            // 로그아웃 후 MyPageController 강제 초기화
+            // Get.delete<MyPageController>();
+            // Get.put(MyPageController()); // 새로운 MyPageController 인스턴스 등록
+
+            // Navigator.of(context).pushReplacement(
+            //   MaterialPageRoute(builder: (context) => LoginScreen()),
+            // );
+            Get.offAll(() => LoginScreen());
           },
         ),
         ListTile(

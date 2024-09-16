@@ -21,13 +21,14 @@ class MyPageController extends GetxController {
   void onInit() {
     super.onInit();
     loadUserName(); // 사용자 이름을 로드하는 함수 호출
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    print("불러오기");
-    loadUserName(); // 사용자 이름을 로드하는 함수 호출
+    // 인증 상태 변화를 감지하여 사용자 이름 업데이트
+    auth.FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user != null) {
+        updateUserName(user.displayName ?? '');
+      } else {
+        clearUserData();
+      }
+    });
   }
 
   // Firebase로부터 로그인된 사용자 이름을 가져와서 업데이트하는 메서드

@@ -4,12 +4,13 @@ import 'package:project_island/section/login/model/login_model.dart' as google_a
 import 'package:project_island/section/home/view/home_view.dart'; // HomeScreen 불러오기
 import 'package:project_island/section/login/view/login_view.dart'; // LoginScreen 불러오기
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
-
 import '../../../main.dart';
+
 
 class SplashScreen extends StatelessWidget {
   final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
   final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,3 +27,44 @@ class SplashScreen extends StatelessWidget {
     }
   }
 }
+
+/*
+class SplashScreen extends StatelessWidget {
+  final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
+  final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService();
+  @override
+  Widget build(BuildContext context) {
+    // Wait for 2 seconds and then decide which page to navigate
+    Future.delayed(Duration(seconds: 2), () {
+      _navigateToNextScreen(context);
+    });
+
+    return Scaffold(
+      body: Center(
+        child: Text('Splash Screen'), // Replace with your splash UI
+      ),
+    );
+  }
+
+  void _navigateToNextScreen(BuildContext context) async {
+    // Check if user is logged in
+    User? googleUser = _googleAuthService.googleGetCurrentUser();
+    User? kakaoUser = _kakaoAuthService.kakaoGetCurrentUser();
+
+    if (googleUser != null || kakaoUser != null) {
+      // User is logged in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } else {
+      // User is not logged in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
+  }
+}
+
+ */

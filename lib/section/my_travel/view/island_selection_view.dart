@@ -146,6 +146,7 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
         title: Text(
           '',
           style: TextStyle(color: Colors.black),

@@ -44,8 +44,9 @@ class GooglePlaceModel {
         photoUrls: json['photos'] != null
             ? (json['photos'] as List)
             .map((photo) =>
-        'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo['photo_reference']}&key=$apiKey')
+        'https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference=${photo['photo_reference']}&key=$apiKey')
             .toList() //사진의 해상도를 400으로 설정. 모바일 환경에서 너무 큰 이미지는 로딩 시간이 길어질 수 있고, 너무 작은 이미지는 품질이 떨어질 수 있어 400px 정도가 적당하다고 함.
+        // 300으로 바꿔볼게용~
 
             : null,
         // rating 값이 있으면 double로 변환하고 없으면 null로 설정

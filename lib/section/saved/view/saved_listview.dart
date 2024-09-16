@@ -21,16 +21,16 @@ class SavedListView extends StatelessWidget {
         return Column(
           children: [
             ListTile(
-              leading: ItemImage(imageUrl: item.imageUrl), // ItemImage 위젯 사용
+              leading: ItemImage(imageUrl: item.imageUrl),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ItemAddress(address: item.address), // ItemAddress 위젯 사용
-                  ItemTitle(title: item.title), // ItemTitle 위젯 사용
+                  ItemAddress(address: item.address),
+                  ItemTitle(title: item.title),
                   ItemDescription(
                     rating: item.rating,
                     isOpenNow: item.isOpenNow,
-                  ), // ItemDescription 위젯 사용
+                  ),
                 ],
               ),
               trailing: BookmarkButton(
@@ -39,8 +39,7 @@ class SavedListView extends StatelessWidget {
                 onUpdate: () => controller.toggleBookmark(item),
               ),
               onTap: () {
-                // 상세 페이지로 이동하는 로직
-                // Get.to(() => PlaceDetailPage(place: item));
+                // 상세 페이지 이동 로직 추가 가능
               },
             ),
             if (index != items.length - 1)
@@ -73,7 +72,6 @@ class ItemImage extends StatelessWidget {
           imageUrl,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            // 이미지 로드에 실패하면 로컬 이미지로 대체
             return Image.asset(
               'assets/images/No_photo_available.webp',
               fit: BoxFit.cover,
@@ -85,7 +83,7 @@ class ItemImage extends StatelessWidget {
   }
 }
 
-// 주소를 표시하는 위젯
+// ItemAddress 위젯 정의
 class ItemAddress extends StatelessWidget {
   final String address;
 
@@ -109,7 +107,7 @@ class ItemAddress extends StatelessWidget {
   }
 }
 
-// 장소 이름을 표시하는 위젯
+// ItemTitle 위젯 정의
 class ItemTitle extends StatelessWidget {
   final String title;
 
@@ -125,7 +123,7 @@ class ItemTitle extends StatelessWidget {
   }
 }
 
-// 설명(평점과 영업 상태)을 표시하는 위젯
+// ItemDescription 위젯 정의
 class ItemDescription extends StatelessWidget {
   final double? rating;
   final bool? isOpenNow;
@@ -139,8 +137,8 @@ class ItemDescription extends StatelessWidget {
         if (rating != null)
           Row(
             children: [
-              const Icon(Icons.star, color: Colors.yellow, size: 16), // 별표 아이콘
-              const SizedBox(width: 4), // 아이콘과 텍스트 사이의 간격
+              const Icon(Icons.star, color: Colors.yellow, size: 16),
+              const SizedBox(width: 4),
               Text(
                 rating.toString(),
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
@@ -148,13 +146,13 @@ class ItemDescription extends StatelessWidget {
             ],
           ),
         if (rating != null && isOpenNow != null)
-          const SizedBox(width: 8), // 평점과 영업 상태 사이의 간격
+          const SizedBox(width: 8),
         if (isOpenNow != null)
           Text(
             isOpenNow! ? '영업 중' : '영업 종료',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.bold, // 영업 상태 텍스트 굵게 표시
+              fontWeight: FontWeight.bold,
               color: isOpenNow! ? Colors.green : Colors.red,
             ),
           ),
@@ -163,7 +161,7 @@ class ItemDescription extends StatelessWidget {
   }
 }
 
-// 북마크 버튼 위젯
+// 북마크 버튼 위젯 정의
 class BookmarkButton extends StatelessWidget {
   final SavedItem item;
   final SavedController controller;

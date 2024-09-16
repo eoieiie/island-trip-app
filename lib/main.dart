@@ -19,6 +19,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/login/view/splash.dart';
 import 'package:project_island/firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:project_island/custom_navigation_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
@@ -48,8 +49,15 @@ class MyApp extends StatelessWidget {
       title: 'Island Travel App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        canvasColor: Colors.white,
+        cardColor: Colors.white,
+        primaryColor: Colors.white,
+        colorScheme: ColorScheme.light(
+          primary: Colors.white, // 주요 색상
+          secondary: Colors.blue, // 보조 색상
+        ),
       ),
-      home: SplashScreen(), // 앱의 시작 페이지를 MainPage로 설정합니다.
+      home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
     );
   }
 }
@@ -73,11 +81,11 @@ class _MainPageState extends State<MainPage> {
   }
 
   static final List<Widget> _widgetOptions = <Widget>[
-    HomeView(), // 섬 모양 홈버튼 페이지
-    MyTravelView(), // 내 일정 페이지
-    HomeMapView(), // 맵 페이지
-    SavedView(), //SearchPage(),
-    MyPageView(), // 마이페이지
+    HomeView(),
+    MyTravelView(),
+    HomeMapView(),
+    SavedView(),
+    MyPageView(),
   ];
 
   void _onItemTapped(int index) {
@@ -89,101 +97,101 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: UniqueKey(),
+      backgroundColor: Colors.white,
       body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: Stack(
-        children: [
-          Theme(
-            data: Theme.of(context).copyWith(
-              canvasColor: Colors.white,  // BottomNavigationBar 배경색을 흰색으로 설정
-            ),
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/images/icon-home-mono.svg',
-                    width: 24,
-                    height: 24,
-                    color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
-                  ),
-                  label: '홈',
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 6.0,
+        elevation: 0,  // 그림자 없애기
+        child: Container(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround, // 아이콘을 균등하게 배치
+            children: <Widget>[
+              IconButton(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-home-mono.svg',
+                  color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
                 ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/images/icon_calendar.svg',
-                    width: 24,
-                    height: 24,
-                    color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
-                  ),
-                  label: '일정',
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/images/icon-stack-up-square-mono.svg',
-                    width: 24,
-                    height: 24,
-                    color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
-                  ),
-                  label: '저장',
-                ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/images/icon-user-mono.svg',
-                    width: 24,
-                    height: 24,
-                    color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
-                  ),
-                  label: '마이페이지',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Colors.green,
-              unselectedItemColor: Colors.grey,
-              onTap: _onItemTapped,
-              showSelectedLabels: false,  // 선택된 아이템의 label을 숨깁니다.
-              showUnselectedLabels: false,  // 선택되지 않은 아이템의 label을 숨깁니다.
-            ),
-          ),
-          Positioned(
-            top: -25,
-            left: MediaQuery.of(context).size.width / 2 - 33,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeMapView()),
-                );
-              },
-              child: Container(
-                width: 66,
-                height: 66,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3), // 그림자의 색상과 투명도
-                      spreadRadius: 2, // 그림자 퍼짐의 정도
-                      blurRadius: 5,   // 그림자의 흐림 정도
-                      offset: Offset(0, 5), // 그림자의 위치 (x, y)
-                    ),
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  'assets/images/mapIcon.svg',
-                  width: 52,
-                  height: 52,
-                  fit: BoxFit.cover,
-                ),
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 0;
+                  });
+                },
               ),
-            ),
+              IconButton(
+                icon: SvgPicture.asset(
+                  'assets/images/icon_calendar.svg',
+                  color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 1;
+                  });
+                },
+              ),
+              SizedBox(width: 40), // 플로팅 액션 버튼 공간 확보
+              IconButton(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-stack-up-square-mono.svg',
+                  color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 3;
+                  });
+                },
+              ),
+              IconButton(
+                icon: SvgPicture.asset(
+                  'assets/images/icon-user-mono.svg',
+                  color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 4;
+                  });
+                },
+              ),
+            ],
           ),
-        ],
-        clipBehavior: Clip.none,
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeMapView()),
+          );
+        },
+        child: SvgPicture.asset(
+          'assets/images/mapIcon.svg',
+          fit: BoxFit.contain,
+          width: 52,
+          height: 52,
+        ),
+        backgroundColor: Colors.white,
+        shape: CircleBorder(),
+      ),
+
+      floatingActionButtonLocation: CustomFloatingActionButtonLocation(offsetY: -7),
     );
+  }
+}
+// Custom Floating Action Button Location class
+class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
+  final double offsetY; // Y축 조정을 위한 변수
+
+  CustomFloatingActionButtonLocation({this.offsetY = 0});
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    // X 좌표는 화면 중앙, Y 좌표는 기본 위치에서 offsetY 만큼 아래로
+    double fabX = (scaffoldGeometry.scaffoldSize.width - scaffoldGeometry.floatingActionButtonSize.width) / 2;
+    double fabY = scaffoldGeometry.scaffoldSize.height - scaffoldGeometry.floatingActionButtonSize.height - 16 + offsetY;
+    return Offset(fabX, fabY);
   }
 }

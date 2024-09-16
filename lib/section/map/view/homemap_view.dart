@@ -381,6 +381,7 @@ class _HomeMapViewState extends State<HomeMapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         title: Text(
           '섬 선택',

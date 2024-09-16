@@ -110,6 +110,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white, // 앱바 배경색 흰색
+        scrolledUnderElevation: 0,
         elevation: 0, // 그림자 없애기
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 앱바 왼쪽 패딩 설정

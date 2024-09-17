@@ -9,7 +9,9 @@ import '../viewmodel/island_viewmodel.dart';
 import '../model/island_model.dart';
 import 'package:project_island/section/home/view/island_detail_view.dart';
 import 'package:project_island/section/map/view/homemap_list.dart';
-
+import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart'; // 추가
+import 'package:project_island/section/map/widget/custom_appbar.dart'; // CustomAppBar 추가
+import 'package:project_island/section/map/view/homemap_listview.dart'; // HomemapListView 추가
 
 class HomeMapView extends StatefulWidget {
   @override
@@ -19,7 +21,9 @@ class HomeMapView extends StatefulWidget {
 class _HomeMapViewState extends State<HomeMapView> {
   final Completer<NaverMapController> _controller = Completer();
   final IslandViewModel viewModel = Get.put(IslandViewModel());
+  final HomemapListController listController = HomemapListController(); // 검색 기능을 위한 컨트롤러 추가
   List<IslandModel> islands = []; // JSON에서 불러온 섬 정보
+  List<IslandModel> searchResults = []; // 검색 결과 저장
   IslandModel? _currentSelectedIsland; // 선택된 섬 정보
   String _selectedIsland = '거제도'; // 기본 선택된 섬
   bool _isMapReady = false; // 맵 준비 여부 확인
@@ -59,6 +63,18 @@ class _HomeMapViewState extends State<HomeMapView> {
     }
   }
 
+  // 검색 결과를 화면에 표시하는 함수
+  void _onSearchSubmitted(String query) async {
+    if (_currentSelectedIsland != null && query.isNotEmpty) {
+      // 사용자가 입력한 검색어에 섬 이름을 추가
+      final searchQuery = '${_currentSelectedIsland!.name} $query';
+      final results = await listController.searchPlaces(searchQuery); // 검색 결과 얻기
+      setState(() {
+        searchResults = results; // 검색 결과 저장
+      });
+    }
+  }
+
   // 맵이 준비되면 마커 추가
   void _onMapReady(NaverMapController controller) {
     _controller.complete(controller);
@@ -95,324 +111,181 @@ class _HomeMapViewState extends State<HomeMapView> {
   Widget _buildIslandInfoBox() {
     if (_currentSelectedIsland == null) return SizedBox.shrink();  // 선택된 섬이 없을 때는 빈 박스 반환
 
-    // 섬 이름에 따른 짧은 설명 작성 및 글자 크기 설정
-    Widget getIslandDescription(String islandName) {
-      switch (islandName) {
-        case '거제도':
-          return Text(
-            '"여기가 한국이야?" 감성과 분위기가\n넘쳐 흐르는 꿈 같은 섬 🐚',
-            style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
-          );
-        case '안면도':
-          return Text(
-            '로맨틱한 꽃 축제와 익스트림한\n놀거리까지! 떠오르는 데이트 성지😘',
-            style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
-          );
-        case '덕적도':
-          return Text(
-            '수도권에서 가볍게 떠나는 힐링 섬캉스, 프라이빗 바닷가 캠핑 명소🔥',
-            style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
-          );
-        case '진도':
-          return Text(
-            '진도는 물회 맛집! 전통 시장 구경하고, 청정자연에서 몸도 마음도 refresh😚',
-            style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
-          );
-        case '울릉도':
-          return Text(
-            '천혜의 자연이 살아 숨쉬는 섬, 에메랄드빛 바다에서 즐기는 해양스포츠 명소🤿',
-            style: TextStyle(fontSize: 13, color: Color(0xFF606060)),
-          );
-        default:
-          return Text(
-            '🔧',
-            style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
-          );
-      }
-    }
-
     return GestureDetector(
-        onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomemapList()),  // HomemapList로 이동
-      );
-    },
-    child: Container(
-      padding: EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 16),
-      margin: EdgeInsets.symmetric(horizontal: 7.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),  // 둥근 모서리
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,  // 그림자 색상
-            blurRadius: 5,  // 그림자 흐림 정도
-            offset: Offset(0, 3),  // 그림자 위치
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,  // 행의 상단을 기준으로 정렬
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 9),  // 이미지를 약간 아래로 내림
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),  // 이미지의 모서리를 둥글게 처리
-              child: Image.asset(
-                _currentSelectedIsland!.imageUrl,  // 섬 이미지 URL
-                height: 80,  // 이미지 높이
-                width: 80,  // 이미지 너비
-                fit: BoxFit.fill,  // 이미지 크기 조정
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomemapList()),  // HomemapList로 이동
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 16),
+        margin: EdgeInsets.symmetric(horizontal: 7.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),  // 둥근 모서리
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,  // 그림자 색상
+              blurRadius: 5,  // 그림자 흐림 정도
+              offset: Offset(0, 3),  // 그림자 위치
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,  // 행의 상단을 기준으로 정렬
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 9),  // 이미지를 약간 아래로 내림
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),  // 이미지의 모서리를 둥글게 처리
+                child: Image.asset(
+                  _currentSelectedIsland!.imageUrl,  // 섬 이미지 URL
+                  height: 80,  // 이미지 높이
+                  width: 80,  // 이미지 너비
+                  fit: BoxFit.fill,  // 이미지 크기 조정
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 12),  // 이미지와 텍스트 간 간격 추가
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,  // 주소와 "섬 자세히 보기"를 하단 정렬
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 주소와 "섬 자세히 보기"를 같은 행에 배치
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,  // 주소를 하단 정렬
-                      child: Text(
-                        _currentSelectedIsland!.address,  // 섬 주소
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // 섬 이름을 매개변수로 전달하여 IslandDetailView로 네비게이션
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => IslandDetailView(islandName: _currentSelectedIsland!.name),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,  // 텍스트와 선을 왼쪽 정렬
-                        children: [
-                          Text(
-                            '섬 자세히 보기',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF9fa4ab),  // 텍스트 색상
-                            ),
-                          ),
-                          SizedBox(height: 0.1),  // 텍스트와 선 사이 간격
-                          Container(
-                            height: 0.7,  // 선의 두께
-                            color: Color(0xFF9fa4ab),  // 선의 색상
-                            width: 76,  // 선의 너비 (텍스트 너비에 맞추거나 원하는 값으로 설정)
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 3),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,  // 행의 하단을 기준으로 정렬
-                  children: [
-                    Text(
-                      _currentSelectedIsland!.name,  // 섬 이름
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),  // 이름과 태그 간격 추가
-                    Align(
-                      alignment: Alignment.bottomLeft,  // 태그를 하단 정렬
-                      child: Text(
-                        _currentSelectedIsland!.tags.take(3).join(' '),  // 섬 해시태그
-                        style: TextStyle(fontSize: 12, color: Colors.black38),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 3),
-                getIslandDescription(_currentSelectedIsland!.name),  // 섬 이름에 따른 설명 표시
-              ],
-            ),
-          ),
-          SizedBox(width: 8),  // 오른쪽 여백
-        ],
-      ),
-    ),
-    );
-  }
-
-  // 섬 목록을 보여주는 위젯
-  Widget _buildIslandList() {
-    return Container(
-      color: Colors.white,  // 리스트 전체 배경을 흰색으로 설정
-      child: ListView.separated(
-        itemCount: islands.length,
-        separatorBuilder: (context, index) => Divider(color: Colors.grey[300]),  // 각 항목 사이에 구분선 추가
-        itemBuilder: (context, index) {
-          final island = islands[index];
-
-          // 각 섬마다 다른 문구를 표시하는 함수
-          String getIslandDescription(String islandName) {
-            switch (islandName) {
-              case '거제도':
-                return '"여기가 한국이야?" 감성과 분위기가 넘쳐 흐르는 꿈 같은 섬 🐚';
-              case '안면도':
-                return '로맨틱한 꽃 축제와 익스트림한 놀거리까지! 떠오르는 데이트 성지😘';
-              case '덕적도':
-                return '수도권에서 가볍게 떠나는 힐링 섬캉스, 프라이빗 바닷가 캠핑 명소🔥';
-              case '진도':
-                return '진도는 물회 맛집! 전통 시장 구경하고, 청정자연에서 몸도 마음도 refresh😚';
-              case '울릉도':
-                return '천혜의 자연이 살아 숨쉬는 섬, 에메랄드빛 바다에서 즐기는 해양스포츠 명소🤿';
-              default:
-                return '아름다운 섬으로의 여행을 떠나보세요!';
-            }
-          }
-
-          return GestureDetector(
-              onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomemapList()),  // HomemapList로 이동
-            );
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-            color: Colors.white,  // 각 항목의 배경색을 흰색으로 설정
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,  // 이미지와 텍스트가 세로 가운데 정렬
-              children: [
-                // 섬 이미지
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: SizedBox(
-                    width: 75,  // 이미지 너비
-                    height: 75,  // 이미지 높이
-                    child: Image.asset(
-                      island.imageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12),
-                // 섬 정보 텍스트
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,  // 텍스트도 세로로 가운데 정렬
+            SizedBox(width: 12),  // 이미지와 텍스트 간 간격 추가
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,  // 주소와 "섬 자세히 보기"를 하단 정렬
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 주소와 "섬 자세히 보기"를 같은 행에 배치
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 주소와 "섬 자세히 보기"를 같은 행에 배치
-                        children: [
-                          Text(
-                            island.address,
-                            style: TextStyle(fontSize: 11, color: Colors.grey),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // 섬 이름을 매개변수로 전달하여 IslandDetailView로 네비게이션
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => IslandDetailView(islandName: island.name),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,  // 텍스트와 선을 왼쪽 정렬
-                              children: [
-                                Text(
-                                  '섬 자세히 보기',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF9fa4ab),  // 텍스트 색상
-                                  ),
-                                ),
-                                SizedBox(height: 0.1),  // 텍스트와 선 사이 간격
-                                Container(
-                                  height: 0.7,  // 선의 두께
-                                  color: Color(0xFF9fa4ab),  // 선의 색상
-                                  width: 76,  // 선의 너비 (텍스트 너비에 맞추거나 원하는 값으로 설정)
-                                ),
-                              ],
+                      Align(
+                        alignment: Alignment.bottomLeft,  // 주소를 하단 정렬
+                        child: Text(
+                          _currentSelectedIsland!.address,  // 섬 주소
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // 섬 이름을 매개변수로 전달하여 IslandDetailView로 네비게이션
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IslandDetailView(islandName: _currentSelectedIsland!.name),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            island.name,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            island.tags.take(3).join(', '),
-                            style: TextStyle(fontSize: 12, color: Colors.black38),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        getIslandDescription(island.name),  // 섬 이름에 따른 설명 표시
-                        style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,  // 텍스트와 선을 왼쪽 정렬
+                          children: [
+                            Text(
+                              '섬 자세히 보기',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF9fa4ab),  // 텍스트 색상
+                              ),
+                            ),
+                            SizedBox(height: 0.1),  // 텍스트와 선 사이 간격
+                            Container(
+                              height: 0.7,  // 선의 두께
+                              color: Color(0xFF9fa4ab),  // 선의 색상
+                              width: 76,  // 선의 너비 (텍스트 너비에 맞추거나 원하는 값으로 설정)
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  SizedBox(height: 3),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,  // 행의 하단을 기준으로 정렬
+                    children: [
+                      Text(
+                        _currentSelectedIsland!.name,  // 섬 이름
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 8),  // 이름과 태그 간격 추가
+                      Align(
+                        alignment: Alignment.bottomLeft,  // 태그를 하단 정렬
+                        child: Text(
+                          _currentSelectedIsland!.tags.take(3).join(' '),  // 섬 해시태그
+                          style: TextStyle(fontSize: 12, color: Colors.black38),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    '"${_currentSelectedIsland!.name}" 섬에 대한 정보를 확인하세요!',  // 섬 설명
+                    style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
+                  ),
+                ],
+              ),
             ),
-          ),
-          );
-        },
+            SizedBox(width: 8),  // 오른쪽 여백
+          ],
+        ),
       ),
     );
   }
 
+  // 섬 목록을 보여주는 함수
+  Widget _buildIslandList() {
+    return ListView.builder(
+      itemCount: islands.length,
+      itemBuilder: (context, index) {
+        final island = islands[index];
+        return ListTile(
+          title: Text(island.name),
+          subtitle: Text(island.address),
+          onTap: () {
+            setState(() {
+              _currentSelectedIsland = island;  // 섬 선택
+            });
+          },
+        );
+      },
+    );
+  }
 
-
+  // 검색 결과 UI와 검색 상태 관리 추가
+  Widget _buildSearchResults() {
+    if (searchResults.isEmpty) {
+      return const SizedBox.shrink(); // 검색 결과가 없으면 빈 공간 반환
+    }
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: 300, // 검색 결과 리스트의 높이 설정
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        child: HomemapListView(  // HomemapListView를 통해 검색 결과 출력
+          items: searchResults, // 검색 결과 리스트 전달
+          controller: listController,
+        ),
+      ),
+    );
+  }
 
   // UI 구성
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          '섬 선택',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 3,
-                  offset: Offset(0, 0),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);  // 뒤로 가기
-              },
-            ),
-          ),
-        ),
+      appBar: CustomAppBar(  // 커스텀 검색창 사용
+        onSearchSubmitted: _onSearchSubmitted,  // 검색창에 입력된 내용 전달
       ),
       body: Stack(
         children: [
-          // 현재 선택된 옵션에 따라 지도를 표시하거나 섬 목록을 표시
+          // 네이버 맵 화면 또는 섬 목록을 보여주는 뷰
           Positioned.fill(
             child: _selectedOption == '지도'
                 ? NaverMap(
@@ -426,7 +299,10 @@ class _HomeMapViewState extends State<HomeMapView> {
             )
                 : _buildIslandList(), // '목록'일 때는 섬 리스트를 표시
           ),
-          if (_selectedOption == '지도' && _isMapReady)
+          // 검색 결과가 있으면 화면 아래에 표시
+          if (searchResults.isNotEmpty) _buildSearchResults(),
+          // 선택된 섬 정보 박스 표시
+          if (_currentSelectedIsland != null && searchResults.isEmpty)
             Positioned(
               top: 20,
               left: 12,
@@ -437,9 +313,10 @@ class _HomeMapViewState extends State<HomeMapView> {
       ),
       floatingActionButton: Stack(
         children: [
+          // 지도보기 및 목록보기 버튼 구현
           Positioned(
             bottom: 20, // 화면 아래로부터 30px 위치
-            right: 5,  // 화면 왼쪽으로부터 40px 위치 (원하는 만큼 조절 가능)
+            right: 5,  // 화면 왼쪽으로부터 40px 위치
             child: GestureDetector(
               onTap: () {
                 setState(() {

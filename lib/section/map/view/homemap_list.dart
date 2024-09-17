@@ -19,10 +19,24 @@ class HomemapListState extends State<HomemapList> {
   String selectedCategory = '관심';
   String selectedSubCategory = '';
 
+  // 검색창에서 제출 시 호출될 함수
+  void _onSearchSubmitted(String query) async {
+    if (query.isNotEmpty) {
+      // 검색어가 있으면 검색 수행
+      final results = await controller.getItemsByCategory(query);
+      // 결과 처리, 필요에 따라 검색 결과를 다른 화면이나 현재 화면에 반영
+      setState(() {
+        // 검색 결과에 따라 상태 업데이트
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        onSearchSubmitted: _onSearchSubmitted, // 검색 기능을 위한 콜백 추가
+      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [

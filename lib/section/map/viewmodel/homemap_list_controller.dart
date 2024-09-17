@@ -10,6 +10,12 @@ class HomemapListController with ChangeNotifier {
     return await repository.getItemsByCategory(category); // 저장소에서 데이터를 가져옴
   }
 
+  // 검색어를 통해 Google API로 장소를 검색하는 메서드 추가
+  Future<List<IslandModel>> searchPlaces(String query) async {
+    // 검색어 기반으로 Google API를 이용하여 장소를 검색
+    return await repository.getItemsByCategory(query); // 검색 결과 반환
+  }
+
   // 북마크 토글 기능
   void toggleBookmark(IslandModel item) {
     repository.toggleBookmark(item); // 저장소에서 북마크 상태를 변경

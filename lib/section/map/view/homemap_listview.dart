@@ -14,8 +14,11 @@ class HomemapListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final List<IslandModel> searchResults = ModalRoute.of(context)?.settings.arguments as List<IslandModel>? ?? items;
+
     return ListView.builder(
-      itemCount: items.length,
+      itemCount: searchResults.length, // 검색 결과로 리스트 표시
       itemBuilder: (context, index) {
         final item = items[index];
         return Column(

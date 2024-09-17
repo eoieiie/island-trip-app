@@ -8,7 +8,9 @@ import 'package:project_island/section/map/widget/category_buttons.dart'; // Cat
 import 'package:project_island/section/map/model/island_model.dart'; // IslandModel이 정의된 파일 경로로 수정
 
 class HomemapList extends StatefulWidget {
-  const HomemapList({super.key});
+  final String islandName; // 선택된 섬의 이름을 전달받기 위한 변수 추가
+
+  const HomemapList({Key? key, required this.islandName}) : super(key: key); // 생성자 수정
 
   @override
   HomemapListState createState() => HomemapListState();
@@ -18,22 +20,69 @@ class HomemapListState extends State<HomemapList> {
   final HomemapListController controller = HomemapListController();
   String selectedCategory = '관심';
   String selectedSubCategory = '';
+  List<IslandModel> displayedItems = []; // 화면에 표시될 아이템 리스트 추가
+
+  @override
+  void initState() {
+    super.initState();
+    // 초기 카테고리를 섬 이름으로 설정하여 해당 섬의 기본 정보를 로드
+    selectedCategory = widget.islandName;  // 수정된 부분
+    _loadInitialItems(); // 초기 아이템 로드
+  }
+
+  // 초기 아이템을 로드하는 함수 추가
+  void _loadInitialItems() async {
+    final results = await controller.getItemsByCategory(selectedCategory);
+    setState(() {
+      displayedItems = results;
+    });
+  }
+
+  // 검색창에서 제출 시 호출될 함수 수정
+  void _onSearchSubmitted(String query) async {
+    if (query.isNotEmpty) {
+      String modifiedQuery = '${widget.islandName} $query';
+      final results = await controller.getItemsByCategory(modifiedQuery);
+      print('검색 결과 수: ${results.length}'); // 검색 결과 개수 출력
+      setState(() {
+        displayedItems = results; // 검색 결과로 리스트 업데이트
+      });
+    }
+  }
+
+  // 카테고리 선택 시 호출되는 함수 추가
+  void _onCategorySelected(String category) async {
+    String modifiedCategory = '${widget.islandName} $category';
+    final results = await controller.getItemsByCategory(modifiedCategory);
+    setState(() {
+      selectedCategory = category;
+      selectedSubCategory = '';
+      displayedItems = results;
+    });
+  }
+
+  // 서브 카테고리 선택 시 호출되는 함수 추가
+  void _onSubCategorySelected(String subCategory) async {
+    String modifiedSubCategory = '${widget.islandName} $subCategory';
+    final results = await controller.getItemsByCategory(modifiedSubCategory);
+    setState(() {
+      selectedSubCategory = subCategory;
+      displayedItems = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        onSearchSubmitted: _onSearchSubmitted, // 검색 기능을 위한 콜백 추가
+      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
           CategoryButtons(
             selectedCategory: selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-                selectedSubCategory = '';
-              });
-            },
+            onCategorySelected: _onCategorySelected, // 수정된 부분
           ),
           if (selectedCategory == '관심') ...[
             Divider(
@@ -43,11 +92,7 @@ class HomemapListState extends State<HomemapList> {
             ),
             SubCategoryButtons(
               selectedSubCategory: selectedSubCategory,
-              onSubCategorySelected: (subCategory) {
-                setState(() {
-                  selectedSubCategory = subCategory;
-                });
-              },
+              onSubCategorySelected: _onSubCategorySelected, // 수정된 부분
             ),
           ],
           Divider(
@@ -65,27 +110,18 @@ class HomemapListState extends State<HomemapList> {
                     '목록 ',
                     style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                  _buildItemCountText(),
+                  Text(
+                    '${displayedItems.length}개', // 아이템 수 표시
+                    style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<IslandModel>>(
-              future: controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('오류 발생: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('저장된 항목이 없습니다.'));
-                } else {
-                  final items = snapshot.data!;
-                  return HomemapListView(items: items, controller: controller); // IslandModel을 SavedListView에 전달
-                }
-              },
-            ),
+            child: displayedItems.isEmpty
+                ? const Center(child: Text('저장된 항목이 없습니다.'))
+                : HomemapListView(items: displayedItems, controller: controller), // displayedItems로 리스트뷰 생성
           ),
         ],
       ),
@@ -95,7 +131,7 @@ class HomemapListState extends State<HomemapList> {
           padding: const EdgeInsets.only(bottom: 20),
           child: GestureDetector(
             onTap: () {
-              Get.to(HomeMapView());
+              Get.to(() => HomeMapView());
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -123,35 +159,6 @@ class HomemapListState extends State<HomemapList> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget _buildItemCountText() {
-    return FutureBuilder<List<IslandModel>>(
-      future: controller.getItemsByCategory(selectedSubCategory.isEmpty ? selectedCategory : selectedSubCategory),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text(
-            '불러오는 중...',
-            style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
-          );
-        } else if (snapshot.hasError) {
-          return const Text(
-            '오류 발생',
-            style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
-          );
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text(
-            '0개',
-            style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
-          );
-        } else {
-          return Text(
-            '${snapshot.data!.length}개',
-            style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
-          );
-        }
-      },
     );
   }
 }

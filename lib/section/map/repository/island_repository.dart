@@ -16,21 +16,26 @@ class IslandRepository {
   Future<List<IslandModel>> getItemsByCategory(String category) async {
     List<GooglePlaceModel> places = [];
 
-    // 카테고리에 따라 구글 API로 장소 검색
-    if (category == '명소/놀거리') {
-      final places1 = await _googlePlaceViewModel.searchPlaces('명소');
-      final places2 = await _googlePlaceViewModel.searchPlaces('놀거리');
-      places = [...places1, ...places2];
-    } else if (category == '섬') {
-      places = await _googlePlaceViewModel.searchPlaces('island'); // "섬" 검색
-    } else if (category == '음식') {
-      places = await _googlePlaceViewModel.searchPlaces('음식점');
-    } else if (category == '카페') {
-      places = await _googlePlaceViewModel.searchPlaces('카페');
-    } else if (category == '숙소') {
-      places = await _googlePlaceViewModel.searchPlaces('숙박');
+    // 만약 카테고리에 공백이 포함되어 있다면 (예: "거제도 카페"), 그대로 검색
+    if (category.contains(' ')) {
+      places = await _googlePlaceViewModel.searchPlaces(category);  // 수정된 부분
     } else {
-      places = await _googlePlaceViewModel.searchPlaces(category);
+      // 기존 카테고리별 분기 로직 유지
+      if (category == '명소/놀거리') {
+        final places1 = await _googlePlaceViewModel.searchPlaces('명소');
+        final places2 = await _googlePlaceViewModel.searchPlaces('놀거리');
+        places = [...places1, ...places2];
+      } else if (category == '섬') {
+        places = await _googlePlaceViewModel.searchPlaces('island');
+      } else if (category == '음식') {
+        places = await _googlePlaceViewModel.searchPlaces('음식점');
+      } else if (category == '카페') {
+        places = await _googlePlaceViewModel.searchPlaces('카페');
+      } else if (category == '숙소') {
+        places = await _googlePlaceViewModel.searchPlaces('숙박');
+      } else {
+        places = await _googlePlaceViewModel.searchPlaces(category);
+      }
     }
 
     // 평점 순으로 정렬 (높은 평점이 상위에 오도록)

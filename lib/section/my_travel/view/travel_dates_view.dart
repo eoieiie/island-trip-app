@@ -175,6 +175,7 @@ class _TravelDatePageState extends State<TravelDatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         title: Text(''),
         leading: Padding(

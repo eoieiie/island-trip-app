@@ -4,7 +4,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TextEditingController searchController = TextEditingController(); // 검색창 입력을 위한 컨트롤러
   final Function(String) onSearchSubmitted; // 검색 제출 콜백 추가
 
-  CustomAppBar({super.key, required this.onSearchSubmitted}); // 생성자에서 콜백 받음
+  CustomAppBar({Key? key, required this.onSearchSubmitted}) : super(key: key); // 생성자에서 콜백 받음
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8), // 뒤로가기 버튼 왼쪽 여백 유지
         child: Container(
           height: 48, // 높이 통일 (정사각형 유지)
-          width: 48,  // 너비 통일 (정사각형 유지)
+          width: 48, // 너비 통일 (정사각형 유지)
           decoration: BoxDecoration(
             color: Colors.white, // 버튼 배경 흰색
             borderRadius: BorderRadius.circular(12), // 둥근 모서리

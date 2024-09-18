@@ -1,6 +1,8 @@
 import 'package:project_island/section/common/google_api/viewmodels/google_place_view_model.dart';
 import 'package:project_island/section/common/google_api/models/google_place_model.dart';
 import '../model/island_model.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class IslandRepository {
   final GooglePlaceViewModel _googlePlaceViewModel = GooglePlaceViewModel(); // 구글 API 사용을 위한 ViewModel 인스턴스 생성
@@ -8,8 +10,9 @@ class IslandRepository {
 
   // 로컬 JSON 파일에서 섬 데이터를 로드하는 메서드
   Future<List<IslandModel>> loadIslands() async {
-    // 로컬 데이터를 로드하는 로직 (필요 시)
-    return []; // 여기서는 빈 리스트 반환 (예제 목적)
+    final String response = await rootBundle.loadString('assets/data/island_data.json');
+    final List<dynamic> data = jsonDecode(response);
+    return data.map((json) => IslandModel.fromJson(json)).toList();
   }
 
   // 카테고리에 따른 섬(장소) 데이터를 가져오는 메서드

@@ -21,7 +21,7 @@ class ItemImage extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             // 이미지 로딩 실패 시 대체 이미지 표시
             return Image.asset(
-              'assets/images/no_photo_available.webp',
+              'assets/images/No_photo_available.webp',
               fit: BoxFit.cover,
             );
           },

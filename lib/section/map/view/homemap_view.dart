@@ -480,6 +480,10 @@ class _HomeMapViewState extends State<HomeMapView> {
                                   _selectedOption = '지도'; // '지도' 버튼 누르면 지도 화면으로 전환
                                   _isExpanded = false; // 버튼 축소
                                 });
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeMapView()),  // 현재 페이지를 다시 로드
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(

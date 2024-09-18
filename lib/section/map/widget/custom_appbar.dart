@@ -9,7 +9,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      scrolledUnderElevation: 0,
+    backgroundColor: Colors.white,
       elevation: 0, // AppBar 자체의 그림자 제거
       titleSpacing: 0, // 타이틀과 leading 사이의 간격을 0으로 설정
       title: Container(
@@ -33,6 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 padding: const EdgeInsets.only(left: 18), // 왼쪽에 여백 추가
                 child: TextField(
                   controller: searchController, // 검색창에 텍스트 컨트롤러 추가
+                  cursorColor: Colors.black, // 커서 색상을 검정색으로 설정
                   decoration: const InputDecoration(
                     hintText: '장소 검색', // Placeholder
                     border: InputBorder.none, // 기본 테두리 제거

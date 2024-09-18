@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
       initialBinding: InitBinding(),
       title: 'Island Travel App',
       theme: ThemeData(
+        fontFamily: 'Pretendard',
         primarySwatch: Colors.blue,
         canvasColor: Colors.white,
         cardColor: Colors.white,
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
           secondary: Colors.blue, // 보조 색상
         ),
       ),
-      home: MainPage(), // 앱의 시작 페이지를 MainPage로 설정합니다.
+      home: SplashScreen(), // 앱의 시작 페이지를 MainPage로 설정합니다.
     );
   }
 }
@@ -98,67 +99,79 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: UniqueKey(),
-      backgroundColor: Colors.white,
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: CircularNotchedRectangle(),
-        notchMargin: 6.0,
-        elevation: 0,  // 그림자 없애기
-        child: Container(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround, // 아이콘을 균등하게 배치
-            children: <Widget>[
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-home-mono.svg',
-                  color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+      //backgroundColor: Colors.white,
+      body: SafeArea( // SafeArea로 인해 발생하는 하단 여백 제거
+        bottom: false,
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: BottomAppBar(
+          padding: EdgeInsets.zero,
+          height: 65,
+          //color: Colors.white,
+          shape: CircularNotchedRectangle(),
+          notchMargin: 3.0,
+          child: Container(
+            // decoration: BoxDecoration(
+            //   border: Border(
+            //     top: BorderSide(color: Colors.grey, width: 1.0), // 상단 구분선 추가
+            //   ),
+            // ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround, // 아이콘을 균등하게 배치
+              children: <Widget>[
+                IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-home-mono.svg',
+                    color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 0;
+                    });
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    _selectedIndex = 0;
-                  });
-                },
-              ),
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/images/icon_calendar.svg',
-                  color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon_calendar.svg',
+                    color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 1;
+                    });
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    _selectedIndex = 1;
-                  });
-                },
-              ),
-              SizedBox(width: 40), // 플로팅 액션 버튼 공간 확보
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-stack-up-square-mono.svg',
-                  color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                SizedBox(width: 40), // 플로팅 액션 버튼 공간 확보
+                IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-stack-up-square-mono.svg',
+                    color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 3;
+                    });
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    _selectedIndex = 3;
-                  });
-                },
-              ),
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/images/icon-user-mono.svg',
-                  color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/images/icon-user-mono.svg',
+                    color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 4;
+                    });
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    _selectedIndex = 4;
-                  });
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: () {
@@ -181,6 +194,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
 // Custom Floating Action Button Location class
 class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
   final double offsetY; // Y축 조정을 위한 변수

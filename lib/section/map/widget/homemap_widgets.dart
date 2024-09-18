@@ -6,7 +6,7 @@ import 'package:project_island/section/map/viewmodel/homemap_list_controller.dar
 class ItemImage extends StatelessWidget {
   final String imageUrl;
 
-  const ItemImage({super.key, required this.imageUrl});
+  const ItemImage({Key? key, required this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class ItemImage extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             // 이미지 로딩 실패 시 대체 이미지 표시
             return Image.asset(
-              'assets/images/No_photo_available.webp',
+              'assets/images/no_photo_available.webp',
               fit: BoxFit.cover,
             );
           },
@@ -35,7 +35,7 @@ class ItemImage extends StatelessWidget {
 class ItemAddress extends StatelessWidget {
   final String address;
 
-  const ItemAddress({super.key, required this.address});
+  const ItemAddress({Key? key, required this.address}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class ItemAddress extends StatelessWidget {
 class ItemTitle extends StatelessWidget {
   final String title;
 
-  const ItemTitle({super.key, required this.title});
+  const ItemTitle({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class ItemDescription extends StatelessWidget {
   final double? rating;
   final bool? isOpenNow;
 
-  const ItemDescription({super.key, required this.rating, required this.isOpenNow});
+  const ItemDescription({Key? key, required this.rating, required this.isOpenNow}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +116,11 @@ class BookmarkButton extends StatelessWidget {
   final VoidCallback onUpdate;
 
   const BookmarkButton({
-    super.key,
+    Key? key,
     required this.item,
     required this.controller,
     required this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

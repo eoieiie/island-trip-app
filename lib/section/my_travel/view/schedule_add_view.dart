@@ -64,6 +64,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text(
           '일정 추가',
           style: TextStyle(

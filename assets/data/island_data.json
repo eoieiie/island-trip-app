@@ -5,7 +5,8 @@
     "iconUrl": "assets/icons/3dcamping.png",
     "tags": ["#캠핑", "#해변", "#트레킹", "#수영", "#자연경관"],
     "latitude": 37.2298,
-    "longitude": 126.1444
+    "longitude": 126.1444,
+    "address": "인천광역시 옹진군"
   },
   {
     "name": "거제도",
@@ -13,7 +14,8 @@
     "iconUrl": "assets/icons/3dsurf.png",
     "tags": ["#스노쿨링", "#낚시", "#해변", "#해산물", "#힐링"],
     "latitude": 34.8806,
-    "longitude": 128.6217
+    "longitude": 128.6217,
+    "address": "경상남도 거제시"
   },
   {
     "name": "울릉도",
@@ -21,7 +23,8 @@
     "iconUrl": "assets/icons/3ddiving.png",
     "tags": ["#등산", "#낚시", "#자연경관", "#해양스포츠", "#해산물"],
     "latitude": 37.4886,
-    "longitude": 130.9055
+    "longitude": 130.9055,
+    "address": "경상북도 울릉군"
   },
   {
     "name": "안면도",
@@ -29,14 +32,16 @@
     "iconUrl": "assets/icons/3dflower.png",
     "tags": ["#해변", "#해양스포츠", "#낚시", "#캠핑", "#힐링"],
     "latitude": 36.5262,
-    "longitude": 126.2967
+    "longitude": 126.2967,
+    "address": "충청남도 태안군"
   },
   {
     "name": "진도",
     "imageUrl": "assets/icons/3dbluefish.png",
     "iconUrl": "assets/icons/3dbluefish.png",
-    "tags": ["#물회", "낚시", "#전통시장", "#역사", "#진도대교", "#문화유적"],
+    "tags": ["#물회", "#낚시", "#전통시장", "#역사", "#진도대교", "#문화유적"],
     "latitude": 34.4887,
-    "longitude": 126.2630
+    "longitude": 126.2630,
+    "address": "전라남도 진도군"
   }
 ]

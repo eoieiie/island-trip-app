@@ -130,24 +130,24 @@ class MapBackground extends StatelessWidget {
     // 선택된 섬에 따라 초기 위치와 줌 레벨을 설정하는 스위치문
     switch (selectedIsland) {
       case '덕적도':
-        initialPosition = NLatLng(37.2338, 126.1344); // 덕적도 좌표
-        initialZoom = 10.2;
+        initialPosition = NLatLng(37.2138, 126.1344); // 덕적도 좌표
+        initialZoom = 11.4;
         break;
       case '거제도':
-        initialPosition = NLatLng(34.8806, 128.6217); // 거제도 좌표
-        initialZoom = 9.0;
+        initialPosition = NLatLng(34.7706, 128.6217); // 거제도 좌표
+        initialZoom = 9.27;
         break;
       case '울릉도':
-        initialPosition = NLatLng(37.4286, 130.8655); // 울릉도 좌표
-        initialZoom = 10.0;
+        initialPosition = NLatLng(37.4706, 130.8655); // 울릉도 좌표
+        initialZoom = 10.75;
         break;
       case '안면도':
-        initialPosition = NLatLng(36.5062, 126.2967); // 안면도 좌표
-        initialZoom = 9.0;
+        initialPosition = NLatLng(36.4162, 126.3867); // 안면도 좌표
+        initialZoom = 9.4;
         break;
       case '진도':
-        initialPosition = NLatLng(34.4687, 126.2230); // 진도 좌표
-        initialZoom = 8.8;
+        initialPosition = NLatLng(34.3987, 126.2530); // 진도 좌표
+        initialZoom = 9.7;
         break;
       default:
         initialPosition = NLatLng(36.0665, 127.2780); // 기본 위치 (서울)

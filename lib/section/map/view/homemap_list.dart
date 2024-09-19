@@ -9,7 +9,6 @@ import 'package:project_island/section/map/widget/category_buttons.dart';
 
 class HomemapList extends StatefulWidget {
   final String islandName;
-
   const HomemapList({Key? key, required this.islandName}) : super(key: key);
 
   @override

@@ -1,65 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:project_island/section/saved/viewmodel/saved_controller.dart';
-import 'package:project_island/section/saved/model/saved_model.dart';
+import 'package:project_island/section/map/model/island_model.dart';
+import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
 
-class SavedListView extends StatelessWidget {
-  final List<SavedItem> items;
-  final SavedController controller;
-
-  const SavedListView({
-    super.key,
-    required this.items,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return Column(
-          children: [
-            ListTile(
-              leading: ItemImage(imageUrl: item.imageUrl),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ItemAddress(address: item.address),
-                  ItemTitle(title: item.title),
-                  ItemDescription(
-                    rating: item.rating,
-                    isOpenNow: item.isOpenNow,
-                  ),
-                ],
-              ),
-              trailing: BookmarkButton(
-                item: item,
-                controller: controller,
-                onUpdate: () => controller.toggleBookmark(item),
-              ),
-              onTap: () {
-                // 상세 페이지 이동 로직 추가 가능
-              },
-            ),
-            if (index != items.length - 1)
-              Divider(
-                color: Colors.grey[200],
-                thickness: 1,
-                height: 1,
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ItemImage 위젯 정의
+// 이미지 위젯
 class ItemImage extends StatelessWidget {
   final String imageUrl;
 
-  const ItemImage({super.key, required this.imageUrl});
+  const ItemImage({Key? key, required this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +19,7 @@ class ItemImage extends StatelessWidget {
           imageUrl,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
+            // 이미지 로딩 실패 시 대체 이미지 표시
             return Image.asset(
               'assets/images/No_photo_available.webp',
               fit: BoxFit.cover,
@@ -83,11 +31,11 @@ class ItemImage extends StatelessWidget {
   }
 }
 
-// ItemAddress 위젯 정의
+// 주소 표시 위젯
 class ItemAddress extends StatelessWidget {
   final String address;
 
-  const ItemAddress({super.key, required this.address});
+  const ItemAddress({Key? key, required this.address}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +55,11 @@ class ItemAddress extends StatelessWidget {
   }
 }
 
-// ItemTitle 위젯 정의
+// 제목 표시 위젯
 class ItemTitle extends StatelessWidget {
   final String title;
 
-  const ItemTitle({super.key, required this.title});
+  const ItemTitle({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -123,12 +71,12 @@ class ItemTitle extends StatelessWidget {
   }
 }
 
-// ItemDescription 위젯 정의
+// 설명(평점, 영업 상태) 표시 위젯
 class ItemDescription extends StatelessWidget {
   final double? rating;
   final bool? isOpenNow;
 
-  const ItemDescription({super.key, required this.rating, required this.isOpenNow});
+  const ItemDescription({Key? key, required this.rating, required this.isOpenNow}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +85,8 @@ class ItemDescription extends StatelessWidget {
         if (rating != null)
           Row(
             children: [
-              const Icon(Icons.star, color: Colors.yellow, size: 16),
-              const SizedBox(width: 4),
+              const Icon(Icons.star, color: Colors.yellow, size: 16), // 별 아이콘
+              const SizedBox(width: 4), // 아이콘과 텍스트 사이 간격
               Text(
                 rating.toString(),
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
@@ -146,13 +94,13 @@ class ItemDescription extends StatelessWidget {
             ],
           ),
         if (rating != null && isOpenNow != null)
-          const SizedBox(width: 8),
+          const SizedBox(width: 8), // 평점과 영업 상태 사이 간격
         if (isOpenNow != null)
           Text(
             isOpenNow! ? '영업 중' : '영업 종료',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold, // 영업 상태 굵게 표시
               color: isOpenNow! ? Colors.green : Colors.red,
             ),
           ),
@@ -161,18 +109,18 @@ class ItemDescription extends StatelessWidget {
   }
 }
 
-// 북마크 버튼 위젯 정의
+// 북마크 버튼 위젯
 class BookmarkButton extends StatelessWidget {
-  final SavedItem item;
-  final SavedController controller;
+  final IslandModel item;
+  final HomemapListController controller;
   final VoidCallback onUpdate;
 
   const BookmarkButton({
-    super.key,
+    Key? key,
     required this.item,
     required this.controller,
     required this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -182,8 +130,8 @@ class BookmarkButton extends StatelessWidget {
         color: item.isBookmarked ? Colors.yellow : Colors.grey,
       ),
       onPressed: () {
-        controller.toggleBookmark(item);
-        onUpdate();
+        controller.toggleBookmark(item); // 북마크 토글 동작
+        onUpdate(); // UI 업데이트
       },
     );
   }

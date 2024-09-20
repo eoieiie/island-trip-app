@@ -66,7 +66,7 @@ class _MyTravelViewState extends State<MyTravelView> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 0, top: 100.0, right: 50.0, bottom: 0.0),
+                  padding: const EdgeInsets.only(left: 0, top: 50.0, right: 50.0, bottom: 0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -132,7 +132,7 @@ class _MyTravelViewState extends State<MyTravelView> {
                     ),
                   )
                       : Padding(
-                    padding: const EdgeInsets.only(top: 5.0, left: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(top: 25.0, left: 16.0, right: 16.0),
                     child: ListView.builder(
                       itemCount: travelViewModel.travels.length + 1,
                       itemBuilder: (context, index) {

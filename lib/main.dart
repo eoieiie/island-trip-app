@@ -20,7 +20,6 @@ import 'package:project_island/section/login/view/splash.dart';
 import 'package:project_island/firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화
 
@@ -109,8 +108,8 @@ class _MainPageState extends State<MainPage> {
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                blurRadius: 7,
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 15,
               ),
             ],
           ),

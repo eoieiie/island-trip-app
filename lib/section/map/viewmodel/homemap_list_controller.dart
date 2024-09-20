@@ -10,6 +10,7 @@ class HomemapListController extends GetxController {
   var displayedItems = <IslandModel>[].obs; // 리스트 상태 관리
   var currentIsland = ''.obs; // 현재 선택된 섬
 
+
   // 초기 아이템 로드
   void loadInitialItems(String islandName) async {
     currentIsland.value = islandName; // 섬 이름을 저장

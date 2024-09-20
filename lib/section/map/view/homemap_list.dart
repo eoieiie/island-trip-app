@@ -6,6 +6,7 @@ import 'package:project_island/section/map/viewmodel/homemap_list_controller.dar
 import 'package:project_island/section/map/view/homemap_listview.dart';
 import 'package:project_island/section/map/widget/custom_appbar.dart';
 import 'package:project_island/section/map/widget/category_buttons.dart';
+import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // SubCategoryButtons가 정의된 파일 import
 
 class HomemapList extends StatefulWidget {
   final String islandName;
@@ -35,7 +36,7 @@ class HomemapListState extends State<HomemapList> {
         position: NLatLng(lat, lng),
         caption: NOverlayCaption(
           text: "Marker: $markerId",
-          textSize: 14,
+          textSize: 1,
           color: Colors.black,
           haloColor: Colors.white,
         ),
@@ -70,7 +71,9 @@ class HomemapListState extends State<HomemapList> {
                   color: Colors.white, // 상위 카테고리 바의 배경색을 흰색으로 설정
                   child: Obx(() => CategoryButtons(
                     selectedCategory: controller.selectedCategory.value,
-                    onCategorySelected: controller.onCategorySelected, // ViewModel에서 처리
+                    onCategorySelected: controller.onCategorySelected,
+                    selectedSubCategory: controller.selectedSubCategory.value, // 추가된 파라미터
+                    onSubCategorySelected: controller.onSubCategorySelected, // 추가된 파라미터
                   )),
                 ),
                 Expanded(
@@ -85,10 +88,13 @@ class HomemapListState extends State<HomemapList> {
                         controller: controller,
                         scrollController: scrollController,
                         draggableController: draggableScrollableController,
+                        selectedSubCategory: controller.selectedSubCategory.value, // 하위 카테고리 전달
+                        onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 로직 전달
                       );
                     },
                   ),
                 ),
+
               ],
             ),
           ],
@@ -174,18 +180,20 @@ class MapBackground extends StatelessWidget {
   }
 }
 
-
-// 바텀시트의 내용을 표시하는 위젯
 class BottomSheetContent extends StatelessWidget {
   final HomemapListController controller;
   final ScrollController scrollController;
   final DraggableScrollableController draggableController;
+  final String selectedSubCategory;
+  final ValueChanged<String> onSubCategorySelected;
 
   const BottomSheetContent({
     Key? key,
     required this.controller,
     required this.scrollController,
     required this.draggableController,
+    required this.selectedSubCategory,
+    required this.onSubCategorySelected,
   }) : super(key: key);
 
   @override
@@ -219,13 +227,11 @@ class BottomSheetContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              if (controller.selectedCategory.value == '관심') ...[
-                Divider(color: Colors.grey[200], thickness: 1, height: 0),
-                SubCategoryButtons(
-                  selectedSubCategory: controller.selectedSubCategory.value,
-                  onSubCategorySelected: controller.onSubCategorySelected,
-                ),
-              ],
+              // 하위 카테고리바를 바텀시트 손잡이 밑에 배치합니다.
+              SubCategoryButtons(
+                selectedSubCategory: selectedSubCategory,
+                onSubCategorySelected: onSubCategorySelected,
+              ),
               Divider(color: Colors.grey[200], thickness: 1, height: 5),
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),
@@ -261,6 +267,7 @@ class BottomSheetContent extends StatelessWidget {
     );
   }
 }
+
 
 
 // '지도보기' 버튼을 표시하는 위젯

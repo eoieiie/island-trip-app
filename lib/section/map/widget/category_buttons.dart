@@ -1,93 +1,68 @@
-import 'package:flutter/material.dart'
-;
+import 'package:flutter/material.dart';
+import 'package:project_island/section/map/widget/upper_category_buttons.dart';
+import 'package:project_island/section/map/widget/lower_category_buttons.dart';
+
 class CategoryButtons extends StatelessWidget {
-  final String? selectedCategory;
-  final ValueChanged<String> onCategorySelected;
-
-  const CategoryButtons({super.key, required this.selectedCategory, required this.onCategorySelected});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          const SizedBox(width: 15),
-          _buildCategoryButton('관심'),
-          _buildCategoryButton('명소/놀거리'),
-          _buildCategoryButton('음식'),
-          _buildCategoryButton('카페'),
-          _buildCategoryButton('숙소'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton(String category) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 1.0),
-      child: ElevatedButton(
-        onPressed: () => onCategorySelected(category),
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(40, 28),
-          backgroundColor: Colors.white,
-          foregroundColor: selectedCategory == category ? Colors.green : Colors.black,
-          side: BorderSide(
-            color: selectedCategory == category ? Colors.green : Colors.grey[200]!,
-            width: 1,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: Text(
-          category,
-          style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500),
-        ),
-      ),
-    );
-  }
-}
-
-class SubCategoryButtons extends StatelessWidget {
+  final String selectedCategory;
   final String selectedSubCategory;
+  final ValueChanged<String> onCategorySelected;
   final ValueChanged<String> onSubCategorySelected;
+  final bool showAllSubCategories;
 
-  const SubCategoryButtons({super.key, required this.selectedSubCategory, required this.onSubCategorySelected});
+  const CategoryButtons({
+    Key? key,
+    required this.selectedCategory,
+    required this.selectedSubCategory,
+    required this.onCategorySelected,
+    required this.onSubCategorySelected,
+    this.showAllSubCategories = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          const SizedBox(width: 15),
-          ...['섬', '명소/놀거리', '음식', '카페', '숙소'].map((subCategory) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1.0),
-              child: ElevatedButton(
-                onPressed: () => onSubCategorySelected(subCategory),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(40, 28),
-                  backgroundColor: selectedSubCategory == subCategory ? Colors.green : Colors.white,
-                  foregroundColor: selectedSubCategory == subCategory ? Colors.white : Colors.black,
-                  side: BorderSide(
-                    color: selectedSubCategory == subCategory ? Colors.green : Colors.grey[200]!,
-                    width: 1,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+    return Column(
+      children: [
+        UpperCategoryButtons(
+          selectedCategory: selectedCategory,
+          onCategorySelected: onCategorySelected,
+        ),
+        const Divider(),
+        if (selectedCategory == '관심')
+          LowerCategoryButtons(
+            selectedSubCategory: selectedSubCategory,
+            onSubCategorySelected: onSubCategorySelected,
+            subCategories: ['섬', '명소/놀거리', '음식', '카페', '숙소'],
+            showAll: showAllSubCategories,
+          )
+        else if (selectedCategory == '명소/놀거리')
+          LowerCategoryButtons(
+            selectedSubCategory: selectedSubCategory,
+            onSubCategorySelected: onSubCategorySelected,
+            subCategories: ['낚시', '스쿠버 다이빙', '계곡', '바다', '서핑', '휴향림', '산책길', '역사', '수상 레저', '자전거'],
+            showAll: showAllSubCategories,
+          )
+        else if (selectedCategory == '음식')
+            LowerCategoryButtons(
+              selectedSubCategory: selectedSubCategory,
+              onSubCategorySelected: onSubCategorySelected,
+              subCategories: ['한식', '양식', '일식', '중식', '분식', '기타'],
+              showAll: showAllSubCategories,
+            )
+          else if (selectedCategory == '카페')
+              LowerCategoryButtons(
+                selectedSubCategory: selectedSubCategory,
+                onSubCategorySelected: onSubCategorySelected,
+                subCategories: ['커피', '베이커리', '아이스크림/빙수', '차', '과일/주스', '전통 디저트', '기타'],
+                showAll: showAllSubCategories,
+              )
+            else if (selectedCategory == '숙소')
+                LowerCategoryButtons(
+                  selectedSubCategory: selectedSubCategory,
+                  onSubCategorySelected: onSubCategorySelected,
+                  subCategories: ['모텔', '호텔/리조트', '캠핑', '게하/한옥', '펜션'],
+                  showAll: showAllSubCategories,
                 ),
-                child: Text(
-                  subCategory,
-                  style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
+      ],
     );
   }
 }

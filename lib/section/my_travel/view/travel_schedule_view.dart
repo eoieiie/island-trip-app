@@ -98,6 +98,14 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
         markers.add(marker); // 마커 리스트에 추가
       }
     }
+    // 새로운 핑 (거제도 좌표에 마커 추가)
+    final exampleMarker = NMarker(
+      id: 'Example Marker',
+      position: NLatLng(34.8806, 128.6217), // 거제도 좌표
+      caption: NOverlayCaption(text: '거제도'),
+    );
+    markers.add(exampleMarker);
+
 
     // 생성된 모든 마커 지도에 추가
     controller.addOverlayAll(markers.toSet());

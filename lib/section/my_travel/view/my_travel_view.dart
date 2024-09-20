@@ -132,7 +132,7 @@ class _MyTravelViewState extends State<MyTravelView> {
                     ),
                   )
                       : Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(top: 5.0, left: 16.0, right: 16.0),
                     child: ListView.builder(
                       itemCount: travelViewModel.travels.length + 1,
                       itemBuilder: (context, index) {
@@ -263,7 +263,7 @@ class TravelCard extends StatelessWidget {
       child: Card(
         color: Color(0XFFf7f7f7),
         elevation: 4,
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: EdgeInsets.symmetric(vertical: 3),
         child: InkWell(
           onTap: () {
             Navigator.push(

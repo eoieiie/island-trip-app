@@ -62,7 +62,7 @@ class IslandModel {
       name: place.name,
       latitude: place.latitude ?? 0.0,
       longitude: place.longitude ?? 0.0,
-      imageUrl: place.photoUrls?.isNotEmpty == true ? place.photoUrls!.first : 'assets/images/no_photo_available.webp',
+      imageUrl: place.photoUrls?.isNotEmpty == true ? place.photoUrls!.first : 'assets/images/No_photo_available.webp',
       iconUrl: '',
       tags: [], // 태그는 필요에 따라 수정
       title: place.name,

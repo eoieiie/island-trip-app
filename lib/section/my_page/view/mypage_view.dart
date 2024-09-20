@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 임포트
 import 'package:google_sign_in/google_sign_in.dart'; // GoogleSignIn 임포트
 import '../../login/view/login_view.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
+import 'package:http/http.dart' as http;
 
 class MyPageView extends StatelessWidget {
   @override
@@ -178,6 +179,7 @@ class MenuListSection extends StatelessWidget {
             if (googleUser != null) {
               await _googleAuthService.googleSignOut();
             } else if (kakaoUser != null) {
+              await UserApi.instance.unlink();
               await _kakaoAuthService.kakaoSignOut();
             }
 
@@ -271,6 +273,12 @@ class MenuListSection extends StatelessWidget {
                                           await currentUser
                                               .reauthenticateWithCredential(
                                               credential);
+                                          try {
+                                            await UserApi.instance.unlink();
+                                            print('연결 끊기 성공, SDK에서 토큰 삭제');
+                                          } catch (error) {
+                                            print('연결 끊기 실패 $error');
+                                          }
                                           await currentUser.delete();
                                           await _googleAuthService
                                               .googleSignOut();

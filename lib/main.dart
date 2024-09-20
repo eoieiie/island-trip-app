@@ -19,7 +19,6 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/login/view/splash.dart';
 import 'package:project_island/firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:project_island/custom_navigation_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // WidgetsFlutterBinding 초기화

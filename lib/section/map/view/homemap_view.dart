@@ -182,9 +182,15 @@ class _HomeMapViewState extends State<HomeMapView> {
                     children: [
                       Align(
                         alignment: Alignment.bottomLeft,  // 주소를 하단 정렬
-                        child: Text(
-                          _currentSelectedIsland!.address,  // 섬 주소
-                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        child: Row(  // 아이콘과 텍스트를 나란히 배치하기 위해 Row 사용
+                          children: [
+                            Icon(Icons.location_pin, color: Colors.black45, size: 11),  // 핑 아이콘
+                            SizedBox(width: 1),  // 아이콘과 텍스트 사이 간격
+                            Text(
+                              _currentSelectedIsland!.address,  // 섬 주소
+                              style: TextStyle(fontSize: 11, color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
                       GestureDetector(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodel/my_travel_viewmodel.dart';
 import 'travel_schedule_view.dart';
+import 'package:project_island/section/common/google_api/views/google_search_page.dart';
+
 
 class ScheduleAddView extends StatefulWidget {
   final String travelId;
@@ -121,8 +123,8 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               _buildMemoInput(),
               SizedBox(height: 20),
               _makeline(),
-              SizedBox(height: 20),
-              _buildPhotoSection(),
+              //SizedBox(height: 20),
+              //_buildPhotoSection(),
               SizedBox(height: 50),
               _buildSubmitButton(),
             ],
@@ -157,25 +159,32 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
           ),
         ),
         SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0), // 좌우 패딩 추가
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: '위치 검색',
-              contentPadding: EdgeInsets.symmetric(horizontal: 20), // 텍스트와 아이콘에 좌우 패딩 추가
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경 (초록색)
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 활성화 시 테두리 색상
-              ),
-              suffixIcon: Padding(
-                padding: const EdgeInsets.only(right: 12.0), // 아이콘에 오른쪽 패딩 추가
-                child: Icon(
-                  Icons.search,
-                  color: Color(0xFF1BB874), // 하단 버튼과 동일한 초록색
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => GoogleSearchPage()), // GoogleSearchPage로 이동
+            );
+          },
+          child: AbsorbPointer( // TextField의 입력을 막고, 클릭만 가능하게 함
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: '위치 검색',
+                contentPadding: EdgeInsets.symmetric(horizontal: 20), // 텍스트와 아이콘에 좌우 패딩 추가
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 활성화 시 테두리 색상
+                ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 12.0), // 아이콘에 오른쪽 패딩 추가
+                  child: Icon(
+                    Icons.search,
+                    color: Color(0xFF1BB874), // 하단 버튼과 동일한 초록색
+                  ),
                 ),
               ),
             ),
@@ -184,7 +193,9 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         SizedBox(height: 16), // 칸 사이 여백 설정
         Center( // 버튼 가운데 정렬
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              // 관심 리스트에서 불러오는 기능 추가 가능
+            },
             child: Text(
               '관심 리스트에서 불러오기',
               style: TextStyle(
@@ -209,6 +220,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
       ],
     );
   }
+
 
 
 

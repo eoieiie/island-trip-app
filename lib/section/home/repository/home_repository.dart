@@ -89,8 +89,8 @@ class Repository {
         return 125850;
       case '울릉도':
         return 126101;
-      case '덕적도 비조봉':
-        return 2664734;
+      case '영흥도':
+        return 127629;
       case '거제도':
         return 126972; // 예시 contentId
       case '진도':

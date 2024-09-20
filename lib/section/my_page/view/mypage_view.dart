@@ -1,32 +1,41 @@
+import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Cutomer Service.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
-import 'package:project_island/section/my_page/view/profile_edit_view.dart';
 import 'package:project_island/section/my_page/view/setting_view.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth;
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 임포트
+import 'package:google_sign_in/google_sign_in.dart'; // GoogleSignIn 임포트
 import '../../login/view/login_view.dart';
+import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
+import 'package:http/http.dart' as http;
 
 class MyPageView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('마이페이지',
+        title: Text(
+          '마이페이지',
           style: TextStyle(
             color: Color(0xFF222222),
             fontSize: 20,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
-          ),),
+          ),
+        ),
         backgroundColor: Colors.white,
-
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.grey[400],),
+            icon: Icon(
+              Icons.settings,
+              color: Colors.grey[400],
+            ),
             onPressed: () {
               Get.to(() => SettingView()); // 설정 페이지로 이동
             },
@@ -35,7 +44,6 @@ class MyPageView extends StatelessWidget {
       ),
       backgroundColor: Colors.white, // 전체 배경 색상 흰색으로 설정
       body: GetBuilder<MyPageController>(
-        init: MyPageController(),
         builder: (controller) {
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
@@ -70,31 +78,13 @@ class UserProfileSection extends StatelessWidget {
         // Positioned으로 프로필 이미지를 배치
         Positioned(
           left: 0,
-          top: 20, // userTitle과 userName 사이의 간격 조정
-          child: Container(
-            width: 60, // 프로필 이미지의 너비
-            height: 60, // 프로필 이미지의 높이
-            decoration: ShapeDecoration(
-              image: DecorationImage(
-                // 프로필 이미지를 사용하는 부분
-                image: NetworkImage(controller.profileImageUrl), // 수정 전: controller.profileImageUrl
-
-                fit: BoxFit.fill, // 이미지가 컨테이너에 꽉 차도록 설정
-              ),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 2, color: Colors.white), // 흰색 테두리 추가
-                borderRadius: BorderRadius.circular(30), // 둥근 테두리 설정 (반지름을 30으로 설정)
-              ),
-              shadows: [
-                BoxShadow(
-                  color: Colors.grey[200]!, // 그림자의 색상
-                  blurRadius: 20, // 그림자의 흐림 정도
-                  offset: Offset(0, 8), // 그림자의 위치 조정
-                  spreadRadius: 0, // 그림자의 확산 정도
-                )
-              ],
-            ),
-          ),
+          top: 20,
+          child: Obx(() {
+            return CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage(controller.profileImagePath.value),
+            );
+          }),
         ),
         // 프로필 사진 우측에 텍스트와 버튼을 배치
         Padding(
@@ -104,7 +94,8 @@ class UserProfileSection extends StatelessWidget {
             children: [
               // userTitle과 profileEditButton을 한 줄에 정렬
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center, // userTitle과 profileEditButton을 정렬
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // userTitle과 profileEditButton을 정렬
                 children: [
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -123,39 +114,17 @@ class UserProfileSection extends StatelessWidget {
                     ),
                   ),
                   Spacer(), // userTitle을 왼쪽에 고정하고 나머지 공간 확보
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      backgroundColor: Colors.grey[200], // 버튼 배경색을 회색으로 설정
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20), // 둥근 모서리 설정
-                      ),
-                      minimumSize: Size(60, 30), // 버튼의 width와 height를 조정
-                    ),
-                    onPressed: () {
-                      Get.to(() => ProfileEditView()); // 프로필 편집 페이지로 이동
-                    },
-                    child: Text(
-                      '프로필 편집',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black, // 텍스트 색상을 검정으로 설정
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
                 ],
               ),
+              SizedBox(height: 10),
               Text(
-                controller.userName, // 사용자 이름
+                controller.userName.value, // 사용자 이름
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 4),
-              Text(controller.userDescription), // 한 줄 소개
             ],
           ),
         ),
@@ -164,11 +133,14 @@ class UserProfileSection extends StatelessWidget {
   }
 }
 
-
 // 메뉴 리스트 섹션
 class MenuListSection extends StatelessWidget {
-  final google_auth.AuthService _googleAuthService = google_auth.AuthService(); // Google AuthService 인스턴스 생성
-  final kakao_auth.AuthService _kakaoAuthService = kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
+  final google_auth.AuthService _googleAuthService =
+  google_auth.AuthService(); // Google AuthService 인스턴스 생성
+  final kakao_auth.AuthService _kakaoAuthService =
+  kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
+  final MyPageController _myPageController = MyPageController();
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -207,12 +179,12 @@ class MenuListSection extends StatelessWidget {
             if (googleUser != null) {
               await _googleAuthService.googleSignOut();
             } else if (kakaoUser != null) {
+              await UserApi.instance.unlink();
               await _kakaoAuthService.kakaoSignOut();
             }
 
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => LoginScreen()),
-            );
+            // 로그아웃 후 로그인 화면으로 이동
+            Get.offAll(() => LoginScreen());
           },
         ),
         ListTile(
@@ -220,6 +192,153 @@ class MenuListSection extends StatelessWidget {
           trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 회원 탈퇴 클릭 시 이벤트 처리
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.white,
+              builder: (BuildContext context) {
+                return Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // 필요한 만큼만 공간 차지
+                    children: [
+                      Text(
+                        '정말 회원 탈퇴 하시겠습니까?',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context)
+                                  .pop(); // Modal Bottom Sheet 닫기
+                              final currentUser =
+                                  FirebaseAuth.instance.currentUser;
+
+                              if (currentUser != null) {
+                                try {
+                                  await currentUser.delete();
+                                  await _googleAuthService.googleSignOut();
+                                  await _kakaoAuthService.kakaoSignOut();
+                                  Get.offAll(() => LoginScreen());
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'requires-recent-login') {
+                                    // 재인증 필요
+                                    print('재인증이 필요합니다.');
+
+                                    try {
+                                      final googleUser = _googleAuthService
+                                          .googleGetCurrentUser();
+                                      final kakaoUser = _kakaoAuthService
+                                          .kakaoGetCurrentUser();
+
+                                      if (googleUser != null) {
+                                        // Google 재인증
+                                        final GoogleSignInAccount?
+                                        googleSignInAccount =
+                                        await GoogleSignIn().signIn();
+                                        if (googleSignInAccount != null) {
+                                          final GoogleSignInAuthentication
+                                          googleAuth =
+                                          await googleSignInAccount
+                                              .authentication;
+                                          final AuthCredential credential =
+                                          GoogleAuthProvider.credential(
+                                            accessToken: googleAuth.accessToken,
+                                            idToken: googleAuth.idToken,
+                                          );
+                                          await currentUser
+                                              .reauthenticateWithCredential(
+                                              credential);
+                                          await currentUser.delete();
+                                          await _googleAuthService
+                                              .googleSignOut();
+                                          await _kakaoAuthService
+                                              .kakaoSignOut();
+                                          Get.offAll(() => LoginScreen());
+                                        }
+                                      } else if (kakaoUser != null) {
+                                        // Kakao 재인증
+                                        final kakaoToken =
+                                        await _kakaoAuthService
+                                            .signInWithKakao();
+                                        final token = await UserApi.instance.loginWithKakaoTalk();
+                                        if (kakaoToken != null) {
+                                          final OAuthCredential credential =
+                                          OAuthProvider("kakao.com")
+                                              .credential(
+                                            accessToken: token.accessToken,
+                                          );
+                                          await currentUser
+                                              .reauthenticateWithCredential(
+                                              credential);
+                                          try {
+                                            await UserApi.instance.unlink();
+                                            print('연결 끊기 성공, SDK에서 토큰 삭제');
+                                          } catch (error) {
+                                            print('연결 끊기 실패 $error');
+                                          }
+                                          await currentUser.delete();
+                                          await _googleAuthService
+                                              .googleSignOut();
+                                          await _kakaoAuthService
+                                              .kakaoSignOut();
+                                          Get.offAll(() => LoginScreen());
+                                        }
+                                      } else {
+                                        // 기타 인증 제공자 처리
+                                      }
+                                    } catch (e) {
+                                      // 재인증 중 오류 처리
+                                      print('재인증 중 오류 발생: $e');
+                                    }
+                                  } else {
+                                    print('회원 탈퇴 중 오류 발생: $e');
+                                  }
+                                } catch (e) {
+                                  print('회원 탈퇴 중 오류 발생: $e');
+                                }
+                              } else {
+                                // 로그인된 사용자가 없음
+                                print('로그인된 사용자가 없습니다.');
+                              }
+                            },
+                            child: Text('네',
+                              style: TextStyle(fontFamily: 'Pretendard',
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black, // 버튼 배경색을 검정색으로 설정
+                              foregroundColor: Colors.white, // 버튼 글자색을 흰색으로 설정
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black, // 버튼 배경색을 검정색으로 설정
+                              foregroundColor: Colors.white, // 버튼 글자색을 흰색으로 설정
+                            ),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pop(); // Modal Bottom Sheet 닫기
+                            },
+                            child: Text('아니오',
+                            style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
           },
         ),
       ],

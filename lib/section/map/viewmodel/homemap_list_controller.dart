@@ -8,10 +8,12 @@ class HomemapListController extends GetxController {
   var selectedSubCategory = ''.obs; // Observable로 변경
   var isFullScreen = false.obs; // 화면 상태 관리
   var displayedItems = <IslandModel>[].obs; // 리스트 상태 관리
+  var currentIsland = ''.obs; // 현재 선택된 섬
 
   // 초기 아이템 로드
-  void loadInitialItems(String category) async {
-    var results = await repository.getItemsByCategory(category);
+  void loadInitialItems(String islandName) async {
+    currentIsland.value = islandName; // 섬 이름을 저장
+    var results = await repository.getItemsByCategory(islandName); // 섬에 해당하는 데이터를 가져옴
     displayedItems.assignAll(results);
   }
 
@@ -26,14 +28,15 @@ class HomemapListController extends GetxController {
 
   // 카테고리 선택 처리
   void onCategorySelected(String category) async {
-    var results = await repository.getItemsByCategory(category);
+    String modifiedCategory = '${currentIsland.value} $category'; // 섬에 따른 카테고리 필터링
+    var results = await repository.getItemsByCategory(modifiedCategory);
     selectedCategory.value = category;
     displayedItems.assignAll(results);
   }
 
   // 서브 카테고리 선택 처리 (onSubCategorySelected)
   void onSubCategorySelected(String subCategory) async {
-    String modifiedSubCategory = '${selectedCategory.value} $subCategory';
+    String modifiedSubCategory = '${currentIsland.value} $subCategory'; // 섬에 따른 서브 카테고리 필터링
     var results = await repository.getItemsByCategory(modifiedSubCategory);
     selectedSubCategory.value = subCategory;
     displayedItems.assignAll(results);

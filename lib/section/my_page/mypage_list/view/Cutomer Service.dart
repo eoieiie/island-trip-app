@@ -13,26 +13,37 @@ class CustomerServiceScreen extends StatelessWidget {
             child: ListView(
               children: [
                 ListTile(
-                  title: Text('자주 묻는 질문 1'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FaqDetailScreen(question: '자주 묻는 질문 1'),
-                      ),
-                    );
-                  },
+                  title: Text('문의처',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,  // 글씨 두껍게
+                      fontSize: 24,                 // 글씨 크기
+                      fontFamily: 'Pretendard',          // 글씨체 변경 (폰트 패밀리)
+                    ),
+                  ),
+                  // onTap: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => FaqDetailScreen(question: '자주 묻는 질문 1'),
+                  //     ),
+                  //   );
+                  // },
                 ),
                 ListTile(
-                  title: Text('자주 묻는 질문 2'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FaqDetailScreen(question: '자주 묻는 질문 2'),
-                      ),
-                    );
-                  },
+                  title: Text('atropic159@naver.com',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,  // 글씨 두껍게
+                      fontSize: 18,                 // 글씨 크기
+                      fontFamily: 'Pretendard',          // 글씨체 변경 (폰트 패밀리)
+                    ),),
+                  // onTap: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => FaqDetailScreen(question: '자주 묻는 질문 2'),
+                  //     ),
+                  //   );
+                  // },
                 ),
                 // 더 많은 FAQ 항목 추가 가능
               ],

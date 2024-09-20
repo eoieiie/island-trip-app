@@ -64,20 +64,20 @@ class MagazineView extends StatelessWidget {
                               right: 0,
                               child: Center(
                                 child: Obx(() => Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(viewModel.islandImages.length, (index) {
-                                    return AnimatedContainer(
-                                      duration: Duration(milliseconds: 300),
-                                      margin: EdgeInsets.symmetric(horizontal: 4.0),
-                                      width: currentPage.value == index ? 16.0 : 8.0,
-                                      height: 8.0,
-                                      decoration: BoxDecoration(
-                                        color: currentPage.value == index ? Color(0xFF1BB874) : Colors.grey.withOpacity(0.5),
-                                        borderRadius: BorderRadius.circular(4.0),
-                                      ),
-                                    );
-                                  }),
-                                )),
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: List.generate(viewModel.islandImages.length, (index) {
+                                      return AnimatedContainer(
+                                        duration: Duration(milliseconds: 300),
+                                        margin: EdgeInsets.symmetric(horizontal: 4.0),
+                                        width: currentPage.value == index ? 16.0 : 8.0,
+                                        height: 8.0,
+                                        decoration: BoxDecoration(
+                                          color: currentPage.value == index ? Color(0xFF1BB874) : Colors.grey.withOpacity(0.5),
+                                          borderRadius: BorderRadius.circular(4.0),
+                                        ),
+                                      );
+                                    })),
+                                ),
                               ),
                             ),
                             // 상단 뒤로 가기 버튼
@@ -212,6 +212,47 @@ class MagazineView extends StatelessWidget {
                         ),
                       ),
 
+                    // 여러 개의 섹션을 표시
+                    if (viewModel.jsonMagazines.isNotEmpty)
+                      ...viewModel.jsonMagazines.first.content.map((section) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                section.title, // 섹션 제목
+                                style: TextStyle(
+                                  color: Color(0xFF222222),
+                                  fontSize: 18,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.5,
+                                ),
+                              ),
+                              SizedBox(height: 10.0),
+                              Text(
+                                section.content, // 섹션 내용
+                                style: TextStyle(
+                                  color: Color(0xFF666666),
+                                  fontSize: 13,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.5,
+                                ),
+                              ),
+                              SizedBox(height: 10.0),
+                              if (section.CI.isNotEmpty)
+                                Image.network(
+                                  '이미지 API 호출 URL/${section.CI}', // CI로 이미지 불러오기
+                                  fit: BoxFit.cover,
+                                ),
+                              SizedBox(height: 20.0),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+
                     // 경계선 섹션
                     const SizedBox(height: 16), // 경계선 위의 간격
                     Container(
@@ -229,49 +270,6 @@ class MagazineView extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-
-                    // "소개" 텍스트 표시 섹션
-                    const SizedBox(height: 16), // 경계선과 "소개" 텍스트 사이 간격
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        "소개",
-                        style: TextStyle(
-                          color: Color(0xFF222222),
-                          fontSize: 18,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          height: 0.09,
-                        ),
-                      ),
-                    ),
-
-                    // "소개내용" 텍스트 표시 섹션
-                    const SizedBox(height: 16), // "소개"와 "소개내용" 사이 간격 조정
-                    if (viewModel.jsonMagazines.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Text(
-                          viewModel.jsonMagazines.first.content, // JSON에서 가져온 매거진 세부내용
-                          style: TextStyle(
-                            color: Color(0xFF666666),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
-                            height: 1.5, // 줄 간격을 넓게 설정
-                          ),
-                        ),
-                      ),
-
-                    // 내용 섹션과 다음 경계선 사이 간격을 유동적으로 설정
-                    const SizedBox(height: 16),
-
-                    // 경계선 섹션
-                    Container(
-                      width: double.infinity,
-                      height: 8,
-                      decoration: BoxDecoration(color: Color(0xFF999999).withOpacity(0.1)), // 투명한 경계선 색상 설정
                     ),
 
                     // "Recommend" 텍스트 표시 섹션

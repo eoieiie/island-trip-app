@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import '../model/home_model.dart';
 import '../viewmodel/magazine_viewmodel.dart';
 import '../repository/home_repository.dart'; // Repository import
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'package:xml/xml.dart' as xml;
+
+final String apiKey = dotenv.env['TOUR_API_KEY'] ?? ''; // 환경 변수에서 API 키 가져오기
 
 class MagazineView extends StatelessWidget {
   final Magazine magazine; // Magazine 객체를 받는 매개변수
@@ -10,6 +15,28 @@ class MagazineView extends StatelessWidget {
   final RxInt currentPage = 0.obs; // 현재 페이지를 추적하는 변수 추가
 
   MagazineView({required this.magazine});
+
+  // API에서 이미지 URL을 가져오는 함수
+  Future<List<String>> fetchImageUrls(String contentId) async {
+    final url =
+        'http://apis.data.go.kr/B551011/KorService1/detailImage1?ServiceKey=$apiKey&contentId=$contentId&MobileOS=ETC&MobileApp=AppTest&imageYN=Y&subImageYN=Y&numOfRows=10';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // XML 응답 파싱
+      final document = xml.XmlDocument.parse(response.body);
+
+      // originimgurl 태그에서 이미지 URL 추출
+      final urls = document.findAllElements('originimgurl').map((node) {
+        return node.text;
+      }).toList();
+
+      return urls; // 이미지 URL 리스트 반환
+    } else {
+      throw Exception('Failed to load image data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,44 +239,84 @@ class MagazineView extends StatelessWidget {
                         ),
                       ),
 
+                    // 해시태그 밑에 얇은 회색 경계선 추가
+                    Divider(
+                      color: Color(0xFF999999).withOpacity(0.5),
+                      thickness: 1, // 얇은 경계선
+                    ),
+
                     // 여러 개의 섹션을 표시
                     if (viewModel.jsonMagazines.isNotEmpty)
                       ...viewModel.jsonMagazines.first.content.map((section) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                section.title, // 섹션 제목
-                                style: TextStyle(
-                                  color: Color(0xFF222222),
-                                  fontSize: 18,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.5,
-                                ),
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    section.title, // 섹션 제목
+                                    style: TextStyle(
+                                      color: Color(0xFF222222),
+                                      fontSize: 18,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    section.content, // 섹션 내용
+                                    style: TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.0),
+
+                                  // 한 번에 하나의 이미지만 표시하고 스크롤로 넘기기
+                                  FutureBuilder<List<String>>(
+                                    future: fetchImageUrls(section.CI),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return Center(child: CircularProgressIndicator());
+                                      } else if (snapshot.hasError) {
+                                        return Center(child: Text('이미지를 불러올 수 없습니다.'));
+                                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                        return Center(child: Text('이미지가 없습니다.'));
+                                      } else {
+                                        final imageUrls = snapshot.data!;
+                                        return Container(
+                                          height: 300, // 이미지 카드 높이 설정
+                                          child: PageView.builder(
+                                            itemCount: imageUrls.length,
+                                            itemBuilder: (context, index) {
+                                              return Image.network(
+                                                imageUrls[index],
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(height: 20.0),
+                                ],
                               ),
-                              SizedBox(height: 10.0),
-                              Text(
-                                section.content, // 섹션 내용
-                                style: TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 13,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.5,
-                                ),
-                              ),
-                              SizedBox(height: 10.0),
-                              if (section.CI.isNotEmpty)
-                                Image.network(
-                                  '이미지 API 호출 URL/${section.CI}', // CI로 이미지 불러오기
-                                  fit: BoxFit.cover,
-                                ),
-                              SizedBox(height: 20.0),
-                            ],
-                          ),
+                            ),
+
+                            // 각 섹션 사이에 얇은 경계선 추가
+                            Divider(
+                              color: Color(0xFF999999).withOpacity(0.5),
+                              thickness: 1, // 얇은 경계선
+                            ),
+                          ],
                         );
                       }).toList(),
 

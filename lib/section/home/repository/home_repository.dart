@@ -3,8 +3,29 @@ import 'dart:convert';  // JSON 파싱을 위해 필요
 import 'package:http/http.dart' as http;  // HTTP 요청을 위해 필요
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';  // 로컬 JSON 파일을 불러오기 위해 필요
-
+import 'package:http/http.dart' as http;
+import 'package:xml/xml.dart' as xml;
 class Repository {
+  Future<List<String>> fetchImageUrls(String contentId) async {
+    final url =
+        'http://apis.data.go.kr/B551011/KorService1/detailImage1?ServiceKey=$apiKey&contentId=$contentId&MobileOS=ETC&MobileApp=AppTest&imageYN=Y&subImageYN=Y&numOfRows=10';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // XML 응답 파싱
+      final document = xml.XmlDocument.parse(response.body);
+
+      // originimgurl 태그에서 이미지 URL 추출
+      final urls = document.findAllElements('originimgurl').map((node) {
+        return node.text;
+      }).toList();
+
+      return urls; // 이미지 URL 리스트 반환
+    } else {
+      throw Exception('Failed to load image data');
+    }
+  }
 
   // JSON 파일을 로드하고 Magazine1 목록을 반환하는 메서드
   Future<List<Magazine1>> fetchMagazinesFromJson() async {

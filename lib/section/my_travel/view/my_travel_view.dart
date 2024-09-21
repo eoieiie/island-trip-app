@@ -66,7 +66,7 @@ class _MyTravelViewState extends State<MyTravelView> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 0, top: 100.0, right: 50.0, bottom: 0.0),
+                  padding: const EdgeInsets.only(left: 0, top: 50.0, right: 50.0, bottom: 0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -132,7 +132,7 @@ class _MyTravelViewState extends State<MyTravelView> {
                     ),
                   )
                       : Padding(
-                    padding: const EdgeInsets.only(top: 5.0, left: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(top: 25.0, left: 16.0, right: 16.0),
                     child: ListView.builder(
                       itemCount: travelViewModel.travels.length + 1,
                       itemBuilder: (context, index) {
@@ -193,7 +193,7 @@ class _MyTravelViewState extends State<MyTravelView> {
             ),
             if (travelViewModel.travels.isNotEmpty)
               Positioned(
-                bottom: 60,
+                bottom: 40,
                 left: MediaQuery.of(context).size.width / 2 - 60, // 가운데 위치 조정
                 child: FloatingActionButton.extended(
                   onPressed: () {
@@ -261,7 +261,7 @@ class TravelCard extends StatelessWidget {
       height: 140, // 컨테이너 높이 설정
       padding: EdgeInsets.symmetric(vertical: 8.0), // 카드 위아래 여백 추가
       child: Card(
-        color: Color(0XFFf7f7f7),
+        color: Color(0XFFf9f9f9),
         elevation: 4,
         margin: EdgeInsets.symmetric(vertical: 3),
         child: InkWell(

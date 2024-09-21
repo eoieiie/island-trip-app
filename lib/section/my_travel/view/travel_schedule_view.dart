@@ -14,6 +14,10 @@ class TravelScheduleView extends StatefulWidget {
   final String selectedIsland; // 선택된 섬 이름
   final DateTime startDate; // 여행 시작일
   final DateTime endDate; // 여행 종료일
+  final double? latitude; // 장소의 위도 (선택적)
+  final double? longitude; // 장소의 경도 (선택적)
+  final List<String>? imageUrls; // 이미지 URL 목록, 로컬 asset 이미지도 포함 가능 (선택적)
+
 
   // 생성자를 통해 필수 매개변수 초기화
   TravelScheduleView({
@@ -21,6 +25,9 @@ class TravelScheduleView extends StatefulWidget {
     required this.selectedIsland,
     required this.startDate,
     required this.endDate,
+    this.latitude, // 선택적, 기본값 없음
+    this.longitude, // 선택적, 기본값 없음
+    this.imageUrls, // 선택적, 기본값 없음
   });
 
   // State를 생성하는 메서드
@@ -76,19 +83,34 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
   void _onMapReady(NaverMapController controller) {
     _controller.complete(controller); // 컨트롤러를 Completer로 전달
 
-    // 네이버 지도에 마커 추가
-    final marker1 = NMarker(
-      id: '1',
-      position: const NLatLng(37.5665, 126.9780), // 서울 위치
-    );
-    final marker2 = NMarker(
-      id: '2',
-      position: const NLatLng(37.5765, 126.9880), // 다른 위치
-    );
+    // 여행 일정에서 좌표가 있는 일정에 대해 마커 생성
+    final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex); // 일정 목록 가져오기
+    List<NMarker> markers = [];
 
-    // 지도에 마커 표시
-    controller.addOverlayAll({marker1, marker2});
+    for (var schedule in schedules) {
+      if (schedule.latitude != null && schedule.longitude != null) {
+        // 좌표가 있는 경우 마커 생성
+        final marker = NMarker(
+          id: schedule.title, // 일정 제목을 마커 ID로 사용
+          position: NLatLng(schedule.latitude!, schedule.longitude!), // 일정의 위도와 경도를 위치로 설정
+          caption: NOverlayCaption(text: schedule.title), // 일정 제목을 마커 캡션으로 표시
+        );
+        markers.add(marker); // 마커 리스트에 추가
+      }
+    }
+    // 새로운 핑 (거제도 좌표에 마커 추가)
+    final exampleMarker = NMarker(
+      id: 'Example Marker',
+      position: NLatLng(34.8806, 128.6217), // 거제도 좌표
+      caption: NOverlayCaption(text: '거제도'),
+    );
+    markers.add(exampleMarker);
+
+
+    // 생성된 모든 마커 지도에 추가
+    controller.addOverlayAll(markers.toSet());
   }
+
 
   // 새로운 일정을 추가하는 함수
   void _addSchedule(String title, String startTime, String endTime, String memo) {

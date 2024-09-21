@@ -211,90 +211,27 @@ class MenuListSection extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             onPressed: () async {
-                              Navigator.of(context)
-                                  .pop(); // Modal Bottom Sheet 닫기
-                              final currentUser =
-                                  FirebaseAuth.instance.currentUser;
-
+                              Navigator.of(context).pop(); // Modal Bottom Sheet 닫기
+                              final currentUser = FirebaseAuth.instance.currentUser;
+                              print(currentUser);
                               if (currentUser != null) {
+                                final providerData = currentUser.providerData;
                                 try {
-                                  await currentUser.delete();
-                                  await _googleAuthService.googleSignOut();
-                                  await _kakaoAuthService.kakaoSignOut();
-                                  Get.offAll(() => LoginScreen());
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'requires-recent-login') {
-                                    // 재인증 필요
-                                    print('재인증이 필요합니다.');
-
+                                  if (providerData.any((userInfo) => userInfo.providerId == 'google.com')) {
+                                    // 구글 유저인 경우
+                                    await currentUser.delete();
+                                    await _googleAuthService.googleSignOut();
+                                  } else if (providerData.any((userInfo) => userInfo.providerId == 'oidc.kakao')) {
+                                    // 카카오 유저인 경우
+                                    print('step1');
                                     try {
-                                      final googleUser = _googleAuthService
-                                          .googleGetCurrentUser();
-                                      final kakaoUser = _kakaoAuthService
-                                          .kakaoGetCurrentUser();
-
-                                      if (googleUser != null) {
-                                        // Google 재인증
-                                        final GoogleSignInAccount?
-                                        googleSignInAccount =
-                                        await GoogleSignIn().signIn();
-                                        if (googleSignInAccount != null) {
-                                          final GoogleSignInAuthentication
-                                          googleAuth =
-                                          await googleSignInAccount
-                                              .authentication;
-                                          final AuthCredential credential =
-                                          GoogleAuthProvider.credential(
-                                            accessToken: googleAuth.accessToken,
-                                            idToken: googleAuth.idToken,
-                                          );
-                                          await currentUser
-                                              .reauthenticateWithCredential(
-                                              credential);
-                                          await currentUser.delete();
-                                          await _googleAuthService
-                                              .googleSignOut();
-                                          await _kakaoAuthService
-                                              .kakaoSignOut();
-                                          Get.offAll(() => LoginScreen());
-                                        }
-                                      } else if (kakaoUser != null) {
-                                        // Kakao 재인증
-                                        final kakaoToken =
-                                        await _kakaoAuthService
-                                            .signInWithKakao();
-                                        final token = await UserApi.instance.loginWithKakaoTalk();
-                                        if (kakaoToken != null) {
-                                          final OAuthCredential credential =
-                                          OAuthProvider("kakao.com")
-                                              .credential(
-                                            accessToken: token.accessToken,
-                                          );
-                                          await currentUser
-                                              .reauthenticateWithCredential(
-                                              credential);
-                                          try {
-                                            await UserApi.instance.unlink();
-                                            print('연결 끊기 성공, SDK에서 토큰 삭제');
-                                          } catch (error) {
-                                            print('연결 끊기 실패 $error');
-                                          }
-                                          await currentUser.delete();
-                                          await _googleAuthService
-                                              .googleSignOut();
-                                          await _kakaoAuthService
-                                              .kakaoSignOut();
-                                          Get.offAll(() => LoginScreen());
-                                        }
-                                      } else {
-                                        // 기타 인증 제공자 처리
-                                      }
-                                    } catch (e) {
-                                      // 재인증 중 오류 처리
-                                      print('재인증 중 오류 발생: $e');
+                                      await UserApi.instance.unlink();
+                                      await currentUser.delete();
+                                      await _kakaoAuthService.kakaoSignOut();
+                                      Get.offAll(() => LoginScreen());
+                                    } catch (error) {
+                                      print('연결 끊기 실패 $error');
                                     }
-                                  } else {
-                                    print('회원 탈퇴 중 오류 발생: $e');
                                   }
                                 } catch (e) {
                                   print('회원 탈퇴 중 오류 발생: $e');
@@ -304,6 +241,7 @@ class MenuListSection extends StatelessWidget {
                                 print('로그인된 사용자가 없습니다.');
                               }
                             },
+
                             child: Text('네',
                               style: TextStyle(fontFamily: 'Pretendard',
                                   fontSize: 13,

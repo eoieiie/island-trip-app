@@ -26,7 +26,7 @@ class HomeViewModel extends GetxController {
 
     try {
       // 여러 섬의 매거진 데이터를 API에서 가져와 상태를 업데이트
-      magazines.value = await repository.fetchMagazinesFromMultipleIslands(['안면도','울릉도', '덕적도 비조봉', '거제도', '진도']);
+      magazines.value = await repository.fetchMagazinesFromMultipleIslands(['안면도','울릉도', '영흥도', '거제도', '진도']);
 
       // 일반 콘텐츠와 다른 리스트들을 리포지토리에서 가져와 상태를 업데이트
       contents.value = repository.fetchContents();

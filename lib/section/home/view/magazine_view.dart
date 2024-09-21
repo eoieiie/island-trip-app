@@ -53,8 +53,14 @@ class MagazineView extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         } else if (viewModel.errorMessage.isNotEmpty) {
           return Center(child: Text(viewModel.errorMessage.value));
-        } else if (viewModel.jsonMagazines.isEmpty || viewModel.islandImages.isEmpty) {
-          return Center(child: Text('No data available for this island.')); // 데이터가 없을 경우 메시지 출력
+        } else if (viewModel.jsonMagazines.isEmpty) {
+          return Center(
+            child: Text('No magazine data available for this island.'), // JSON 매거진 데이터가 없을 경우
+          );
+        } else if (viewModel.islandImages.isEmpty) {
+          return Center(
+            child: Text('No images available for this island.'), // 이미지 데이터가 없을 경우
+          );
         } else {
           return Stack(
             children: [

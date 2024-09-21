@@ -6,6 +6,7 @@ import 'package:project_island/section/home/view/island_detail_view.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
+import '../viewmodel/magazine_viewmodel.dart';
 
 class HomeView extends StatelessWidget {
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
@@ -19,30 +20,26 @@ class HomeView extends StatelessWidget {
         }
         return Stack(
           children: [
-            // 흰색 배경을 추가하여 매거진 리스트 아래에 위치하게 함
             Positioned.fill(
               child: Container(
                 color: Colors.white,
               ),
             ),
-            // MagazineSection을 맨 위에 배치
             MagazineSection(viewModel: viewModel),
-            // 왼쪽 상단에 로고 추가
             Positioned(
               top: 30.0,
               left: 2.0,
               child: SvgPicture.asset(
                 'assets/images/isltrip-logo.svg',
-                width: 100.0, // 로고의 너비를 설정합니다.
-                height: 50.0, // 로고의 높이를 설정합니다.
-                fit: BoxFit.contain, // 로고를 어떻게 맞출지 설정합니다.
+                width: 100.0,
+                height: 50.0,
+                fit: BoxFit.contain,
               ),
             ),
-            // 바텀 시트 영역
             DraggableScrollableSheet(
               initialChildSize: 0.40,
               minChildSize: 0.40,
-              maxChildSize: 1.0, // 화면 끝까지 올라갈 수 있도록 설정
+              maxChildSize: 1.0,
               builder: (context, scrollController) {
                 return BottomSheetContent(
                   viewModel: viewModel,
@@ -102,6 +99,7 @@ class _MagazineSectionState extends State<MagazineSection> {
     );
   }
 }
+
 class MagazineListView extends StatelessWidget {
   final HomeViewModel viewModel;
   final Function(int) onPageChanged;
@@ -119,35 +117,59 @@ class MagazineListView extends StatelessWidget {
       onPageChanged: onPageChanged, // 페이지 변경 시 호출되는 콜백 함수
       itemBuilder: (context, index) {
         final magazine = viewModel.magazines[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => IslandDetailView(
-                  islandName: magazine.title, // 섬 이름을 전달
+        // MagazineViewModel에서 해당 magazine title에 맞는 데이터를 가져옴
+        final magazineViewModel = Get.put(MagazineViewModel(magazine, Repository()), tag: magazine.title);
+
+        return Obx(() {
+          if (magazineViewModel.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
+          // 매칭된 magazine1 데이터를 가져옴
+          final matchingMagazine1 = magazineViewModel.jsonMagazines.firstWhere(
+                (magazine1) => magazine1.islandtag.trim().toLowerCase() == magazine.title.trim().toLowerCase(),
+            orElse: () => Magazine1(  // 기본값을 반환
+                title: 'No Title',
+                littletitle: 'No Subtitle',
+                hashtags: [],
+                content: [],
+                islandtag: 'No Island'
+            ),
+          );
+
+
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => IslandDetailView(
+                    islandName: magazine.title, // 섬 이름을 전달
+                  ),
                 ),
-              ),
-            );
-          },
-          child: MagazineCard(
-            magazine: magazine,
-            isFirst: index == 0,
-            isRounded: false, // 모서리를 둥글지 않게 설정
-          ),
-        );
+              );
+            },
+            child: MagazineCard(
+              magazine: magazine,
+              magazine1: matchingMagazine1, // matching된 데이터 전달
+              isFirst: index == 0,
+              isRounded: false, // 모서리를 둥글지 않게 설정
+            ),
+          );
+        });
       },
     );
   }
 }
 
 class MagazineCard extends StatelessWidget {
-  final Magazine magazine;
+  final Magazine magazine; // HomeViewModel에서 가져온 magazine
+  final Magazine1? magazine1; // MagazineViewModel에서 가져온 json 매칭된 magazine1
   final bool isFirst;
-  final bool isRounded; // 모서리를 둥글게 할지 여부
+  final bool isRounded;
 
   const MagazineCard({
     required this.magazine,
+    this.magazine1, // optional로 magazine1 추가
     this.isFirst = false,
     this.isRounded = true,
   });
@@ -155,7 +177,7 @@ class MagazineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: isRounded ? BorderRadius.circular(12.0) : BorderRadius.zero, // 모서리 설정 수정
+      borderRadius: isRounded ? BorderRadius.circular(12.0) : BorderRadius.zero,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -164,12 +186,12 @@ class MagazineCard extends StatelessWidget {
             fit: BoxFit.cover,
             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => Container(
-              color: Colors.white, // 흰색 배경
+              color: Colors.white,
               child: Center(
                 child: Text(
-                  "사진이 없어요!", // 썸네일 없는 경우 대체 텍스트
+                  "사진이 없어요!",
                   style: TextStyle(
-                    color: Colors.black, // 텍스트 색상
+                    color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -177,9 +199,9 @@ class MagazineCard extends StatelessWidget {
               ),
             ),
           ),
-          if (isFirst) // 첫 번째 카드에만 텍스트 추가
+          if (magazine1 != null)  // magazine1이 null이 아닐 때만 텍스트 출력
             Positioned(
-              bottom: 21.0,
+              bottom: 70.0,
               left: 16.0,
               child: RichText(
                 text: TextSpan(
@@ -189,16 +211,15 @@ class MagazineCard extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.4),
                         fontSize: 20,
-                        fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w300,
                       ),
                     ),
+                    // 매거진 타이틀을 magazine1에서 가져옴
                     TextSpan(
-                      text: '내 마음을 물들이다.',
+                      text: magazine1!.title,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
-                        fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w300,
                       ),
                     ),
@@ -207,34 +228,33 @@ class MagazineCard extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.4),
                         fontSize: 20,
-                        fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w300,
                       ),
                     ),
                     TextSpan(
-                      text: '안면도',
+                      // 매거진 섬 이름을 magazine1에서 가져옴
+                      text: magazine1!.islandtag,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 32,
-                        fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     TextSpan(
-                      text: '\n맑은 바다와 울창한 숲이 어우러진 거문도,\n자연의 숨결을 느껴보세요',
+                      // 매거진 소제목을 magazine1에서 가져옴
+                      text: '\n${magazine1!.littletitle}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: 13,
-                        fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w300,
-                        height: 1.5, // 줄 높이 조절
+                        height: 1.5,
                       ),
                     ),
                   ],
                 ),
                 textAlign: TextAlign.left,
-              ),
             ),
+          ),
         ],
       ),
     );
@@ -379,6 +399,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                           height: MediaQuery.of(context).size.width * 0.45, // 정사각형 비율
                           child: MagazineCard(
                             magazine: magazine,
+                            magazine1: null, // 바텀시트 안에서는 json 데이터를 넘기지 않음
                             isRounded: true, // 모서리를 둥글게 유지
                           ),
                         ),

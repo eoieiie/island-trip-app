@@ -18,12 +18,14 @@ class Magazine1 {
   final String littletitle;
   final List<String> hashtags;
   final List<MagazineContent> content;
+  final String islandtag;
 
   Magazine1({
     required this.title,
     required this.littletitle,
     required this.hashtags,
     required this.content,
+    required this.islandtag
   });
 
   factory Magazine1.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class Magazine1 {
           .map((item) => MagazineContent.fromJson(item))
           .toList()
           : [], // null일 경우 빈 리스트 사용
+      islandtag: json['islandTag'] as String? ?? 'No islandtag',
     );
   }
 }

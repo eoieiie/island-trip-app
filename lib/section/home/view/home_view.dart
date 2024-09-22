@@ -8,9 +8,9 @@ import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import '../viewmodel/magazine_viewmodel.dart';
 import 'magazine_view.dart';
+import 'attraction_tab_section.dart'; // 새로운 AttractionTabSection 파일 import
 
 // HomeView: 메인 홈 화면을 구성하는 클래스
-// GetX를 사용하여 HomeViewModel과 상호작용하며 데이터를 동적으로 표시
 class HomeView extends StatelessWidget {
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository())); // ViewModel 연결
 
@@ -456,92 +456,9 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ),
             ),
             SizedBox(height: 4.0),
-            // 추천명소 탭바 타이틀
-            Text(
-              '추천명소',
-              style: TextStyle(
-                color: Color(0xFF222222),
-                fontSize: 18,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w600,
-                height: 2,
-              ),
-            ),
-            SizedBox(height: 0.0),
-            // TabBar 섹션: 카테고리 별로 콘텐츠를 분류(유림이)---------------------------------------------
-            Container(
-              height: 48.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // TabBar 설정
-                  TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    labelColor: Color(0xFF222222), // 선택된 탭의 텍스트 색상
-                    unselectedLabelColor: Color(0xFF999999), // 선택되지 않은 탭 텍스트 색상
-                    labelStyle: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    unselectedLabelStyle: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(
-                        color: Color(0xFF1BB874), // 선택된 탭 밑줄 색상 (초록색)
-                        width: 3.0,
-                      ),
-                      insets: EdgeInsets.symmetric(horizontal: 0.0), // 밑줄 길이
-                    ),
-                    tabs: [
-                      Tab(text: '물속 체험'),
-                      Tab(text: '크루즈 여행'),
-                      Tab(text: '낚시'),
-                      Tab(text: '전망대'),
-                      Tab(text: '포토존'),
-                    ],
-                  ),
-                  // TabBar 구분선
-                  Container(
-                    height: 0.0,
-                    color: Color(0xFF999999),
-                    margin: EdgeInsets.symmetric(vertical: 0.0),
-                  ),
-                ],
-              ),
-            ),
-            // TabBarView: 각 탭에 해당하는 콘텐츠를 보여주는 영역 repository 참고(더미데이터니까 다 지우고 새로 작성해도 됨)
-            Container(
-              height: 200.0,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTabContent('물속 체험'),
-                  _buildTabContent('크루즈 여행'),
-                  _buildTabContent('낚시'),
-                  _buildTabContent('전망대'),
-                  _buildTabContent('포토존'),
-                ],
-              ),
-            ),
+            // AttractionTabSection 호출
+            AttractionTabSection(tabController: _tabController),
           ],
-        ),
-      ),
-    );
-  }
-
-  // 각 탭의 콘텐츠를 생성하는 헬퍼 함수
-  Widget _buildTabContent(String title) {
-    return Center(
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Color(0xFF222222),
-          fontSize: 16,
-          fontFamily: 'Pretendard',
-          fontWeight: FontWeight.w600,
         ),
       ),
     );

@@ -10,13 +10,16 @@ class HomemapListController extends GetxController {
   var isFullScreen = false.obs; // 화면 상태 관리
   var displayedItems = <IslandModel>[].obs; // 리스트 상태 관리
   var currentIsland = ''.obs; // 현재 선택된 섬
+  var isLoading = false.obs; // 로딩 상태 추가
 
 
   // 초기 아이템 로드
   void loadInitialItems(String islandName) async {
+    isLoading.value = true; // 로딩 시작
     currentIsland.value = islandName; // 섬 이름을 저장
     var results = await repository.getItemsByCategory(islandName); // 섬에 해당하는 데이터를 가져옴
     displayedItems.assignAll(results);
+    isLoading.value = false; // 로딩 끝
   }
 
   // 검색창 제출 처리 (onSearchSubmitted)
@@ -35,38 +38,38 @@ class HomemapListController extends GetxController {
   }
 
   // 상위 카테고리 선택 처리
-  void onCategorySelected(String category) async {
-    String modifiedCategory = '${currentIsland.value} $category'; // 섬에 따른 카테고리 필터링
-
+  Future<void> onCategorySelected(String category) async {
+    isLoading.value = true; // 로딩 시작
     selectedCategory.value = category;  // 선택된 카테고리 업데이트
     updateSubCategories(category);  // 카테고리 선택 시 하위 카테고리 업데이트
-
-    // 상위 카테고리 선택 시 기본적으로 '전체' 버튼을 눌러서 호출
-    onSubCategorySelected('전체');  // '전체' 버튼이 선택된 것처럼 동작하도록 호출
+    await onSubCategorySelected('전체');  // '전체' 버튼이 선택된 것처럼 동작하도록 호출
+    isLoading.value = false; // 로딩 끝
   }
 
+  // 하위 카테고리 선택 처리 (onSubCategorySelected)
+  Future<void> onSubCategorySelected(String subCategory) async {
+    isLoading.value = true; // 로딩 시작
+    selectedSubCategory.value = subCategory; // 선택된 서브 카테고리 업데이트
 
-  // 서브 카테고리 선택 처리 (onSubCategorySelected)
-  void onSubCategorySelected(String subCategory) async {
+    List<IslandModel> results = [];
+
     if (subCategory == '전체') {
       // 전체 버튼이 눌렸을 때, 해당 카테고리의 모든 하위 카테고리 데이터를 병합
-      var allResults = <IslandModel>[];
       for (var category in subCategories) {
         var modifiedSubCategory = '${currentIsland.value} $category';
-        var results = await repository.getItemsByCategory(modifiedSubCategory);
-        allResults.addAll(results);
+        var categoryResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(categoryResults);
       }
       // 병합한 데이터를 랜덤하게 섞음
-      allResults.shuffle();
-
-      displayedItems.assignAll(allResults);
+      results.shuffle();
     } else {
       // 일반 하위 카테고리 선택 시
       String modifiedSubCategory = '${currentIsland.value} $subCategory';
-      var results = await repository.getItemsByCategory(modifiedSubCategory);
-      displayedItems.assignAll(results);
+      results = await repository.getItemsByCategory(modifiedSubCategory);
     }
-    selectedSubCategory.value = subCategory; // 선택된 서브 카테고리 업데이트
+
+    displayedItems.assignAll(results); // 데이터를 불러온 후에 업데이트
+    isLoading.value = false; // 로딩 끝
   }
 
 

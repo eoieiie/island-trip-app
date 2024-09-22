@@ -264,23 +264,35 @@ class BottomSheetContent extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: controller.displayedItems.isEmpty
-                    ? const Center(child: Text('저장된 항목이 없습니다.'))
-                    : HomemapListView(
-                  items: controller.displayedItems,
-                  controller: controller,
-                  scrollController: scrollController,
+                child: Stack(
+                  children: [
+                    controller.displayedItems.isEmpty
+                        ? const Center(child: Text('저장된 항목이 없습니다.'))
+                        : HomemapListView(
+                      items: controller.displayedItems,
+                      controller: controller,
+                      scrollController: scrollController,
+                    ),
+                    if (controller.isLoading.value)
+                      Container(
+                        color: Colors.white.withOpacity(0.7), // 반투명 배경
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.green[300], // 로딩 애니메이션의 색상을 파란색으로 변경
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
+
             ],
           ),
-        ),
+            ),
       ),
     );
   }
 }
-
-
 
 // '지도보기' 버튼을 표시하는 위젯
 class FloatingMapButton extends StatelessWidget {

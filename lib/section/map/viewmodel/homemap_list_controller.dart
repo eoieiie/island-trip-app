@@ -6,6 +6,7 @@ class HomemapListController extends GetxController {
   final IslandRepository repository = IslandRepository();
   var selectedCategory = ''.obs; // Observable로 변경
   var selectedSubCategory = ''.obs; // Observable로 변경
+  var subCategories = <String>[].obs;  // 하위 카테고리 목록
   var isFullScreen = false.obs; // 화면 상태 관리
   var displayedItems = <IslandModel>[].obs; // 리스트 상태 관리
   var currentIsland = ''.obs; // 현재 선택된 섬
@@ -26,21 +27,63 @@ class HomemapListController extends GetxController {
       displayedItems.assignAll(results);
     }
   }
+  // 초기화 메서드
+  void resetCategories() {
+    selectedCategory.value = '';  // 상위 카테고리 초기화
+    selectedSubCategory.value = '';  // 하위 카테고리 초기화
+    subCategories.clear();  // 하위 카테고리 목록 비우기
+  }
 
-  // 카테고리 선택 처리
+  // 상위 카테고리 선택 처리
   void onCategorySelected(String category) async {
     String modifiedCategory = '${currentIsland.value} $category'; // 섬에 따른 카테고리 필터링
-    var results = await repository.getItemsByCategory(modifiedCategory);
-    selectedCategory.value = category;
-    displayedItems.assignAll(results);
+
+    selectedCategory.value = category;  // 선택된 카테고리 업데이트
+    updateSubCategories(category);  // 카테고리 선택 시 하위 카테고리 업데이트
+
+    // 상위 카테고리 선택 시 기본적으로 '전체' 버튼을 눌러서 호출
+    onSubCategorySelected('전체');  // '전체' 버튼이 선택된 것처럼 동작하도록 호출
   }
+
 
   // 서브 카테고리 선택 처리 (onSubCategorySelected)
   void onSubCategorySelected(String subCategory) async {
-    String modifiedSubCategory = '${currentIsland.value} $subCategory'; // 섬에 따른 서브 카테고리 필터링
-    var results = await repository.getItemsByCategory(modifiedSubCategory);
-    selectedSubCategory.value = subCategory;
-    displayedItems.assignAll(results);
+    if (subCategory == '전체') {
+      // 전체 버튼이 눌렸을 때, 해당 카테고리의 모든 하위 카테고리 데이터를 병합
+      var allResults = <IslandModel>[];
+      for (var category in subCategories) {
+        var modifiedSubCategory = '${currentIsland.value} $category';
+        var results = await repository.getItemsByCategory(modifiedSubCategory);
+        allResults.addAll(results);
+      }
+      // 병합한 데이터를 랜덤하게 섞음
+      allResults.shuffle();
+
+      displayedItems.assignAll(allResults);
+    } else {
+      // 일반 하위 카테고리 선택 시
+      String modifiedSubCategory = '${currentIsland.value} $subCategory';
+      var results = await repository.getItemsByCategory(modifiedSubCategory);
+      displayedItems.assignAll(results);
+    }
+    selectedSubCategory.value = subCategory; // 선택된 서브 카테고리 업데이트
+  }
+
+
+  // 선택된 상위 카테고리에 맞는 하위 카테고리 설정
+  void updateSubCategories(String category) {
+    if (category == '관심') {
+      subCategories.value = ['섬', '명소/놀거리', '음식', '카페', '숙소'];
+    } else if (category == '명소/놀거리') {
+      subCategories.value = ['낚시', '스쿠버 다이빙', '계곡', '바다', '서핑', '산책길', '역사', '수상 레저', '자전거'];
+    } else if (category == '음식') {
+      subCategories.value = ['한식', '양식', '일식', '중식', '분식',];
+    } else if (category == '카페') {
+      subCategories.value = ['커피', '베이커리', '아이스크림/빙수', '차', '과일/주스', '전통 디저트'];
+    } else if (category == '숙소') {
+      subCategories.value = ['모텔', '호텔/리조트', '캠핑', '게하/한옥', '펜션'];
+
+    }
   }
 
   // 스크롤 이벤트 처리

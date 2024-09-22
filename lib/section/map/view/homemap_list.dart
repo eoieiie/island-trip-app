@@ -5,11 +5,12 @@ import 'package:get/get.dart';
 import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
 import 'package:project_island/section/map/view/homemap_listview.dart';
 import 'package:project_island/section/map/widget/custom_appbar.dart';
-import 'package:project_island/section/map/widget/category_buttons.dart';
-import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // SubCategoryButtons가 정의된 파일 import
+import 'package:project_island/section/map/widget/upper_category_buttons.dart';
+import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // 하위 카테고리 버튼 위젯 import
 
+// 메인 리스트 화면 클래스
 class HomemapList extends StatefulWidget {
-  final String islandName;
+  final String islandName; // 섬 이름을 받아옴
   const HomemapList({Key? key, required this.islandName}) : super(key: key);
 
   @override
@@ -17,13 +18,15 @@ class HomemapList extends StatefulWidget {
 }
 
 class HomemapListState extends State<HomemapList> {
+  // 컨트롤러 초기화 (GetX 사용)
   final HomemapListController controller = Get.put(HomemapListController());
-  final DraggableScrollableController draggableScrollableController = DraggableScrollableController();
+  final DraggableScrollableController draggableScrollableController = DraggableScrollableController(); // 바텀시트 컨트롤러
   final Completer<NaverMapController> _naverMapController = Completer(); // 네이버 맵 컨트롤러
 
   @override
   void initState() {
     super.initState();
+    controller.resetCategories();  // 화면이 로드될 때 카테고리 초기화
     controller.onCategorySelected(widget.islandName); // 초기 카테고리 설정
     controller.loadInitialItems(widget.islandName); // 초기 데이터 로드
   }
@@ -33,26 +36,26 @@ class HomemapListState extends State<HomemapList> {
     _naverMapController.future.then((controller) {
       final marker = NMarker(
         id: markerId,
-        position: NLatLng(lat, lng),
+        position: NLatLng(lat, lng), // 마커 위치
         caption: NOverlayCaption(
-          text: "Marker: $markerId",
+          text: "Marker: $markerId", // 마커 ID 표시
           textSize: 1,
           color: Colors.black,
           haloColor: Colors.white,
         ),
-        icon: NOverlayImage.fromAssetImage('assets/marker_icon.png'), // 마커 아이콘
+        icon: NOverlayImage.fromAssetImage('assets/marker_icon.png'), // 마커 아이콘 설정
         size: const Size(40, 40),
       );
-      controller.addOverlay(marker);
+      controller.addOverlay(marker); // 맵에 마커 추가
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 검색 기능이 있는 커스텀 앱바를 사용합니다.
+      // 검색 기능을 포함한 커스텀 앱바
       appBar: CustomAppBar(
-        onSearchSubmitted: controller.onSearchSubmitted, // ViewModel에서 처리
+        onSearchSubmitted: controller.onSearchSubmitted, // 검색어 제출 시 처리
       ),
       backgroundColor: Colors.white,
       // body를 GestureDetector로 감싸서 빈 공간 터치 시 키보드를 해제합니다.
@@ -63,20 +66,22 @@ class HomemapListState extends State<HomemapList> {
         },
         child: Stack(
           children: [
-            MapBackground(selectedIsland: widget.islandName), // 배경에 네이버 맵 표시
+            // 네이버 맵을 배경에 표시
+            MapBackground(selectedIsland: widget.islandName),
             Column(
               children: [
-                // Container로 감싸고 배경색을 흰색으로 설정합니다.
+                // 상위 카테고리 버튼과 하위 카테고리 버튼을 포함한 컨테이너
                 Container(
                   color: Colors.white, // 상위 카테고리 바의 배경색을 흰색으로 설정
-                  child: Obx(() => CategoryButtons(
+                  child: Obx(() => UpperCategoryButtons(
                     selectedCategory: controller.selectedCategory.value,
                     onCategorySelected: controller.onCategorySelected,
-                    selectedSubCategory: controller.selectedSubCategory.value, // 추가된 파라미터
-                    onSubCategorySelected: controller.onSubCategorySelected, // 추가된 파라미터
                   )),
                 ),
+                // 상위 카테고리와 하위 카테고리 사이 경계선
+                Divider(color: Colors.grey[200], thickness: 1, height: 1),
                 Expanded(
+                  // 바텀시트: 스크롤 시 확장/축소 가능한 시트
                   child: DraggableScrollableSheet(
                     controller: draggableScrollableController,
                     initialChildSize: controller.isFullScreen.value ? 1.0 : 0.4,
@@ -94,18 +99,17 @@ class HomemapListState extends State<HomemapList> {
                     },
                   ),
                 ),
-
               ],
             ),
           ],
         ),
       ),
+      // 지도 보기 버튼
       floatingActionButton: Obx(
             () => controller.isFullScreen.value
             ? FloatingMapButton(
           onPressed: () {
-            controller.isFullScreen.value = false; // fullscreen 상태 해제
-            // 바텀시트 높이를 0.4로 조정
+            controller.isFullScreen.value = false; // 풀스크린 상태 해제
             draggableScrollableController.animateTo(
               0.4,
               duration: const Duration(milliseconds: 300),
@@ -120,19 +124,19 @@ class HomemapListState extends State<HomemapList> {
   }
 }
 
-// 네이버 맵을 표시하는 위젯
+// 네이버 맵을 배경에 표시하는 위젯
 class MapBackground extends StatelessWidget {
-  final String selectedIsland;
+  final String selectedIsland; // 선택된 섬
 
   const MapBackground({Key? key, required this.selectedIsland}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // 초기 좌표와 줌 레벨을 설정할 변수들
+    // 초기 좌표와 줌 레벨 설정
     NLatLng initialPosition;
     double initialZoom;
 
-    // 선택된 섬에 따라 초기 위치와 줌 레벨을 설정하는 스위치문
+    // 선택된 섬에 따라 위치 및 줌 레벨 설정
     switch (selectedIsland) {
       case '덕적도':
         initialPosition = NLatLng(37.2138, 126.1344); // 덕적도 좌표
@@ -161,12 +165,12 @@ class MapBackground extends StatelessWidget {
     }
 
     return Positioned.fill(
+      // 네이버 맵 설정
       child: NaverMap(
         onMapReady: (controller) {
-          // NaverMapController를 Completer로 전달
           final HomemapListState? parentState = context.findAncestorStateOfType<HomemapListState>();
           if (parentState != null) {
-            parentState._naverMapController.complete(controller); // 컨트롤러 설정
+            parentState._naverMapController.complete(controller); // 네이버 맵 컨트롤러 설정
           }
         },
         options: NaverMapViewOptions(
@@ -179,6 +183,7 @@ class MapBackground extends StatelessWidget {
     );
   }
 }
+
 
 class BottomSheetContent extends StatelessWidget {
   final HomemapListController controller;
@@ -227,11 +232,18 @@ class BottomSheetContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              // 하위 카테고리바를 바텀시트 손잡이 밑에 배치합니다.
-              SubCategoryButtons(
-                selectedSubCategory: selectedSubCategory,
-                onSubCategorySelected: onSubCategorySelected,
-              ),
+              // 상위 카테고리가 선택된 경우에만 하위 카테고리 바를 표시합니다.
+              if (controller.selectedCategory.isNotEmpty)
+                LowerCategoryButtons(
+                  selectedSubCategory: controller.selectedSubCategory.value, // 선택된 하위 카테고리
+                  onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 시 호출
+                  subCategories: controller.subCategories, // 동적으로 하위 카테고리 목록을 표시
+                  selectedCategory: controller.selectedCategory.value, // 추가된 파라미터
+                  onAllSelected: () { // '전체' 버튼을 눌렀을 때 실행할 콜백 함수
+                    controller.onSubCategorySelected('전체'); // '전체' 카테고리를 처리하는 로직
+                  },
+                ),
+
               Divider(color: Colors.grey[200], thickness: 1, height: 5),
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),

@@ -13,8 +13,8 @@
 따라서, 각 파일을 바인딩하는 것은 이와 같은 이유들로 인해 상태 관리와 의존성 관리의 편의성을 높이기 위한 것입니다. */
 
 
+import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
 import 'package:project_island/section/my_page/viewmodel/auth_controller.dart';
-//import 'package:flutter_clone_instagram/src/controller/bottom_nav_controller.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:project_island/section/my_page/viewmodel/upload_controller.dart';
 import 'package:get/get.dart';
@@ -26,6 +26,7 @@ class InitBinding extends Bindings {
     Get.put(AuthController(), permanent: true);
     Get.put(UploadController(), permanent: true);
     Get.put(MyPageController(), permanent: true);
+    Get.put(HomemapListController(), permanent: true);
   }
 
   static additionalBinding() { // 추가적인 바인딩이 필요하다면 여기에 추가

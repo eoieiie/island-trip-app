@@ -9,24 +9,31 @@ import '../repository/home_repository.dart';
 import '../viewmodel/magazine_viewmodel.dart';
 import 'magazine_view.dart';
 
+// HomeView: 메인 홈 화면을 구성하는 클래스
+// GetX를 사용하여 HomeViewModel과 상호작용하며 데이터를 동적으로 표시
 class HomeView extends StatelessWidget {
-  final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
+  final HomeViewModel viewModel = Get.put(HomeViewModel(Repository())); // ViewModel 연결
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
+        // 데이터 로딩 중일 때 로딩 스피너를 표시
         if (viewModel.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
+        // 로딩이 끝나면 UI 구성
         return Stack(
           children: [
+            // 기본 배경
             Positioned.fill(
               child: Container(
                 color: Colors.white,
               ),
             ),
+            // 매거진 섹션
             MagazineSection(viewModel: viewModel),
+            // 로고 표시
             Positioned(
               top: 30.0,
               left: 2.0,
@@ -37,6 +44,7 @@ class HomeView extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
+            // 하단에서 올라오는 Draggable Scrollable Sheet (바텀 시트)
             DraggableScrollableSheet(
               initialChildSize: 0.40,
               minChildSize: 0.40,
@@ -55,6 +63,8 @@ class HomeView extends StatelessWidget {
   }
 }
 
+// MagazineSection: 매거진을 표시하는 섹션
+// PageView와 Indicator를 포함하여 사용자가 스와이핑으로 매거진을 넘겨볼 수 있음
 class MagazineSection extends StatefulWidget {
   final HomeViewModel viewModel;
 
@@ -65,7 +75,7 @@ class MagazineSection extends StatefulWidget {
 }
 
 class _MagazineSectionState extends State<MagazineSection> {
-  int currentPage = 0;
+  int currentPage = 0; // 현재 페이지 인덱스
 
   @override
   Widget build(BuildContext context) {
@@ -73,21 +83,23 @@ class _MagazineSectionState extends State<MagazineSection> {
       top: 0,
       left: 0,
       right: 0,
-      child: Stack( // Stack을 사용하여 카드와 인디케이터를 겹쳐서 배치
+      child: Stack(
         children: [
+          // PageView로 매거진을 가로로 스크롤
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.55, // 매거진 카드 높이 조정
+            height: MediaQuery.of(context).size.height * 0.55,
             child: MagazineListView(
               viewModel: widget.viewModel,
               onPageChanged: (index) {
                 setState(() {
-                  currentPage = index;
+                  currentPage = index; // 페이지 변경 시 인덱스 업데이트
                 });
               },
             ),
           ),
+          // 매거진 하단에 페이지 인디케이터 표시
           Positioned(
-            bottom: 10.0,  // 인디케이터가 카드 위에 올라오도록 위치 조정
+            bottom: 10.0,
             left: 0,
             right: 0,
             child: IndicatorBar(
@@ -101,6 +113,7 @@ class _MagazineSectionState extends State<MagazineSection> {
   }
 }
 
+// MagazineListView: PageView.builder를 사용하여 매거진 카드들을 수평 스크롤로 표시
 class MagazineListView extends StatelessWidget {
   final HomeViewModel viewModel;
   final Function(int) onPageChanged;
@@ -113,27 +126,29 @@ class MagazineListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-      physics: ClampingScrollPhysics(), // 스와이프 시 딱딱 넘어가도록 설정
+      physics: ClampingScrollPhysics(),
       itemCount: viewModel.magazines.length,
-      onPageChanged: onPageChanged, // 페이지 변경 시 호출되는 콜백 함수
+      onPageChanged: onPageChanged,
       itemBuilder: (context, index) {
         final magazine = viewModel.magazines[index];
-        // MagazineViewModel에서 해당 magazine title에 맞는 데이터를 가져옴
-        final magazineViewModel = Get.put(MagazineViewModel(magazine, Repository()), tag: magazine.title);
+        final magazineViewModel = Get.put(
+            MagazineViewModel(magazine, Repository()),
+            tag: magazine.title);
 
         return Obx(() {
           if (magazineViewModel.isLoading.value) {
             return Center(child: CircularProgressIndicator());
           }
-          // 매칭된 magazine1 데이터를 가져옴
+
           final matchingMagazine1 = magazineViewModel.jsonMagazines.firstWhere(
-                (magazine1) => magazine1.islandtag.trim().toLowerCase() == magazine.title.trim().toLowerCase(),
-            orElse: () => Magazine1(  // 기본값을 반환
-                title: 'No Title',
-                littletitle: 'No Subtitle',
-                hashtags: [],
-                content: [],
-                islandtag: 'No Island'
+                (magazine1) => magazine1.islandtag.trim().toLowerCase() ==
+                magazine.title.trim().toLowerCase(),
+            orElse: () => Magazine1(
+              title: 'No Title',
+              littletitle: 'No Subtitle',
+              hashtags: [],
+              content: [],
+              islandtag: 'No Island',
             ),
           );
 
@@ -143,16 +158,17 @@ class MagazineListView extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => MagazineView(
-                    islandName: magazine.title, magazine: magazine, // 섬 이름을 전달
+                    islandName: magazine.title,
+                    magazine: magazine,
                   ),
                 ),
               );
             },
             child: MagazineCard(
               magazine: magazine,
-              magazine1: matchingMagazine1, // matching된 데이터 전달
+              magazine1: matchingMagazine1,
               isFirst: index == 0,
-              isRounded: false, // 모서리를 둥글지 않게 설정
+              isRounded: false,
             ),
           );
         });
@@ -161,15 +177,16 @@ class MagazineListView extends StatelessWidget {
   }
 }
 
+// MagazineCard: 매거진 데이터를 사용하여 카드 형태로 렌더링하는 위젯
 class MagazineCard extends StatelessWidget {
-  final Magazine magazine; // HomeViewModel에서 가져온 magazine
-  final Magazine1? magazine1; // MagazineViewModel에서 가져온 json 매칭된 magazine1
+  final Magazine magazine;
+  final Magazine1? magazine1;
   final bool isFirst;
   final bool isRounded;
 
   const MagazineCard({
     required this.magazine,
-    this.magazine1, // optional로 magazine1 추가
+    this.magazine1,
     this.isFirst = false,
     this.isRounded = true,
   });
@@ -181,12 +198,15 @@ class MagazineCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // 매거진 썸네일 이미지 로드
           CachedNetworkImage(
             imageUrl: magazine.thumbnail,
             fit: BoxFit.cover,
             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => FutureBuilder<String>(
-              future: Get.find<HomeViewModel>().repository.getFallbackThumbnail(magazine.title), // 대체 썸네일 호출
+              future: Get.find<HomeViewModel>()
+                  .repository
+                  .getFallbackThumbnail(magazine.title),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -210,7 +230,8 @@ class MagazineCard extends StatelessWidget {
               },
             ),
           ),
-          if (magazine1 != null)  // magazine1이 null이 아닐 때만 텍스트 출력
+          // 매거진 텍스트 정보
+          if (magazine1 != null)
             Positioned(
               bottom: 46.0,
               left: 20.0,
@@ -225,7 +246,6 @@ class MagazineCard extends StatelessWidget {
                         fontWeight: FontWeight.w300,
                       ),
                     ),
-                    // 매거진 타이틀을 magazine1에서 가져옴
                     TextSpan(
                       text: magazine1!.title,
                       style: TextStyle(
@@ -243,7 +263,6 @@ class MagazineCard extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      // 매거진 섬 이름을 magazine1에서 가져옴
                       text: magazine1!.islandtag,
                       style: TextStyle(
                         color: Colors.white,
@@ -252,7 +271,6 @@ class MagazineCard extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      // 매거진 소제목을 magazine1에서 가져옴
                       text: '\n${magazine1!.littletitle}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
@@ -272,6 +290,7 @@ class MagazineCard extends StatelessWidget {
   }
 }
 
+// IndicatorBar: 매거진 스크롤 시 하단에 표시되는 페이지 인디케이터
 class IndicatorBar extends StatelessWidget {
   final int currentPage;
   final int itemCount;
@@ -281,18 +300,18 @@ class IndicatorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 20.0,  // 인디케이터 높이 설정
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),  // 상하 여백 조정
+      height: 20.0,
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬
+        mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(itemCount, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 4.0), // 인디케이터 간 간격
-            width: currentPage == index ? 16.0 : 8.0,  // 현재 페이지에 해당하는 인디케이터 크기
+            margin: EdgeInsets.symmetric(horizontal: 4.0),
+            width: currentPage == index ? 16.0 : 8.0,
             height: 8.0,
             decoration: BoxDecoration(
-              color: currentPage == index ? Color(0xFF1BB874) : Color(0xFF999999),  // 선택된/미선택된 색상
-              borderRadius: BorderRadius.circular(4.0),  // 둥근 모서리
+              color: currentPage == index ? Color(0xFF1BB874) : Color(0xFF999999),
+              borderRadius: BorderRadius.circular(4.0),
             ),
           );
         }),
@@ -301,6 +320,7 @@ class IndicatorBar extends StatelessWidget {
   }
 }
 
+// BottomSheetContent: 하단에서 올라오는 바텀 시트 콘텐츠
 class BottomSheetContent extends StatefulWidget {
   final HomeViewModel viewModel;
   final ScrollController scrollController;
@@ -320,7 +340,8 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this); // 탭의 개수 설정
+    // TabBar의 탭 개수 설정 (5개)
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -364,6 +385,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                 ),
               ),
             ),
+            // 바텀 시트 내 타이틀
             Text(
               'Isleland Chart',
               style: TextStyle(
@@ -394,9 +416,9 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ],
             ),
             SizedBox(height: 10.0),
-            // 매거진 카드 목록
+            // 섬 관련 매거진 카드 표시
             SizedBox(
-              height: MediaQuery.of(context).size.width * 0.45 + 100, // 카드 하단 공간 추가
+              height: MediaQuery.of(context).size.width * 0.45 + 100,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.viewModel.magazines.length,
@@ -409,16 +431,16 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width * 0.45,
-                          height: MediaQuery.of(context).size.width * 0.45, // 정사각형 비율
+                          height: MediaQuery.of(context).size.width * 0.45,
                           child: MagazineCard(
                             magazine: magazine,
-                            magazine1: null, // 바텀시트 안에서는 json 데이터를 넘기지 않음
-                            isRounded: true, // 모서리를 둥글게 유지
+                            magazine1: null,
+                            isRounded: true,
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Text(
-                          magazine.title, // 섬 이름
+                          magazine.title,
                           style: TextStyle(
                             color: Color(0xFF999999),
                             fontSize: 11,
@@ -434,18 +456,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ),
             ),
             SizedBox(height: 4.0),
-            // attraction 및 추천명소 텍스트
-            Text(
-              'attraction',
-              style: TextStyle(
-                color: Color(0xFFC8C8C8),
-                fontSize: 12,
-                fontFamily: 'Lobster',
-                fontWeight: FontWeight.w400,
-                height: 0.11,
-              ),
-            ),
-            SizedBox(height: 4.0),
+            // 추천명소 탭바 타이틀
             Text(
               '추천명소',
               style: TextStyle(
@@ -457,31 +468,32 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ),
             ),
             SizedBox(height: 0.0),
-            // 탭 바
+            // TabBar 섹션: 카테고리 별로 콘텐츠를 분류(유림이)---------------------------------------------
             Container(
-              height: 48.0, // 탭 바의 높이
+              height: 48.0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // TabBar 설정
                   TabBar(
                     controller: _tabController,
                     isScrollable: true,
                     labelColor: Color(0xFF222222), // 선택된 탭의 텍스트 색상
-                    unselectedLabelColor: Color(0xFF999999), // 선택되지 않은 탭의 텍스트 색상
+                    unselectedLabelColor: Color(0xFF999999), // 선택되지 않은 탭 텍스트 색상
                     labelStyle: TextStyle(
-                      fontFamily: 'Pretendard', // 선택된 탭의 폰트
-                      fontWeight: FontWeight.w600, // 선택된 탭의 폰트 굵기
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
                     ),
                     unselectedLabelStyle: TextStyle(
-                      fontFamily: 'Pretendard', // 선택되지 않은 탭의 폰트
-                      fontWeight: FontWeight.w400, // 선택되지 않은 탭의 폰트 굵기
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w400,
                     ),
                     indicator: UnderlineTabIndicator(
                       borderSide: BorderSide(
-                        color: Color(0xFF1BB874), // 초록색 밑줄
-                        width: 3.0, // 밑줄 두께
+                        color: Color(0xFF1BB874), // 선택된 탭 밑줄 색상 (초록색)
+                        width: 3.0,
                       ),
-                      insets: EdgeInsets.symmetric(horizontal: 0.0), // 밑줄의 가로 길이
+                      insets: EdgeInsets.symmetric(horizontal: 0.0), // 밑줄 길이
                     ),
                     tabs: [
                       Tab(text: '물속 체험'),
@@ -491,17 +503,18 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                       Tab(text: '포토존'),
                     ],
                   ),
+                  // TabBar 구분선
                   Container(
-                    height: 0.0, // 구분선의 높이 설정
-                    color: Color(0xFF999999), // 구분선 색
+                    height: 0.0,
+                    color: Color(0xFF999999),
                     margin: EdgeInsets.symmetric(vertical: 0.0),
                   ),
                 ],
               ),
             ),
-            // TabBarView 섹션
+            // TabBarView: 각 탭에 해당하는 콘텐츠를 보여주는 영역 repository 참고(더미데이터니까 다 지우고 새로 작성해도 됨)
             Container(
-              height: 200.0, // 원하는 높이로 조정
+              height: 200.0,
               child: TabBarView(
                 controller: _tabController,
                 children: [
@@ -519,6 +532,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
     );
   }
 
+  // 각 탭의 콘텐츠를 생성하는 헬퍼 함수
   Widget _buildTabContent(String title) {
     return Center(
       child: Text(

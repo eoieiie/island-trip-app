@@ -7,11 +7,6 @@ import '../repository/home_repository.dart';
 class HomeViewModel extends GetxController {
   var isLoading = true.obs; // 데이터를 로딩 중인지 여부를 나타내는 상태
   var magazines = <Magazine>[].obs; // 매거진 리스트 상태
-  var contents = <Content>[].obs; // 물속 체험 콘텐츠 리스트 상태
-  var fishingContents = <Content>[].obs; // 낚시 콘텐츠 리스트 상태
-  var viewpointContents = <Content>[].obs; // 전망대 콘텐츠 리스트 상태
-  var cruisetripContents = <Content>[].obs; // 크루즈 여행 콘텐츠 리스트 상태
-  var photozoneContents = <Content>[].obs; // 포토존 콘텐츠 리스트 상태
   final Repository repository; // 데이터 저장소 (API 호출 및 로컬 데이터 로드)
 
   // 생성자에서 저장소를 받아 데이터 초기화
@@ -48,12 +43,6 @@ class HomeViewModel extends GetxController {
       // 매거진 리스트 상태 업데이트
       magazines.value = updatedMagazines;
 
-      // 다른 콘텐츠 리스트도 리포지토리에서 가져와 상태를 업데이트 (추천명소 더미데이터임)
-      contents.value = repository.fetchContents();
-      fishingContents.value = repository.fetchFishingContents();
-      viewpointContents.value = repository.fetchViewpointContents();
-      cruisetripContents.value = repository.fetchCruisetripContents();
-      photozoneContents.value = repository.fetchPhotozoneContents();
     } catch (e) {
       print('Failed to fetch data: $e');
     } finally {

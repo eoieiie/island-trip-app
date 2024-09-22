@@ -187,31 +187,7 @@ class Repository {
     }
   }
 
-  // 다양한 콘텐츠 목록을 생성하는 함수들
-  List<Content> fetchContents() {
-    return List.generate(20, (index) =>
-        Content(title: '물속체험 $index', description: '물속체험 설명 $index', category: '물속체험'));
-  }
 
-  List<Content> fetchCruisetripContents() {
-    return List.generate(20, (index) =>
-        Content(title: '크루즈 여행 $index', description: '크루즈 여행 설명 $index', category: '크루즈 여행'));
-  }
-
-  List<Content> fetchFishingContents() {
-    return List.generate(20, (index) =>
-        Content(title: '낚시 $index', description: '낚시 $index', category: '낚시'));
-  }
-
-  List<Content> fetchViewpointContents() {
-    return List.generate(20, (index) =>
-        Content(title: '전망대 $index', description: '전망대 설명 $index', category: '전망대'));
-  }
-
-  List<Content> fetchPhotozoneContents() {
-    return List.generate(20, (index) =>
-        Content(title: '포토존 $index', description: '포토존 설명 $index', category: '포토존'));
-  }
 
   // 특정 섬에 대한 상세 정보를 가져오는 함수
   Future<IslandDetail> fetchIslandDetails(String islandName) async {

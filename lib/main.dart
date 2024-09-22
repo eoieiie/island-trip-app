@@ -108,8 +108,8 @@ class _MainPageState extends State<MainPage> {
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                blurRadius: 15,
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 5,
               ),
             ],
           ),

@@ -7,6 +7,7 @@ import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import '../viewmodel/magazine_viewmodel.dart';
+import 'magazine_view.dart';
 
 class HomeView extends StatelessWidget {
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository()));
@@ -69,13 +70,13 @@ class _MagazineSectionState extends State<MagazineSection> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 0, // MagazineSection의 위치를 최상단으로 설정
+      top: 0,
       left: 0,
       right: 0,
-      child: Stack(
+      child: Stack( // Stack을 사용하여 카드와 인디케이터를 겹쳐서 배치
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.555, // 바텀 시트 높이 0.445에 맞게 매거진 높이 조정
+            height: MediaQuery.of(context).size.height * 0.55, // 매거진 카드 높이 조정
             child: MagazineListView(
               viewModel: widget.viewModel,
               onPageChanged: (index) {
@@ -86,7 +87,7 @@ class _MagazineSectionState extends State<MagazineSection> {
             ),
           ),
           Positioned(
-            bottom: 0, // 인디케이터가 카드 하단에 고정되도록 위치 설정
+            bottom: 10.0,  // 인디케이터가 카드 위에 올라오도록 위치 조정
             left: 0,
             right: 0,
             child: IndicatorBar(
@@ -141,8 +142,8 @@ class MagazineListView extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => IslandDetailView(
-                    islandName: magazine.title, // 섬 이름을 전달
+                  builder: (context) => MagazineView(
+                    islandName: magazine.title, magazine: magazine, // 섬 이름을 전달
                   ),
                 ),
               );
@@ -211,8 +212,8 @@ class MagazineCard extends StatelessWidget {
           ),
           if (magazine1 != null)  // magazine1이 null이 아닐 때만 텍스트 출력
             Positioned(
-              bottom: 70.0,
-              left: 16.0,
+              bottom: 46.0,
+              left: 20.0,
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -280,16 +281,18 @@ class IndicatorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 2.0, // 인디케이터 높이 설정
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0), // 상하 여백 조정
+      height: 20.0,  // 인디케이터 높이 설정
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),  // 상하 여백 조정
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬
         children: List.generate(itemCount, (index) {
-          return Expanded(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 4.0), // 각 인디케이터 간 간격
-              height: 2.0,
-              color: currentPage == index ? Color(0xFF1BB874) : Color(0xFF999999), // 선택된 인디케이터 색상과 미선택 색상 구분
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 4.0), // 인디케이터 간 간격
+            width: currentPage == index ? 16.0 : 8.0,  // 현재 페이지에 해당하는 인디케이터 크기
+            height: 8.0,
+            decoration: BoxDecoration(
+              color: currentPage == index ? Color(0xFF1BB874) : Color(0xFF999999),  // 선택된/미선택된 색상
+              borderRadius: BorderRadius.circular(4.0),  // 둥근 모서리
             ),
           );
         }),

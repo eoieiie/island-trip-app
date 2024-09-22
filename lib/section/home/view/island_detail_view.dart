@@ -310,7 +310,10 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => MagazineView(magazine: magazine),
+                                                builder: (context) => MagazineView(
+                                                  magazine: magazine,
+                                                  islandName: '',
+                                                ),
                                               ),
                                             );
                                           },
@@ -331,14 +334,36 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  ClipRRect(
-                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)), // 이미지 모서리를 둥글게
-                                                    child: Image.network(
-                                                      magazine.thumbnail,
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
-                                                      height: 200.0,
-                                                    ),
+                                                  FutureBuilder<String>(
+                                                    future: magazine.thumbnail.isNotEmpty
+                                                        ? Future.value(magazine.thumbnail)
+                                                        : Get.find<HomeViewModel>().repository.getFallbackThumbnail(magazine.title),
+                                                    builder: (context, snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                        return Container(
+                                                          height: 200.0,
+                                                          child: Center(child: CircularProgressIndicator()),
+                                                        );
+                                                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                                                        return Container(
+                                                          height: 200.0,
+                                                          color: Colors.grey,
+                                                          child: Center(
+                                                            child: Text("사진이 없습니다"),
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        return ClipRRect(
+                                                          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)), // 이미지 모서리를 둥글게
+                                                          child: Image.network(
+                                                            snapshot.data!,
+                                                            fit: BoxFit.cover,
+                                                            width: double.infinity,
+                                                            height: 200.0,
+                                                          ),
+                                                        );
+                                                      }
+                                                    },
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets.all(16.0), // 내부 여백 추가

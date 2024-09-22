@@ -60,7 +60,7 @@ class Repository {
         contentId = 2614583;
         break;
       case '거제도':
-        contentId = 2821974;
+        contentId = 126224;
         break;
       case '진도':
         contentId = 125851;

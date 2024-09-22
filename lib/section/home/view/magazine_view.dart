@@ -14,7 +14,7 @@ class MagazineView extends StatelessWidget {
   final PageController _pageController = PageController(); // PageController 추가
   final RxInt currentPage = 0.obs; // 현재 페이지를 추적하는 변수 추가
 
-  MagazineView({required this.magazine});
+  MagazineView({required this.magazine, required String islandName});
 
   // API에서 이미지 URL을 가져오는 함수
   Future<List<String>> fetchImageUrls(String contentId) async {

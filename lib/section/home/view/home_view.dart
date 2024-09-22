@@ -136,7 +136,6 @@ class MagazineListView extends StatelessWidget {
             ),
           );
 
-
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -185,18 +184,29 @@ class MagazineCard extends StatelessWidget {
             imageUrl: magazine.thumbnail,
             fit: BoxFit.cover,
             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => Container(
-              color: Colors.white,
-              child: Center(
-                child: Text(
-                  "사진이 없어요!",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            errorWidget: (context, url, error) => FutureBuilder<String>(
+              future: Get.find<HomeViewModel>().repository.getFallbackThumbnail(magazine.title), // 대체 썸네일 호출
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        "사진이 없어요!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Image.network(snapshot.data!, fit: BoxFit.cover);
+                }
+              },
             ),
           ),
           if (magazine1 != null)  // magazine1이 null이 아닐 때만 텍스트 출력
@@ -253,8 +263,8 @@ class MagazineCard extends StatelessWidget {
                   ],
                 ),
                 textAlign: TextAlign.left,
+              ),
             ),
-          ),
         ],
       ),
     );

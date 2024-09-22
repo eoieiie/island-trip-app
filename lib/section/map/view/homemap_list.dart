@@ -244,7 +244,6 @@ class BottomSheetContent extends StatelessWidget {
                   },
                 ),
 
-              Divider(color: Colors.grey[200], thickness: 1, height: 5),
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),
                 child: Align(

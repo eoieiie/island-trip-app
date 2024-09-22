@@ -84,8 +84,8 @@ class HomemapListState extends State<HomemapList> {
                   // 바텀시트: 스크롤 시 확장/축소 가능한 시트
                   child: DraggableScrollableSheet(
                     controller: draggableScrollableController,
-                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.4,
-                    minChildSize: 0.4,
+                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
+                    minChildSize: 0.25,
                     maxChildSize: 1.0,
                     expand: true,
                     builder: (BuildContext context, ScrollController scrollController) {
@@ -225,8 +225,8 @@ class BottomSheetContent extends StatelessWidget {
               if (!controller.isFullScreen.value)
                 Container(
                   width: 40,
-                  height: 6,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
@@ -274,21 +274,23 @@ class BottomSheetContent extends StatelessWidget {
                       scrollController: scrollController,
                     ),
                     if (controller.isLoading.value)
-                      Container(
-                        color: Colors.white.withOpacity(0.7), // 반투명 배경
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.green[300], // 로딩 애니메이션의 색상을 파란색으로 변경
+                      IgnorePointer( // 스크롤 가능하게 하기 위해 추가
+                        ignoring: true,
+                        child: Container(
+                          color: Colors.white.withOpacity(0.7),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.green[300],
+                            ),
                           ),
                         ),
                       ),
                   ],
                 ),
               ),
-
             ],
           ),
-            ),
+        ),
       ),
     );
   }

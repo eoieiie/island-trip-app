@@ -15,6 +15,7 @@ class IslandModel {
   final String website; // 웹사이트 URL
   final double? rating; // 평점
   final bool? isOpenNow; // 현재 영업 중 여부
+  final String url; //구글지도 상세 페이지 url을 위한 필드
   bool isBookmarked; // 북마크 여부
 
   IslandModel({
@@ -30,6 +31,7 @@ class IslandModel {
     required this.category,
     required this.phone,
     required this.website,
+    required this.url, //url 용도로 추가
     this.rating,
     this.isOpenNow,
     this.isBookmarked = false,
@@ -52,12 +54,18 @@ class IslandModel {
       website: json['website'] ?? '',
       rating: json['rating'], // 평점
       isOpenNow: json['isOpenNow'], // 영업 상태
+      url: json['url'],
       isBookmarked: json['isBookmarked'] ?? false,
     );
   }
 
   // GooglePlaceModel을 IslandModel로 변환하는 메서드
   factory IslandModel.fromGooglePlaceModel(GooglePlaceModel place) {
+
+    String googleMapUrl = '';
+    if (place.placeId != null) {
+      googleMapUrl = 'https://www.google.com/maps/place/?q=place_id:${place.placeId}'; // 이 링크로 웹페이지 이동
+    }
     return IslandModel(
       name: place.name,
       latitude: place.latitude ?? 0.0,
@@ -74,6 +82,7 @@ class IslandModel {
       rating: place.rating, // 평점
       isOpenNow: place.isOpenNow, // 영업 상태
       isBookmarked: false,
+      url: googleMapUrl, //생성한 url을 할당함.
     );
   }
 

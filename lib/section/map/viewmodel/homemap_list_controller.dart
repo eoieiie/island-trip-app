@@ -14,7 +14,7 @@ class HomemapListController extends GetxController {
 
 
   // 초기 아이템 로드
-  void loadInitialItems(String islandName) async {
+  Future<void> loadInitialItems(String islandName) async {
     isLoading.value = true; // 로딩 시작
     currentIsland.value = islandName; // 섬 이름을 저장
     var results = await repository.getItemsByCategory(islandName); // 섬에 해당하는 데이터를 가져옴
@@ -69,6 +69,7 @@ class HomemapListController extends GetxController {
     }
 
     displayedItems.assignAll(results); // 데이터를 불러온 후에 업데이트
+
     isLoading.value = false; // 로딩 끝
   }
 

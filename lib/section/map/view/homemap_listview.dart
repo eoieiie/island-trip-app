@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:project_island/section/map/viewmodel/homemap_list_controller.dart';
 import 'package:project_island/section/map/model/island_model.dart';
 import 'package:project_island/section/map/widget/homemap_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class HomemapListView extends StatelessWidget {
   final List<IslandModel> items;
@@ -42,10 +44,19 @@ class HomemapListView extends StatelessWidget {
                 controller: controller,
                 onUpdate: () => controller.toggleBookmark(item),
               ),
-              onTap: () {
-                // 상세 페이지로 이동하는 로직 구현
-                // Get.to(() => PlaceDetailPage(place: item));
+              onTap: () async {
+                String url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(item.name)}&query_place_id=${item.placeId}';
+                Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('해당 장소의 정보를 열 수 없습니다.')),
+                  );
+                }
               },
+
+
             ),
             if (index != items.length - 1)
               Divider(

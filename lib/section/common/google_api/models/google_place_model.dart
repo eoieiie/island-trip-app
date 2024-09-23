@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 //일단 사용 가능한 정보 죄다 끌어옴
 
 class GooglePlaceModel {
-  final String id;  // 장소의 고유 ID.. 이긴 한데 구글은 이 필드를 더이상 사용하지 않는다고 함. 새로운 개발에서 사용을 권장하지 않음.
+  final String id;  // 장소의 고유 ID
   final String name;  // 장소 이름
   final String address;  // 주소
   final List<String>? photoUrls;  // 장소의 사진 URL 리스트, 없을 수도 있음
@@ -14,7 +14,6 @@ class GooglePlaceModel {
   final String? website;  // 웹사이트 URL
   final double? latitude;  // 위도
   final double? longitude; // 경도
-  final String? placeId; // 장소 클릭 시 url로 넘어가는 장소의 id. 얘는 현재 구글에서 사용하는 유일하고 영구적인 식별자. 이걸로 해당 장소의 상세정보 요청 가능
 
   // 생성자 - GooglePlaceModel 인스턴스를 생성하는 함수
   GooglePlaceModel({
@@ -28,7 +27,6 @@ class GooglePlaceModel {
     this.website,
     this.latitude,
     this.longitude,
-    this.placeId
   });
 
   // fromJson 팩토리 생성자 - JSON 데이터를 받아 GooglePlaceModel 인스턴스를 생성
@@ -64,7 +62,6 @@ class GooglePlaceModel {
         // 경도(lng)를 가져오고 없으면 null
         longitude: json['geometry'] != null && json['geometry']['location'] != null
             ? json['geometry']['location']['lng'] as double : null,
-        placeId: json['place_id'], //place_id 파싱해서 placeId에 할당함
       );
     } catch (e) {
       // JSON 파싱 중 에러가 발생하면 기본 값으로 아래 GooglePlaceModel 인스턴스를 반환
@@ -80,7 +77,6 @@ class GooglePlaceModel {
         website: null,  // 에러 발생 시 null로 설정
         latitude: null,  // 에러 발생 시 null로 설정
         longitude: null,  // 에러 발생 시 null로 설정
-        placeId: null, //또까틈
       );
     }
   }

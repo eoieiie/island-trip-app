@@ -7,7 +7,6 @@ import 'package:project_island/section/map/view/homemap_listview.dart';
 import 'package:project_island/section/map/widget/custom_appbar.dart';
 import 'package:project_island/section/map/widget/upper_category_buttons.dart';
 import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // 하위 카테고리 버튼 위젯 import
-import 'package:project_island/section/map/model/island_model.dart';
 
 // 메인 리스트 화면 클래스
 class HomemapList extends StatefulWidget {
@@ -30,39 +29,26 @@ class HomemapListState extends State<HomemapList> {
     controller.resetCategories();  // 화면이 로드될 때 카테고리 초기화
     controller.onCategorySelected(widget.islandName); // 초기 카테고리 설정
     controller.loadInitialItems(widget.islandName); // 초기 데이터 로드
-    // displayedItems 상태가 변경될 때마다 마커를 업데이트하는 로직
-    ever(controller.displayedItems, (_) {
-      _addMarkersForItems(controller.displayedItems);
-    });
   }
 
-  void _addMarkersForItems(List<IslandModel> items) {
+  // 특정 좌표에 마커를 추가하는 함수
+  void _addMarker(double lat, double lng, String markerId) {
     _naverMapController.future.then((controller) {
-      // 기존 마커를 모두 삭제
-      controller.clearOverlays();
-
-      List<NMarker> markers = [];
-
-      for (var item in items) {
-        final marker = NMarker(
-          id: '${item.latitude}-${item.longitude}', // 위도와 경도를 조합해 id 생성
-          position: NLatLng(item.latitude, item.longitude), // 아이템의 위도와 경도
-          caption: NOverlayCaption(
-            text: item.title, // 마커에 표시될 제목
-            textSize: 15,
-            color: Colors.black,
-            haloColor: Colors.white,
-          ),
-          size: const Size(40, 40),
-        );
-        markers.add(marker);
-      }
-
-      // 새로운 마커 추가
-      controller.addOverlayAll(markers.toSet());
+      final marker = NMarker(
+        id: markerId,
+        position: NLatLng(lat, lng), // 마커 위치
+        caption: NOverlayCaption(
+          text: "Marker: $markerId", // 마커 ID 표시
+          textSize: 1,
+          color: Colors.black,
+          haloColor: Colors.white,
+        ),
+        icon: NOverlayImage.fromAssetImage('assets/marker_icon.png'), // 마커 아이콘 설정
+        size: const Size(40, 40),
+      );
+      controller.addOverlay(marker); // 맵에 마커 추가
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,25 +82,22 @@ class HomemapListState extends State<HomemapList> {
                 Divider(color: Colors.grey[200], thickness: 1, height: 1),
                 Expanded(
                   // 바텀시트: 스크롤 시 확장/축소 가능한 시트
-                  child: Obx(() {  // 아이템이 변경될 때마다 마커를 업데이트하는 블록
-                    _addMarkersForItems(controller.displayedItems); // 마커 업데이트
-                    return DraggableScrollableSheet(
-                      controller: draggableScrollableController,
-                      initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
-                      minChildSize: 0.25,
-                      maxChildSize: 1.0,
-                      expand: true,
-                      builder: (BuildContext context, ScrollController scrollController) {
-                        return BottomSheetContent(
-                          controller: controller,
-                          scrollController: scrollController,
-                          draggableController: draggableScrollableController,
-                          selectedSubCategory: controller.selectedSubCategory.value, // 하위 카테고리 전달
-                          onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 로직 전달
-                        );
-                      },
-                    );
-                  }),
+                  child: DraggableScrollableSheet(
+                    controller: draggableScrollableController,
+                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
+                    minChildSize: 0.25,
+                    maxChildSize: 1.0,
+                    expand: true,
+                    builder: (BuildContext context, ScrollController scrollController) {
+                      return BottomSheetContent(
+                        controller: controller,
+                        scrollController: scrollController,
+                        draggableController: draggableScrollableController,
+                        selectedSubCategory: controller.selectedSubCategory.value, // 하위 카테고리 전달
+                        onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 로직 전달
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

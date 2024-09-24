@@ -21,15 +21,17 @@ class MyPageView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '마이페이지',
+          ' 마이페이지',
           style: TextStyle(
             color: Color(0xFF222222),
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
           ),
         ),
         backgroundColor: Colors.white,
+        //톱니바귀 버튼
+        /*
         actions: [
           IconButton(
             icon: Icon(
@@ -41,6 +43,7 @@ class MyPageView extends StatelessWidget {
             },
           ),
         ],
+         */
       ),
       backgroundColor: Colors.white, // 전체 배경 색상 흰색으로 설정
       body: GetBuilder<MyPageController>(
@@ -221,9 +224,9 @@ class MenuListSection extends StatelessWidget {
                                     // 구글 유저인 경우
                                     await currentUser.delete();
                                     await _googleAuthService.googleSignOut();
+                                    Get.offAll(() => LoginScreen());
                                   } else if (providerData.any((userInfo) => userInfo.providerId == 'oidc.kakao')) {
                                     // 카카오 유저인 경우
-                                    print('step1');
                                     try {
                                       await UserApi.instance.unlink();
                                       await currentUser.delete();

@@ -21,10 +21,10 @@ class MyPageView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '마이페이지',
+          ' 마이페이지',
           style: TextStyle(
             color: Color(0xFF222222),
-            fontSize: 20,
+            fontSize: 22,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
           ),

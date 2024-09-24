@@ -7,6 +7,7 @@ import 'package:project_island/section/map/view/homemap_listview.dart';
 import 'package:project_island/section/map/widget/custom_appbar.dart';
 import 'package:project_island/section/map/widget/upper_category_buttons.dart';
 import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // 하위 카테고리 버튼 위젯 import
+import 'package:project_island/section/map/model/island_model.dart';
 
 // 메인 리스트 화면 클래스
 class HomemapList extends StatefulWidget {
@@ -29,26 +30,102 @@ class HomemapListState extends State<HomemapList> {
     controller.resetCategories();  // 화면이 로드될 때 카테고리 초기화
     controller.onCategorySelected(widget.islandName); // 초기 카테고리 설정
     controller.loadInitialItems(widget.islandName); // 초기 데이터 로드
-  }
 
-  // 특정 좌표에 마커를 추가하는 함수
-  void _addMarker(double lat, double lng, String markerId) {
-    _naverMapController.future.then((controller) {
-      final marker = NMarker(
-        id: markerId,
-        position: NLatLng(lat, lng), // 마커 위치
-        caption: NOverlayCaption(
-          text: "Marker: $markerId", // 마커 ID 표시
-          textSize: 1,
-          color: Colors.black,
-          haloColor: Colors.white,
-        ),
-        icon: NOverlayImage.fromAssetImage('assets/marker_icon.png'), // 마커 아이콘 설정
-        size: const Size(40, 40),
-      );
-      controller.addOverlay(marker); // 맵에 마커 추가
+    // displayedItems 상태가 변경될 때마다 마커를 업데이트하는 로직
+    ever(controller.displayedItems, (_) {
+      _addMarkersForItems(controller.displayedItems);
     });
   }
+
+  void _addMarkersForItems(List<IslandModel> items) {
+    _naverMapController.future.then((controller) {
+      // 기존 마커를 모두 삭제
+      controller.clearOverlays();
+
+      List<NMarker> markers = [];
+
+      for (var item in items) {
+        final iconPath = _getIconPathForCategory(item.category); // 카테고리에 맞는 아이콘 경로 가져오기
+
+        final marker = NMarker(
+          id: '${item.latitude}-${item.longitude}', // 위도와 경도를 조합해 id 생성
+          position: NLatLng(item.latitude, item.longitude), // 아이템의 위도와 경도
+          caption: NOverlayCaption(
+            text: item.title, // 마커에 표시될 제목
+            textSize: 15,
+            color: Colors.black,
+            haloColor: Colors.white,
+          ),
+          icon: NOverlayImage.fromAssetImage(iconPath),
+          size: const Size(40, 40),
+        );
+        markers.add(marker);
+      }
+
+      // 새로운 마커 추가
+      controller.addOverlayAll(markers.toSet());
+    });
+  }
+
+  String _getIconPathForCategory(String category) {
+    switch (category) {
+      case '낚시':
+        return 'assets/icons/_fishing.png';
+      case '스쿠버 다이빙':
+        return 'assets/icons/_diving.png';
+      case '계곡':
+        return 'assets/icons/_valley.png️';
+      case '바다':
+        return 'assets/icons/_beach.png';
+      case '서핑':
+        return 'assets/icons/_surfing.png';
+      case '휴향림':
+        return 'assets/icons/_forest.png';
+      case '산책길':
+        return 'assets/icons/_trail.png';
+      case '역사':
+        return 'assets/icons/_history.png';
+      case '수상 레저':
+        return 'assets/icons/_surfing.png';
+      case '자전거':
+        return 'assets/icons/_bicycle.png';
+      case '한식':
+        return 'assets/icons/_korea.png';
+      case '양식':
+        return 'assets/icons/_america.png';
+      case '일식':
+        return 'assets/icons/_japan.png';
+      case '중식':
+        return 'assets/icons/_china.png';
+      case '분식':
+        return 'assets/icons/_snacks.png';
+      case '커피':
+        return 'assets/icons/_coffee.png';
+      case '베이커리':
+        return 'assets/icons/_bakery.png';
+      case '아이스크림/빙수':
+        return 'assets/icons/_ice_cream.png';
+      case '차':
+        return 'assets/icons/_tea.png';
+      case '과일/주스':
+        return 'assets/icons/_juice.png';
+      case '전통 디저트':
+        return 'assets/icons/_dessert.png';
+      case '모텔':
+        return 'assets/icons/_house.png';
+      case '호텔/리조트':
+        return 'assets/icons/_house.png';
+      case '캠핑':
+        return 'assets/icons/_camping.png';
+      case '게하/한옥':
+        return 'assets/icons/_house.png';
+      case '펜션':
+        return 'assets/icons/_house.png';
+      default:
+        return 'assets/icons/shrimp.png'; // 기본 이모지
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

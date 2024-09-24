@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../viewmodel/home_viewmodel.dart ';
+// import '../viewmodel/home_viewmodel.dart ';
 
 // AttractionTabSection: 추천명소와 탭바를 포함한 섹션
 class AttractionTabSection extends StatefulWidget {

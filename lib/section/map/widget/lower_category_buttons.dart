@@ -227,8 +227,8 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
         return '🏛️';
       case '수상 레저':
         return '🐬';
-      case '자전거':
-        return '🚴‍♂️';
+      case '전망대':
+        return '🌄';
       case '한식':
         return '🇰🇷';
       case '양식':

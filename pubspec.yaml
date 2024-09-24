@@ -65,6 +65,7 @@ dependencies:
   hive_flutter: ^1.1.0
   hive: ^2.2.3
   shared_preferences: ^2.3.2
+  geolocator: ^9.0.2 # island_repository.dart에서 거리 계산에 사용
 
 
 dev_dependencies:

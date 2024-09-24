@@ -62,11 +62,55 @@ class HomemapListController extends GetxController {
       }
       // 병합한 데이터를 랜덤하게 섞음
       results.shuffle();
+    } else if (subCategory == '양식') {
+      List<String> westernDishes = ['스테이크', '파스타', '피자', '햄버거', '바베큐'];
+      for (var dish in westernDishes) {
+        var modifiedSubCategory = '${currentIsland.value} $dish';
+        var dishResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(dishResults);
+      }
+      results.shuffle();
+    } else if (subCategory == '일식') {
+      List<String> japaneseDishes = ['초밥', '돈가스', '라멘', '튀김', '우동'];
+      for (var dish in japaneseDishes) {
+        var modifiedSubCategory = '${currentIsland.value} $dish';
+        var dishResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(dishResults);
+      }
+      results.shuffle();
+    } else if (subCategory == '중식') {
+      List<String> chineseDishes = ['짜장면', '짬뽕', '탕수육'];
+      for (var dish in chineseDishes) {
+        var modifiedSubCategory = '${currentIsland.value} $dish';
+        var dishResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(dishResults);
+      }
+      results.shuffle();
+    } else if (subCategory == '분식') {
+      List<String> bunsikDishes = ['떡볶이', '순대', '김밥', '라면'];
+      for (var dish in bunsikDishes) {
+        var modifiedSubCategory = '${currentIsland.value} $dish';
+        var dishResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(dishResults);
+      }
+      results.shuffle();
+    } else if (subCategory == '한식') {
+      List<String> koreanDishes = ['한식'];
+      for (var dish in koreanDishes) {
+        var modifiedSubCategory = '${currentIsland.value} $dish';
+        var dishResults = await repository.getItemsByCategory(modifiedSubCategory);
+        results.addAll(dishResults);
+      }
+      results.shuffle();
     } else {
       // 일반 하위 카테고리 선택 시
       String modifiedSubCategory = '${currentIsland.value} $subCategory';
       results = await repository.getItemsByCategory(modifiedSubCategory);
     }
+
+
+    // 랜덤으로 섞은 결과를 별점 순으로 다시 정렬
+    results.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
 
     displayedItems.assignAll(results); // 데이터를 불러온 후에 업데이트
     isLoading.value = false; // 로딩 끝

@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart'; // 거리 계산을 위함
 
 class IslandRepository {
   final GooglePlaceViewModel _googlePlaceViewModel = GooglePlaceViewModel(); // 구글 API 사용을 위한 ViewModel 인스턴스 생성
-  List<IslandModel> _savedItems = []; // 저장된 항목들을 관리하는 리스트
 
   // 각 섬의 좌표 정보
   final Map<String, List<double>> islandCoordinates = {
@@ -50,7 +49,7 @@ class IslandRepository {
         places = await _googlePlaceViewModel.searchPlaces(category);
       }
     }
-
+//
     // 해당 섬의 좌표 가져오기
     String islandName = _extractIslandNameFromCategory(category);
     List<double>? islandCoords = islandCoordinates[islandName];
@@ -73,9 +72,6 @@ class IslandRepository {
 
     // 필터링된 장소를 IslandModel로 변환하여 반환
     return filteredPlaces.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();
-
-    // 필터링된 장소를 IslandModel로 변환
-    return places.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();
   }
 
   // 섬 이름을 카테고리에서 추출하는 헬퍼 메서드
@@ -92,20 +88,5 @@ class IslandRepository {
       return '진도';
     }
     return ''; // 기본 값
-  }
-
-  // 저장된 항목들을 반환하는 메서드
-  Future<List<IslandModel>> getSavedItems() async {
-    return _savedItems;
-  }
-
-  // 북마크 토글 기능
-  void toggleBookmark(IslandModel item) {
-    item.isBookmarked = !item.isBookmarked; // 북마크 상태 반전
-    if (item.isBookmarked) {
-      _savedItems.add(item); // 북마크가 활성화된 항목을 저장된 리스트에 추가
-    } else {
-      _savedItems.remove(item); // 북마크가 비활성화된 항목을 리스트에서 제거
-    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:project_island/section/map/viewmodel/homemap_list_controller.dar
 import 'package:project_island/section/map/model/island_model.dart';
 import 'package:project_island/section/map/widget/homemap_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+//
 
 class HomemapListView extends StatelessWidget {
   final List<IslandModel> items;
@@ -38,11 +38,6 @@ class HomemapListView extends StatelessWidget {
                     isOpenNow: item.isOpenNow,
                   ), // ItemDescription 위젯 사용
                 ],
-              ),
-              trailing: BookmarkButton(
-                item: item,
-                controller: controller,
-                onUpdate: () => controller.toggleBookmark(item),
               ),
               onTap: () async {
                 String url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(item.name)}&query_place_id=${item.placeId}';

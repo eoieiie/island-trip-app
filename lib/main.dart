@@ -9,6 +9,7 @@ import 'package:project_island/section/map/view/homemap_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
+import 'package:project_island/section/post/views/post_home.dart';
 import 'binding/init_binding.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/section/common/kakao_api/views/search_page.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialBinding: InitBinding(),
       title: 'Island Travel App',
       theme: ThemeData(
@@ -84,7 +86,8 @@ class _MainPageState extends State<MainPage> {
     HomeView(),
     MyTravelView(),
     HomeMapView(),
-    SavedView(),
+    //SavedView(),
+    PostHomePage(),
     MyPageView(),
   ];
 

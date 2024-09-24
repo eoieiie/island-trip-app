@@ -197,7 +197,7 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(height: 4.0),
-                                // 섬 이름
+                                // 섬 이름만 표시
                                 Text(
                                   islandName,
                                   style: TextStyle(
@@ -294,12 +294,69 @@ class CategoryFullScreen extends StatelessWidget {
               ? place.photoUrls!.first
               : null;
 
-          return ListTile(
-            leading: imageUrl != null
-                ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover)
-                : Icon(Icons.image_not_supported),
-            title: Text(place.name),
-            subtitle: Text('Rating: ${place.rating ?? "N/A"}'),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                contentPadding: EdgeInsets.all(16.0),
+                leading: imageUrl != null
+                    ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    imageUrl,
+                    width: 120,  // 이미지 크기를 더 키움
+                    height: 120,
+                    fit: BoxFit.cover,
+                  ),
+                )
+                    : Icon(Icons.image_not_supported, size: 120),
+                title: Text(
+                  place.name,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),  // 타이틀 크기 키움
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 4.0),
+                    // 섬 이름과 별점 표시를 나란히
+                    Row(
+                      children: [
+                        Text(
+                          placeData['island'],  // 섬 이름만 표시
+                          style: TextStyle(
+                            color: Color(0xFF222222),
+                            fontSize: 18,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 10.0),
+                        Icon(Icons.star, color: Colors.yellow, size: 16),
+                        SizedBox(width: 4.0),
+                        Text(
+                          place.rating != null ? place.rating!.toString() : 'N/A',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         },
       ),

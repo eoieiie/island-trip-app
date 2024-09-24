@@ -1,5 +1,5 @@
 import 'package:project_island/section/common/google_api/models/google_place_model.dart'; // GooglePlaceModel 임포트
-
+//
 class IslandModel {
   final String name; // 장소 이름
   final double latitude; // 위도

@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -12,7 +10,6 @@ import 'package:project_island/section/login/model/kakao_login.dart' as kakao_au
 import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 임포트
 import 'package:google_sign_in/google_sign_in.dart'; // GoogleSignIn 임포트
 import '../../login/view/login_view.dart';
-import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:http/http.dart' as http;
 
 class MyPageView extends StatelessWidget {

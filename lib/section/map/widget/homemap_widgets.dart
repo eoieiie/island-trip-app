@@ -30,7 +30,7 @@ class ItemImage extends StatelessWidget {
     );
   }
 }
-
+//
 // 주소 표시 위젯
 class ItemAddress extends StatelessWidget {
   final String address;

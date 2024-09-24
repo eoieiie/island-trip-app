@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:project_island/section/map/model/island_model.dart';
 import 'package:project_island/section/map/repository/island_repository.dart';
-
+//
 class HomemapListController extends GetxController {
   final IslandRepository repository = IslandRepository();
   var selectedCategory = ''.obs; // Observable로 변경

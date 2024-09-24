@@ -49,7 +49,7 @@ class IslandRepository {
         places = await _googlePlaceViewModel.searchPlaces(category);
       }
     }
-
+//
     // 해당 섬의 좌표 가져오기
     String islandName = _extractIslandNameFromCategory(category);
     List<double>? islandCoords = islandCoordinates[islandName];

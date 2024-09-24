@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:project_island/section/map/model/island_model.dart';
 import 'package:project_island/section/map/repository/island_repository.dart';
-
+//
 class HomemapListController extends GetxController {
   final IslandRepository repository = IslandRepository();
   var selectedCategory = ''.obs; // Observable로 변경
@@ -119,9 +119,7 @@ class HomemapListController extends GetxController {
 
   // 선택된 상위 카테고리에 맞는 하위 카테고리 설정
   void updateSubCategories(String category) {
-    if (category == '관심') {
-      subCategories.value = ['섬', '명소/놀거리', '음식', '카페', '숙소'];
-    } else if (category == '명소/놀거리') {
+    if (category == '명소/놀거리') {
       subCategories.value = ['낚시', '스쿠버 다이빙', '계곡', '전망대', '바다', '서핑', '산책길', '역사', '수상 레저',];
     } else if (category == '음식') {
       subCategories.value = ['한식', '양식', '일식', '중식', '분식',];
@@ -145,16 +143,5 @@ class HomemapListController extends GetxController {
   // '지도 보기' 버튼 눌렀을 때
   void onMapButtonPressed() {
     isFullScreen.value = false;
-  }
-
-  // 북마크 토글 기능
-  void toggleBookmark(IslandModel item) {
-    repository.toggleBookmark(item); // 북마크 상태를 저장소에서 변경
-    displayedItems.refresh(); // 리스트 상태를 갱신하여 UI 업데이트
-  }
-
-  // 저장된 항목들을 가져오는 메서드
-  Future<List<IslandModel>> getSavedItems() async {
-    return await repository.getSavedItems(); // 저장된 항목을 가져옴
   }
 }

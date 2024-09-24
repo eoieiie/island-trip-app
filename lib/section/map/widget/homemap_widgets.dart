@@ -30,7 +30,7 @@ class ItemImage extends StatelessWidget {
     );
   }
 }
-
+//
 // 주소 표시 위젯
 class ItemAddress extends StatelessWidget {
   final String address;
@@ -109,30 +109,3 @@ class ItemDescription extends StatelessWidget {
   }
 }
 
-// 북마크 버튼 위젯
-class BookmarkButton extends StatelessWidget {
-  final IslandModel item;
-  final HomemapListController controller;
-  final VoidCallback onUpdate;
-
-  const BookmarkButton({
-    Key? key,
-    required this.item,
-    required this.controller,
-    required this.onUpdate,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        item.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-        color: item.isBookmarked ? Colors.yellow : Colors.grey,
-      ),
-      onPressed: () {
-        controller.toggleBookmark(item); // 북마크 토글 동작
-        onUpdate(); // UI 업데이트
-      },
-    );
-  }
-}

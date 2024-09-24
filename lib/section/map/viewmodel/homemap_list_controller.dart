@@ -78,7 +78,7 @@ class HomemapListController extends GetxController {
     if (category == '관심') {
       subCategories.value = ['섬', '명소/놀거리', '음식', '카페', '숙소'];
     } else if (category == '명소/놀거리') {
-      subCategories.value = ['낚시', '스쿠버 다이빙', '계곡', '바다', '서핑', '산책길', '역사', '수상 레저', '자전거'];
+      subCategories.value = ['낚시', '스쿠버 다이빙', '계곡', '전망대', '바다', '서핑', '산책길', '역사', '수상 레저',];
     } else if (category == '음식') {
       subCategories.value = ['한식', '양식', '일식', '중식', '분식',];
     } else if (category == '카페') {

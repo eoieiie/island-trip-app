@@ -300,8 +300,8 @@ class IndicatorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 20.0,
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+      height: 30.0,
+      margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(itemCount, (index) {
@@ -443,9 +443,9 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                           magazine.title,
                           style: TextStyle(
                             color: Color(0xFF999999),
-                            fontSize: 11,
+                            fontSize: 13,
                             fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.bold,
                             height: 0.10,
                           ),
                         ),
@@ -457,7 +457,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
             ),
             SizedBox(height: 4.0),
             // AttractionTabSection 호출
-            AttractionTabSection(tabController: _tabController),
+            AttractionTabSection(),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+//google_places_api.dart파일
 import 'dart:convert';  // JSON 데이터 파싱
 import 'package:http/http.dart' as http;  // HTTP 요청
 import 'package:flutter_dotenv/flutter_dotenv.dart';

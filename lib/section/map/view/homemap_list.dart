@@ -30,6 +30,7 @@ class HomemapListState extends State<HomemapList> {
     controller.resetCategories();  // 화면이 로드될 때 카테고리 초기화
     controller.onCategorySelected(widget.islandName); // 초기 카테고리 설정
     controller.loadInitialItems(widget.islandName); // 초기 데이터 로드
+
     // displayedItems 상태가 변경될 때마다 마커를 업데이트하는 로직
     ever(controller.displayedItems, (_) {
       _addMarkersForItems(controller.displayedItems);
@@ -44,6 +45,8 @@ class HomemapListState extends State<HomemapList> {
       List<NMarker> markers = [];
 
       for (var item in items) {
+        final iconPath = _getIconPathForCategory(item.category); // 카테고리에 맞는 아이콘 경로 가져오기
+
         final marker = NMarker(
           id: '${item.latitude}-${item.longitude}', // 위도와 경도를 조합해 id 생성
           position: NLatLng(item.latitude, item.longitude), // 아이템의 위도와 경도
@@ -53,6 +56,7 @@ class HomemapListState extends State<HomemapList> {
             color: Colors.black,
             haloColor: Colors.white,
           ),
+          icon: NOverlayImage.fromAssetImage(iconPath),
           size: const Size(40, 40),
         );
         markers.add(marker);
@@ -61,6 +65,65 @@ class HomemapListState extends State<HomemapList> {
       // 새로운 마커 추가
       controller.addOverlayAll(markers.toSet());
     });
+  }
+
+  String _getIconPathForCategory(String category) {
+    switch (category) {
+      case '낚시':
+        return 'assets/icons/_fishing.png';
+      case '스쿠버 다이빙':
+        return 'assets/icons/_diving.png';
+      case '계곡':
+        return 'assets/icons/_valley.png️';
+      case '바다':
+        return 'assets/icons/_beach.png';
+      case '서핑':
+        return 'assets/icons/_surfing.png';
+      case '휴향림':
+        return 'assets/icons/_forest.png';
+      case '산책길':
+        return 'assets/icons/_trail.png';
+      case '역사':
+        return 'assets/icons/_history.png';
+      case '수상 레저':
+        return 'assets/icons/_surfing.png';
+      case '자전거':
+        return 'assets/icons/_bicycle.png';
+      case '한식':
+        return 'assets/icons/_korea.png';
+      case '양식':
+        return 'assets/icons/_america.png';
+      case '일식':
+        return 'assets/icons/_japan.png';
+      case '중식':
+        return 'assets/icons/_china.png';
+      case '분식':
+        return 'assets/icons/_snacks.png';
+      case '커피':
+        return 'assets/icons/_coffee.png';
+      case '베이커리':
+        return 'assets/icons/_bakery.png';
+      case '아이스크림/빙수':
+        return 'assets/icons/_ice_cream.png';
+      case '차':
+        return 'assets/icons/_tea.png';
+      case '과일/주스':
+        return 'assets/icons/_juice.png';
+      case '전통 디저트':
+        return 'assets/icons/_dessert.png';
+      case '모텔':
+        return 'assets/icons/_house.png';
+      case '호텔/리조트':
+        return 'assets/icons/_house.png';
+      case '캠핑':
+        return 'assets/icons/_camping.png';
+      case '게하/한옥':
+        return 'assets/icons/_house.png';
+      case '펜션':
+        return 'assets/icons/_house.png';
+      default:
+        return 'assets/icons/shrimp.png'; // 기본 이모지
+    }
   }
 
 
@@ -96,25 +159,22 @@ class HomemapListState extends State<HomemapList> {
                 Divider(color: Colors.grey[200], thickness: 1, height: 1),
                 Expanded(
                   // 바텀시트: 스크롤 시 확장/축소 가능한 시트
-                  child: Obx(() {  // 아이템이 변경될 때마다 마커를 업데이트하는 블록
-                    _addMarkersForItems(controller.displayedItems); // 마커 업데이트
-                    return DraggableScrollableSheet(
-                      controller: draggableScrollableController,
-                      initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
-                      minChildSize: 0.25,
-                      maxChildSize: 1.0,
-                      expand: true,
-                      builder: (BuildContext context, ScrollController scrollController) {
-                        return BottomSheetContent(
-                          controller: controller,
-                          scrollController: scrollController,
-                          draggableController: draggableScrollableController,
-                          selectedSubCategory: controller.selectedSubCategory.value, // 하위 카테고리 전달
-                          onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 로직 전달
-                        );
-                      },
-                    );
-                  }),
+                  child: DraggableScrollableSheet(
+                    controller: draggableScrollableController,
+                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
+                    minChildSize: 0.25,
+                    maxChildSize: 1.0,
+                    expand: true,
+                    builder: (BuildContext context, ScrollController scrollController) {
+                      return BottomSheetContent(
+                        controller: controller,
+                        scrollController: scrollController,
+                        draggableController: draggableScrollableController,
+                        selectedSubCategory: controller.selectedSubCategory.value, // 하위 카테고리 전달
+                        onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 로직 전달
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -1,3 +1,4 @@
+//google_place_model.dart파일
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
@@ -14,6 +15,7 @@ class GooglePlaceModel {
   final String? website;  // 웹사이트 URL
   final double? latitude;  // 위도
   final double? longitude; // 경도
+  final String? placeId;
 
   // 생성자 - GooglePlaceModel 인스턴스를 생성하는 함수
   GooglePlaceModel({
@@ -27,6 +29,7 @@ class GooglePlaceModel {
     this.website,
     this.latitude,
     this.longitude,
+    this.placeId,
   });
 
   // fromJson 팩토리 생성자 - JSON 데이터를 받아 GooglePlaceModel 인스턴스를 생성
@@ -52,7 +55,8 @@ class GooglePlaceModel {
         // rating 값이 있으면 double로 변환하고 없으면 null로 설정
         rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
         // open_now 값이 있으면 bool
-        isOpenNow: json['opening_hours'] != null ? json['opening_hours']['open_now'] as bool : null,
+        isOpenNow: json['opening_hours'] != null ? json['opening_hours']['open_now'] as bool? ?? false  // 여기서 null 처리(지민 수정)
+            : false,  // 기본값을 false로 처리
         // phoneNumber와 website는 값이 있으면 그대로 가져옴
         phoneNumber: json['formatted_phone_number'],
         website: json['website'],
@@ -62,6 +66,7 @@ class GooglePlaceModel {
         // 경도(lng)를 가져오고 없으면 null
         longitude: json['geometry'] != null && json['geometry']['location'] != null
             ? json['geometry']['location']['lng'] as double : null,
+        placeId: json['place_id'], // Google Places API 응답에서 `place_id`를 사용
       );
     } catch (e) {
       // JSON 파싱 중 에러가 발생하면 기본 값으로 아래 GooglePlaceModel 인스턴스를 반환
@@ -77,6 +82,7 @@ class GooglePlaceModel {
         website: null,  // 에러 발생 시 null로 설정
         latitude: null,  // 에러 발생 시 null로 설정
         longitude: null,  // 에러 발생 시 null로 설정
+        placeId: null,
       );
     }
   }

@@ -16,7 +16,6 @@ class IslandModel {
   final double? rating; // 평점
   final bool? isOpenNow; // 현재 영업 중 여부
   final String placeId; // 장소의 고유 식별자 (Place ID)
-  bool isBookmarked; // 북마크 여부
 
   IslandModel({
     required this.name,
@@ -34,7 +33,6 @@ class IslandModel {
     required this.placeId, // 추가된 필드
     this.rating,
     this.isOpenNow,
-    this.isBookmarked = false,
   });
 
   // JSON을 IslandModel 객체로 변환하는 팩토리 생성자
@@ -54,7 +52,6 @@ class IslandModel {
       website: json['website'] ?? '',
       rating: json['rating'], // 평점
       isOpenNow: json['isOpenNow'], // 영업 상태
-      isBookmarked: json['isBookmarked'] ?? false,
       placeId: json['placeId'] ?? '',
     );
   }
@@ -76,7 +73,6 @@ class IslandModel {
       website: place.website ?? '',
       rating: place.rating, // 평점
       isOpenNow: place.isOpenNow, // 영업 상태
-      isBookmarked: false,
       placeId: place.placeId ?? '', // `GooglePlaceModel`에 `placeId`가 있다고 가정
     );
   }
@@ -98,7 +94,6 @@ class IslandModel {
       'website': website,
       'rating': rating, // 평점
       'isOpenNow': isOpenNow, // 영업 상태
-      'isBookmarked': isBookmarked,
       'placeId': placeId,
     };
   }

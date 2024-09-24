@@ -39,11 +39,6 @@ class HomemapListView extends StatelessWidget {
                   ), // ItemDescription 위젯 사용
                 ],
               ),
-              trailing: BookmarkButton(
-                item: item,
-                controller: controller,
-                onUpdate: () => controller.toggleBookmark(item),
-              ),
               onTap: () async {
                 String url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(item.name)}&query_place_id=${item.placeId}';
                 Uri uri = Uri.parse(url);

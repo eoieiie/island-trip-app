@@ -161,8 +161,8 @@ class HomemapListState extends State<HomemapList> {
                   // 바텀시트: 스크롤 시 확장/축소 가능한 시트
                   child: DraggableScrollableSheet(
                     controller: draggableScrollableController,
-                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
-                    minChildSize: 0.25,
+                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.3,
+                    minChildSize: 0.3,
                     maxChildSize: 1.0,
                     expand: true,
                     builder: (BuildContext context, ScrollController scrollController) {

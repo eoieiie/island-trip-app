@@ -1,3 +1,4 @@
+//google_place_model.dart파일
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
@@ -54,7 +55,8 @@ class GooglePlaceModel {
         // rating 값이 있으면 double로 변환하고 없으면 null로 설정
         rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
         // open_now 값이 있으면 bool
-        isOpenNow: json['opening_hours'] != null ? json['opening_hours']['open_now'] as bool : null,
+        isOpenNow: json['opening_hours'] != null ? json['opening_hours']['open_now'] as bool? ?? false  // 여기서 null 처리(지민 수정)
+            : false,  // 기본값을 false로 처리
         // phoneNumber와 website는 값이 있으면 그대로 가져옴
         phoneNumber: json['formatted_phone_number'],
         website: json['website'],

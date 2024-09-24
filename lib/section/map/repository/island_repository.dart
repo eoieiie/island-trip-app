@@ -4,9 +4,26 @@ import '../model/island_model.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart'; // 거리 계산을 위함
+/////////nextPageToken을 관리
+// IslandRepository.dart
+class IslandCategoryData {
+  List<IslandModel> islands = [];
+  String? nextPageToken;
+  bool isDataLoaded = false;
 
+  IslandCategoryData({List<IslandModel>? islands, this.nextPageToken, this.isDataLoaded = false}) {
+    if (islands != null) {
+      this.islands = islands;
+    }
+  }
+}
+///////////////////
 class IslandRepository {
   final GooglePlaceViewModel _googlePlaceViewModel = GooglePlaceViewModel(); // 구글 API 사용을 위한 ViewModel 인스턴스 생성
+
+  // 카테고리별로 데이터를 캐싱하기 위한 맵
+  final Map<String, List<IslandModel>> _categoryCache = {};
+
 
   // 각 섬의 좌표 정보
   final Map<String, List<double>> islandCoordinates = {
@@ -26,6 +43,11 @@ class IslandRepository {
 
   // 카테고리에 따른 섬(장소) 데이터를 가져오는 메서드
   Future<List<IslandModel>> getItemsByCategory(String category) async {
+    // 캐시에 데이터가 있으면 반환
+    if (_categoryCache.containsKey(category)) {
+      return _categoryCache[category]!;
+    }
+
     List<GooglePlaceModel> places = [];
 
     // 만약 카테고리에 공백이 포함되어 있다면 (예: "거제도 카페"), 그대로 검색
@@ -69,9 +91,19 @@ class IslandRepository {
 
     // 평점 순으로 정렬 (높은 평점이 상위에 오도록)
     filteredPlaces.sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
+    //////////////////////////////추가 함
+    // 필터링된 장소를 IslandModel로 변환하여 리스트로 저장
+    List<IslandModel> islandModels = filteredPlaces.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();
+
+    // 캐시에 저장
+    _categoryCache[category] = islandModels;
+
+    // 리스트를 반환
+    return islandModels;
+//////////////////////////////////
 
     // 필터링된 장소를 IslandModel로 변환하여 반환
-    return filteredPlaces.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();
+    // return filteredPlaces.map((place) => IslandModel.fromGooglePlaceModel(place)).toList();  /dead 코드라는데 지워도 되나.. 위에 함수(캐싱 넣을라고) 추가하고부터 쓸데없어졌나봄
   }
 
   // 섬 이름을 카테고리에서 추출하는 헬퍼 메서드

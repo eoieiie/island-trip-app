@@ -1,3 +1,4 @@
+/*
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -245,3 +246,5 @@ class UploadView extends GetView<UploadController> {
     );
   }
 }
+
+ */

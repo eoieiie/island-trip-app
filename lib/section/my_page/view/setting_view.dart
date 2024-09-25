@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart'; // Flutter의 기본 위젯과 Material 디자인을 사용하기 위한 패키지
 import 'package:get/get.dart'; // GetX 패키지를 사용하기 위한 패키지
 import 'package:project_island/section/my_page/viewmodel/settings_controller.dart'; // ViewModel인 SettingsController를 가져옴
@@ -241,3 +242,5 @@ class PolicyWidget extends StatelessWidget {
     );
   }
 }
+
+ */

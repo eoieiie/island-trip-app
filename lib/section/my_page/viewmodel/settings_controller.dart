@@ -1,3 +1,4 @@
+/*
 import 'package:get/get.dart';
 import 'package:project_island/section/my_page/repository/settings_repository.dart';
 import 'package:project_island/section/my_page/model/settings_model.dart';
@@ -77,3 +78,5 @@ class SettingsController extends GetxController {
     Get.back(); // 저장 후 화면 닫기
   }
 }
+
+ */

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project_island/section/common/google_api/views/google_search_page.dart';
 import 'package:project_island/section/home/repository/home_repository.dart';
 import 'package:project_island/section/home/viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
@@ -26,11 +25,10 @@ void main() async {
   await NaverMapSdk.instance.initialize(
     clientId: dotenv.env['NAVER_MAP_CLIENT_ID']!,
     onAuthFailed: (e) {
-      print('네이버맵 인증오류: $e');
     },
   ); // 네이버 지도 SDK 초기화
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  KakaoSdk.init(nativeAppKey: 'f7f5aa7d9be3f42d6274a97fd8e92bab');
+  KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_API_KEY']);
 
   Get.put(Repository()); // Repository 인스턴스 등록
   Get.put(IslandDetailViewModel(Get.find<Repository>())); // IslandDetailViewModel 인스턴스 등록
@@ -51,7 +49,7 @@ class MyApp extends StatelessWidget {
         canvasColor: Colors.white,
         cardColor: Colors.white,
         primaryColor: Colors.white,
-        colorScheme: ColorScheme.light(
+        colorScheme: const ColorScheme.light(
           primary: Colors.white, // 주요 색상
           secondary: Colors.blue, // 보조 색상
         ),
@@ -64,7 +62,7 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final int selectedIndex;
 
-  MainPage({this.selectedIndex = 0});
+  const MainPage({this.selectedIndex = 0});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -88,11 +86,11 @@ class _MainPageState extends State<MainPage> {
     MyPageView(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +101,7 @@ class _MainPageState extends State<MainPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
+        preferredSize: const Size.fromHeight(60.0),
         child: Container(
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
@@ -116,7 +114,7 @@ class _MainPageState extends State<MainPage> {
           child: BottomAppBar(
             padding: EdgeInsets.zero,
             height: 65,
-            shape: CircularNotchedRectangle(),
+            shape: const CircularNotchedRectangle(),
             notchMargin: 0.4,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -124,7 +122,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/icon-home-mono.svg',
-                    color: _selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                    color: _selectedIndex == 0 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
                   ),
                   onPressed: () {
                     setState(() {
@@ -135,7 +133,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/icon_calendar.svg',
-                    color: _selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                    color: _selectedIndex == 1 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
                   ),
                   onPressed: () {
                     setState(() {
@@ -143,11 +141,11 @@ class _MainPageState extends State<MainPage> {
                     });
                   },
                 ),
-                SizedBox(width: 40),
+                const SizedBox(width: 40),
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/icon-stack-up-square-mono.svg',
-                    color: _selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                    color: _selectedIndex == 3 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
                   ),
                   onPressed: () {
                     setState(() {
@@ -158,7 +156,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/icon-user-mono.svg',
-                    color: _selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+                    color: _selectedIndex == 4 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
                   ),
                   onPressed: () {
                     setState(() {
@@ -186,7 +184,7 @@ class _MainPageState extends State<MainPage> {
           height: 52,
         ),
         backgroundColor: Colors.white,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
       floatingActionButtonLocation: CustomFloatingActionButtonLocation(offsetY: -7),
     );

@@ -24,7 +24,7 @@ class InitBinding extends Bindings {
   void dependencies() {
     // Get.put(BottomNavController(), permanent: true);
     Get.put(AuthController(), permanent: true);
-    Get.put(UploadController(), permanent: true);
+    // Get.put(UploadController(), permanent: true);
     Get.put(MyPageController(), permanent: true);
     Get.put(HomemapListController(), permanent: true);
   }

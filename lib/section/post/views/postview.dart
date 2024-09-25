@@ -296,38 +296,35 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       maxLines: 5,
                     ),
                   ),
-                  SizedBox(height: 16),
-                  // 저장 및 취소 버튼
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end, // 버튼을 오른쪽 정렬
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          // 수정된 게시글 저장 처리
-                          await postViewModel.updatePost(
-                            widget.postId,
-                            _titleController.text,
-                            _contentController.text,
-                          );
-                          Navigator.pop(context); // 모달 닫기
-                          _refreshPostData(); // 수정 후 새로고침
-                        },
-                        child: Text(
-                          '저장',
-                          style: TextStyle(color: Color(0xFF6EBF54)),
+                  SizedBox(height: 20),
+                  // 저장 버튼을 가로로 길게 하단에 배치
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9, // 가로 길이를 화면의 90%로 설정
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // 수정된 게시글 저장 처리
+                        await postViewModel.updatePost(
+                          widget.postId,
+                          _titleController.text,
+                          _contentController.text,
+                        );
+                        Navigator.pop(context); // 모달 닫기
+                        _refreshPostData(); // 수정 후 새로고침
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 15), // 버튼 높이 설정
+                        backgroundColor: Color(0xFF1BB874), // 초록색 배경
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15), // 버튼 모서리 둥글게 설정
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // 모달 닫기
-                        },
-                        child: Text(
-                          '취소',
-                          style: TextStyle(color: Colors.black),
-                        ),
+                      child: Text(
+                        '저장',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
-                    ],
+                    ),
                   ),
+                  SizedBox(height: 20), // 버튼과 바닥 사이에 20px 여백 추가
                 ],
               ),
             ),
@@ -336,6 +333,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       },
     );
   }
+
 
 
   // 게시글 옵션 모달 바텀 시트 (수정, 삭제, 닫기)
@@ -759,7 +757,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         textSelectionTheme: TextSelectionThemeData(
                           cursorColor: Colors.black,
                           selectionColor: Color(0xFFBBDDFF),
-                          selectionHandleColor: Color(0xFF6699FF),
+                          selectionHandleColor: Color(0xFF1BB874),
                         ),
                       ),
                       child: TextField(

@@ -345,7 +345,7 @@ class CategoryFullScreen extends StatelessWidget {
         padding: EdgeInsets.all(12.0),
         child: GridView.builder(
           itemCount: places.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 12.0,
             crossAxisSpacing: 12.0,

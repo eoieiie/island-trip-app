@@ -150,13 +150,6 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
                       width: MediaQuery.of(context).size.width * 0.33,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 10.0,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
                       ),
                       child: Stack(
                         children: [

@@ -17,7 +17,6 @@ class TourismPhotoAPI {
         // 응답 바이트 데이터를 UTF-8로 디코딩
         final decodedResponse = utf8.decode(response.bodyBytes);
         final data = json.decode(decodedResponse);  // JSON 데이터로 디코딩
-        print('API Response: $data');  // 응답 데이터 출력
 
         if (data['response']['body']['items'] != null) {
           // items가 단일 객체인지 배열인지 확인하여 처리
@@ -28,10 +27,8 @@ class TourismPhotoAPI {
             return [Map<String, dynamic>.from(items)];  // 단일 객체를 리스트로 변환하여 반환
           }
         } else {
-          print('No items found in the response.');  // items가 없는 경우 메시지 출력
         }
       } else {
-        print('Failed to load photos: ${response.statusCode} - ${response.body}');  // API 호출 실패 시 오류 메시지 출력
       }
     } catch (e) {
       print('Error occurred during API call: $e');  // 예외 발생 시 오류 메시지 출력

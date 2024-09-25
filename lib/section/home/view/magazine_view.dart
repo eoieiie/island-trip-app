@@ -54,11 +54,11 @@ class MagazineView extends StatelessWidget {
         } else if (viewModel.errorMessage.isNotEmpty) {
           return Center(child: Text(viewModel.errorMessage.value));
         } else if (viewModel.jsonMagazines.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('No magazine data available for this island.'), // JSON 매거진 데이터가 없을 경우
           );
         } else if (viewModel.islandImages.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('No images available for this island.'), // 이미지 데이터가 없을 경우
           );
         } else {
@@ -116,7 +116,7 @@ class MagazineView extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).pop(); // 뒤로 가기 기능
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_back_ios_new, // 새로운 화살표 아이콘 사용
                             color: Colors.white, // 아이콘 색상 흰색
                             size: 24.0, // 아이콘 크기 조정
@@ -131,7 +131,7 @@ class MagazineView extends StatelessWidget {
                           onTap: () {
                             // 메뉴 버튼 기능 추가
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.more_vert, // 메뉴 아이콘
                             color: Colors.white,
                             size: 24.0,
@@ -150,7 +150,7 @@ class MagazineView extends StatelessWidget {
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16.0),
                         topRight: Radius.circular(16.0),
                       ),
@@ -183,7 +183,7 @@ class MagazineView extends StatelessWidget {
                                   ),
                                   child: Text(
                                     magazine.title, // API로 받아온 섬 이름
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 11,
                                       fontFamily: 'Pretendard',
@@ -200,7 +200,7 @@ class MagazineView extends StatelessWidget {
                                     padding: const EdgeInsets.only(top: 10.0), // 주소를 더 아래로 이동하여 높이 조정
                                     child: Text(
                                       magazine.address ?? '주소 없음', // API로 받아온 주소
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Color(0xFF999999), // 텍스트 색상
                                         fontSize: 12,
                                         fontFamily: 'Pretendard',
@@ -222,7 +222,7 @@ class MagazineView extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
                               child: Text(
                                 viewModel.jsonMagazines.first.title, // JSON에서 가져온 매거진 제목
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF222222),
                                   fontSize: 20,
                                   fontFamily: 'Pretendard',
@@ -239,12 +239,13 @@ class MagazineView extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 20.0),
                               child: Text(
                                 viewModel.jsonMagazines.first.littletitle, // JSON에서 가져온 매거진 부제목
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF222222),
                                   fontSize: 13,
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w300,
-                                  height: 0.12,
+                                  // height: 0.12, // 이 줄을 제거하거나 아래와 같이 수정
+                                  height: 1.5, // 줄 간격을 적절하게 설정
                                 ),
                               ),
                             ),
@@ -274,7 +275,7 @@ class MagazineView extends StatelessWidget {
                                         children: [
                                           Text(
                                             hashtag, // 해시태그 텍스트
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 11,
                                               fontFamily: 'Pretendard',
@@ -320,7 +321,7 @@ class MagazineView extends StatelessWidget {
                                       children: [
                                         Text(
                                           section.title, // 섹션 제목
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Color(0xFF222222),
                                             fontSize: 18,
                                             fontFamily: 'Pretendard',
@@ -331,7 +332,7 @@ class MagazineView extends StatelessWidget {
                                         SizedBox(height: 10.0),
                                         Text(
                                           section.content, // 섹션 내용
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Color(0xFF666666),
                                             fontSize: 13,
                                             fontFamily: 'Pretendard',
@@ -377,10 +378,22 @@ class MagazineView extends StatelessWidget {
                                     ),
                                   ),
 
-                                  // 각 섹션 사이에 얇은 경계선 추가
-                                  Divider(
-                                    color: Color(0xFF999999).withOpacity(0.2),
-                                    thickness: 1, // 얇은 경계선
+                                  // 각 섹션 사이에 경계선 추가 (해시태그 밑 경계선과 동일하게 수정)
+                                  Container(
+                                    width: double.infinity,
+                                    height: 8,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 8,
+                                          decoration: BoxDecoration(color: Color(0xFFF7F7F7)), // 경계선 색상 설정
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               );

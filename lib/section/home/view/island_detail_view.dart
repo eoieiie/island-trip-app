@@ -47,7 +47,7 @@ class _CustomWidthUnderlinePainter extends BoxPainter {
 class IslandDetailView extends StatefulWidget {
   final String islandName; // 섬 이름을 받는 매개변수
 
-  IslandDetailView({required this.islandName});
+  const IslandDetailView({super.key, required this.islandName});
 
   @override
   _IslandDetailViewState createState() => _IslandDetailViewState();
@@ -64,8 +64,7 @@ class _IslandDetailViewState extends State<IslandDetailView>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: 2, vsync: this); // 탭 수를 2로 변경
+    _tabController = TabController(length: 2, vsync: this); // 탭 수를 2로 변경
     _pageController.addListener(() {
       setState(() {});
     });
@@ -110,8 +109,7 @@ class _IslandDetailViewState extends State<IslandDetailView>
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          height:
-                          MediaQuery.of(context).size.height * 0.4, // 화면 높이에 비례한 높이
+                          height: MediaQuery.of(context).size.height * 0.4, // 화면 높이에 비례한 높이
                           color: Colors.white, // 배경을 흰색으로 설정
                           child: PageView.builder(
                             controller: _pageController,
@@ -158,12 +156,11 @@ class _IslandDetailViewState extends State<IslandDetailView>
                     ),
                     // 섬 이름
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 30.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
                       child: Text(
                         viewModel.islandName1.value ?? '섬 이름',
                         // 섬 이름을 여기에 넣으세요
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF222222),
                           fontSize: 20,
                           fontFamily: 'Pretendard',
@@ -177,14 +174,14 @@ class _IslandDetailViewState extends State<IslandDetailView>
                       controller: _tabController,
                       labelColor: Color(0xFF222222),
                       unselectedLabelColor: Color(0xFF999999),
-                      labelStyle: TextStyle(
+                      labelStyle: const TextStyle(
                         color: Color(0xFF222222),
                         fontSize: 13,
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w700,
                         height: 0.12,
                       ),
-                      unselectedLabelStyle: TextStyle(
+                      unselectedLabelStyle: const TextStyle(
                         color: Color(0xFF999999),
                         fontSize: 13,
                         fontFamily: 'Pretendard',
@@ -193,12 +190,10 @@ class _IslandDetailViewState extends State<IslandDetailView>
                       ),
                       // 커스텀 인디케이터 적용
                       indicator: CustomWidthUnderlineTabIndicator(
-                        borderSide:
-                        BorderSide(color: Color(0xFF222222), width: 2.0),
-                        indicatorWidth:
-                        MediaQuery.of(context).size.width / 2, // 절반 길이
+                        borderSide: BorderSide(color: Color(0xFF222222), width: 2.0),
+                        indicatorWidth: MediaQuery.of(context).size.width / 2, // 절반 길이
                       ),
-                      tabs: [
+                      tabs: const [
                         Tab(text: '섬정보'),
                         Tab(text: '매거진'),
                       ],
@@ -217,12 +212,10 @@ class _IslandDetailViewState extends State<IslandDetailView>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // 기존 코드 유지
                                   Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
+                                      const Text(
                                         '길찾기',
                                         style: TextStyle(
                                           fontSize: 24.0,
@@ -231,20 +224,13 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          // 복사 버튼 클릭 시 클립보드에 주소 복사
-                                          Clipboard.setData(ClipboardData(
-                                              text: viewModel
-                                                  .islandAddress.value ??
-                                                  '주소 없음'));
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text('주소가 복사되었습니다.')),
+                                          Clipboard.setData(ClipboardData(text: viewModel.islandAddress.value ?? '주소 없음'));
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('주소가 복사되었습니다.')),
                                           );
                                         },
                                         icon: SvgPicture.asset(
-                                          'assets/images/boksa.svg',
-                                          // 복사 아이콘 이미지 경로
+                                          'assets/images/boksa.svg', // 복사 아이콘 이미지 경로
                                           width: 24,
                                           height: 24,
                                         ),
@@ -255,16 +241,14 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                   Row(
                                     children: [
                                       SvgPicture.asset(
-                                        'assets/images/icon-pin-location-mono.svg',
-                                        // 핀 아이콘 이미지 경로
+                                        'assets/images/icon-pin-location-mono.svg', // 핀 아이콘 이미지 경로
                                         width: 24,
                                         height: 24,
                                       ),
                                       SizedBox(width: 8),
                                       Text(
-                                        viewModel.islandAddress.value ??
-                                            '주소를 여기에 입력하세요', // 주소를 여기에 입력하세요
-                                        style: TextStyle(
+                                        viewModel.islandAddress.value ?? '주소를 여기에 입력하세요', // 주소를 여기에 입력하세요
+                                        style: const TextStyle(
                                           color: Color(0xFF999999),
                                           fontSize: 12,
                                           fontFamily: 'Pretendard',
@@ -276,8 +260,7 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                   ),
                                   SizedBox(height: 16.0),
                                   Text(
-                                    viewModel.islandDescription.value ??
-                                        '여기에 섬에 대한 상세 정보를 입력하세요. 예를 들어 섬의 역사, 주요 명소, 활동 정보 등을 추가할 수 있습니다.',
+                                    viewModel.islandDescription.value ?? '여기에 섬에 대한 상세 정보를 입력하세요.',
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color: Colors.grey[700],
@@ -303,50 +286,38 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                     );
                                   } else {
                                     return Column(
-                                      children: viewModel.islandMagazines
-                                          .map((magazine) {
+                                      children: viewModel.islandMagazines.map((magazine) {
                                         return GestureDetector(
                                           onTap: () {
-                                            // 매거진 카드 탭 시 MagazineView로 이동
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MagazineView(
-                                                      magazine: magazine,
-                                                      islandName: '',
-                                                    ),
+                                                builder: (context) => MagazineView(
+                                                  magazine: magazine,
+                                                  islandName: '',
+                                                ),
                                               ),
                                             );
                                           },
                                           child: ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.circular(16.0), // 카드 모서리를 둥글게
+                                            borderRadius: BorderRadius.circular(16.0),
                                             child: FutureBuilder<String>(
-                                              future: magazine.thumbnail
-                                                  .isNotEmpty
-                                                  ? Future.value(
-                                                  magazine.thumbnail)
-                                                  : Get.find<HomeViewModel>()
-                                                  .repository
-                                                  .getFallbackThumbnail(
-                                                  magazine.title),
+                                              future: magazine.thumbnail.isNotEmpty
+                                                  ? Future.value(magazine.thumbnail)
+                                                  : Get.find<HomeViewModel>().repository.getFallbackThumbnail(magazine.title),
                                               builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
+                                                if (snapshot.connectionState == ConnectionState.waiting) {
                                                   return Container(
                                                     height: 200.0,
-                                                    child: Center(
-                                                        child:
-                                                        CircularProgressIndicator()),
+                                                    child: const Center(
+                                                      child: CircularProgressIndicator(),
+                                                    ),
                                                   );
-                                                } else if (snapshot.hasError ||
-                                                    !snapshot.hasData ||
-                                                    snapshot.data!.isEmpty) {
+                                                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
                                                   return Container(
                                                     height: 200.0,
                                                     color: Colors.grey,
-                                                    child: Center(
+                                                    child: const Center(
                                                       child: Text("사진이 없습니다"),
                                                     ),
                                                   );
@@ -362,19 +333,13 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                                         ),
                                                         // 이미지 위에 텍스트 오버레이
                                                         Container(
-                                                          decoration:
-                                                          BoxDecoration(
-                                                            gradient:
-                                                            LinearGradient(
-                                                              begin:
-                                                              Alignment.topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
+                                                          decoration: BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                              begin: Alignment.topCenter,
+                                                              end: Alignment.bottomCenter,
                                                               colors: [
-                                                                Colors
-                                                                    .transparent,
-                                                                Colors.black
-                                                                    .withOpacity(0.7),
+                                                                Colors.transparent,
+                                                                Colors.black.withOpacity(0.7),
                                                               ],
                                                             ),
                                                           ),
@@ -384,36 +349,32 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                                           bottom: 16.0,
                                                           right: 16.0,
                                                           child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Text(
-                                                                magazine.title,
-                                                                style: TextStyle(
-                                                                  color:
-                                                                  Colors.white,
-                                                                  fontSize: 20.0,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                ),
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons.location_pin,
+                                                                    color: Colors.white,
+                                                                    size: 16,
+                                                                  ),
+                                                                  SizedBox(width: 4.0),
+                                                                  Text(
+                                                                    magazine.title,
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 14.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                              SizedBox(
-                                                                  height: 5.0),
+                                                              const SizedBox(height: 5.0),
                                                               Text(
-                                                                magazine
-                                                                    .description,
-                                                                maxLines:
-                                                                2, // 최대 두 줄까지만 표시
-                                                                overflow:
-                                                                TextOverflow
-                                                                    .ellipsis, // 넘치는 텍스트는 "..."으로 표시
-                                                                style: TextStyle(
-                                                                  color:
-                                                                  Colors.white,
-                                                                  fontSize: 14.0,
-                                                                  height: 1.5,
+                                                                '매거진 #1',
+                                                                style: const TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: 20.0,
+                                                                  fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),
                                                             ],
@@ -454,8 +415,6 @@ class _IslandDetailViewState extends State<IslandDetailView>
                   ),
                 ),
               ),
-              // 오른쪽 상단의 에셋 버튼 제거
-              // 저장 버튼이 제거되었습니다.
             ],
           );
         }

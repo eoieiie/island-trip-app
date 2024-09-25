@@ -212,7 +212,7 @@ class MagazineCard extends StatelessWidget {
                 } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     color: Colors.white,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "사진이 없어요!",
                         style: TextStyle(
@@ -247,7 +247,7 @@ class MagazineCard extends StatelessWidget {
                     ),
                     TextSpan(
                       text: magazine1!.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w300,
@@ -263,7 +263,7 @@ class MagazineCard extends StatelessWidget {
                     ),
                     TextSpan(
                       text: magazine1!.islandtag,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
@@ -357,7 +357,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16.0),
             topRight: Radius.circular(16.0),
           ),
@@ -385,7 +385,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ),
             ),
             // 바텀 시트 내 타이틀
-            Text(
+            const Text(
               'Isleland Chart',
               style: TextStyle(
                 color: Color(0xFFC8C8C8),
@@ -395,7 +395,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
               ),
             ),
             SizedBox(height: 4.0),
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -440,7 +440,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                         SizedBox(height: 15.0),
                         Text(
                           magazine.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFF999999),
                             fontSize: 13,
                             fontFamily: 'Pretendard',

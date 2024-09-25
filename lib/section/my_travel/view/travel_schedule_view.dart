@@ -7,6 +7,7 @@ import '../viewmodel/my_travel_viewmodel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:project_island/main.dart';
 import 'schedule_add_view.dart';
+import 'package:intl/intl.dart';
 
 // 여행 일정 화면을 위한 StatefulWidget 정의
 class TravelScheduleView extends StatefulWidget {
@@ -89,11 +90,22 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
     for (var schedule in schedules) {
       if (schedule.latitude != null && schedule.longitude != null) {
+        // 숫자에 따른 이모티콘 이미지 경로 설정
+        String iconPath;
+        int scheduleIndex = schedules.indexOf(schedule) + 1;
+
+        if (scheduleIndex >= 1 && scheduleIndex <= 10) {
+          iconPath = 'assets/icons/_$scheduleIndex.png'; // 1부터 10까지의 숫자 이모티콘
+        } else {
+          iconPath = 'assets/icons/_location.png'; // 디폴트 이미지
+        }
+
         // 좌표가 있는 경우 마커 생성
         final marker = NMarker(
           id: schedule.title, // 일정 제목을 마커 ID로 사용
           position: NLatLng(schedule.latitude!, schedule.longitude!), // 일정의 위도와 경도를 위치로 설정
           caption: NOverlayCaption(text: schedule.title), // 일정 제목을 마커 캡션으로 표시
+          icon: NOverlayImage.fromAssetImage(iconPath), // 마커 이미지 설정
         );
         markers.add(marker); // 마커 리스트에 추가
       }
@@ -185,7 +197,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
             _buildDaySchedule(), // 일자별 일정 표시 위젯
             // _buildAddScheduleButton(), // 일정 추가 버튼 표시
             _buildSaveAndAddButtons(), // 좌우 버튼
-            _buildSavedPlaces(), // 내 저장 장소 리스트
+            // _buildSavedPlaces(), // 내 저장 장소 리스트
             // _buildAISuggestions(), // AI 추천 섹션
             // _buildSavedPlaces(), // 저장된 장소 섹션
           ],
@@ -452,20 +464,47 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex); // 선택된 날짜의 일정 가져오기
 
     return Column(
-      children: schedules.map((schedule) {
-        return _buildScheduleItem(
-          schedule.title,
-          "${schedule.startTime}",
-          schedule.memo ?? '',
+      children: List<Widget>.from(schedules.asMap().entries.map((entry) {
+        final int scheduleIndex = entry.key + 1; // 1부터 시작하는 일정 순서
+        final schedule = entry.value;
+        return Dismissible(
+          key: Key(schedule.id), // scheduleId로 고유 키 설정
+          direction: DismissDirection.endToStart, // 오른쪽에서 왼쪽으로 스와이프
+          onDismissed: (direction) {
+            travelViewModel.deleteSchedule(widget.travelId, schedule.id); // 스케줄 삭제
+          },
+          background: Container(
+            color: Colors.red, // 삭제 시 배경색
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.only(right: 20),
+            child: Icon(Icons.delete, color: Colors.white), // 삭제 아이콘
+          ),
+          child: _buildScheduleItem(
+            schedule.title,
+            "${schedule.startTime}",
+            schedule.memo ?? '',
+            scheduleIndex,  // 추가된 인수
+          ),
         );
-      }).toList(),
+      }).toList()),
     );
   }
 
-  // 일정 아이템을 표시하는 함수
-  Widget _buildScheduleItem(String place, String time, String memo) {
+  Widget _buildScheduleItem(String place, String time, String memo, int scheduleIndex) {
+    // String을 DateTime으로 변환하고 시간 형식을 HH:mm으로 변환
+    DateTime parsedTime = DateTime.parse(time); // time이 '2024-09-12 12:00:00.000' 형식이라고 가정
+    String formattedTime = DateFormat('HH:mm').format(parsedTime); // 시간만 추출
+
+    // 숫자에 따른 이모티콘 이미지 경로 설정
+    String iconPath;
+    if (scheduleIndex >= 1 && scheduleIndex <= 10) {
+      iconPath = 'assets/icons/_$scheduleIndex.png'; // 1부터 10까지의 숫자 이모티콘
+    } else {
+      iconPath = 'assets/icons/_location.png'; // 디폴트 이미지
+    }
+
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // 패딩 설정
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // 외부 여백 설정
       padding: const EdgeInsets.all(8.0), // 내부 여백 설정
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!), // 테두리 색상 설정
@@ -473,15 +512,38 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
         color: Colors.white, // 배경색 흰색
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+        crossAxisAlignment: CrossAxisAlignment.end, // 왼쪽 정렬
         children: [
-          Text('  $place', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), // 장소 및 시간 표시
-          Text('  $time', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w100)), // 장소 및 시간 표시
-          if (memo.isNotEmpty) // 메모가 있을 경우에만 표시
+          // 장소와 시간을 나란히 배치
+          Row(
+            children: [
+              Image.asset(
+                iconPath, // 이모티콘 이미지 경로
+                width: 20, // 이미지 너비
+                height: 20, // 이미지 높이
+              ),
+              SizedBox(width: 8.0), // 간격
+              Text(
+                place,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // 장소 표시
+              ),
+              SizedBox(width: 8.0), // 장소와 시간 사이 간격
+              Text(
+                formattedTime,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w100), // 시간 표시
+              ),
+            ],
+          ),
+          SizedBox(height: 8.0), // 장소와 메모 간격
+
+          // 메모가 있을 경우 표시
+          if (memo.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Text(memo, style: TextStyle(fontSize: 14)), // 메모 내용 표시
             ),
+
+          // 교통편 및 메모 추가 버튼
           Row(
             children: [
               _buildWhiteButton('교통편 보기', () {}), // 교통편 보기 버튼
@@ -517,6 +579,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       ),
     );
   }
+
 
   // 흰색 버튼 스타일을 설정하는 함수
   Widget _buildWhiteButton(String text, VoidCallback onPressed) {
@@ -642,7 +705,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween, // 좌우로 버튼 나누기
         children: [
-          // '내 저장' 버튼
+          // '내 저장' 버튼 (주석 처리)
+          /*
           Expanded(
             child: GestureDetector(
               onTap: () {
@@ -677,8 +741,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
               ),
             ),
           ),
-          const SizedBox(width: 12), // 두 버튼 사이 간격
-          // '일정 추가' 버튼
+          */
+          // '일정 추가' 버튼 (전체 가로 차지)
           Expanded(
             child: GestureDetector(
               onTap: () async {
@@ -731,6 +795,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       ),
     );
   }
+
 
 // '내 저장 장소' 리스트를 보여주는 함수
   Widget _buildSavedPlaces() {

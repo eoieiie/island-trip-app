@@ -117,7 +117,7 @@ class _IslandSelectionViewState extends State<IslandSelectionView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '396km · ${_currentSelectedIsland!.address}', // '이런 섬은 어때요?', // 설명 텍스트
+                  '${_currentSelectedIsland!.address}', // '이런 섬은 어때요?', // 설명 텍스트
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 // SizedBox(height: 1),

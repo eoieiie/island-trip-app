@@ -117,6 +117,28 @@ class PostViewModel {
     await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
   }
 
+  // 게시글 수정
+  Future<void> updatePost(String postId, String newTitle, String newContent) async {
+    await _firestore.collection('posts').doc(postId).update({
+      'title': newTitle,
+      'content': newContent,
+      'timestamp': Timestamp.now(), // 수정 시간 업데이트
+    });
+  }
+
+  // 댓글 수정
+  Future<void> updateComment(String postId, String commentId, String newComment) async {
+    await _firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .doc(commentId)
+        .update({
+      'comment': newComment,
+      'timestamp': Timestamp.now(), // 수정 시간 업데이트
+    });
+  }
+
   // 이미지 선택 (ImagePicker 사용)
   Future<File?> pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);

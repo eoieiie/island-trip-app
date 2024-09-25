@@ -134,9 +134,9 @@ class HomemapListController extends GetxController {
   // 스크롤 이벤트 처리
   void handleScroll(double extent) {
     if (extent == 1.0 && !isFullScreen.value) {
-      isFullScreen.value = true;
+      isFullScreen.value = true; // 전체 화면 상태로 변경
     } else if (extent < 1.0 && isFullScreen.value) {
-      isFullScreen.value = false;
+      isFullScreen.value = false; // 전체 화면 해제
     }
   }
 

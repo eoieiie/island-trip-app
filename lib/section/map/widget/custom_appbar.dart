@@ -36,7 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   controller: searchController, // 검색창에 텍스트 컨트롤러 추가
                   cursorColor: Colors.black, // 커서 색상을 검정색으로 설정
                   decoration: const InputDecoration(
-                    hintText: '장소 검색', // Placeholder
+                    hintText: '검색어를 입력하세요', // Placeholder
                     border: InputBorder.none, // 기본 테두리 제거
                     contentPadding: EdgeInsets.symmetric(vertical: 10), // 텍스트 입력과 테두리 간격 조정
                   ),

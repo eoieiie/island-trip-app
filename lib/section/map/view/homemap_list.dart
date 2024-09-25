@@ -139,13 +139,13 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
       case '자전거':
         return 'assets/icons/_bicycle.png';
       case '한식':
-        return 'assets/icons/_korea.png';
+        return 'assets/icons/korea.png';
       case '양식':
-        return 'assets/icons/_america.png';
+        return 'assets/icons/_fork.png';
       case '일식':
-        return 'assets/icons/_japan.png';
+        return 'assets/icons/japan.png';
       case '중식':
-        return 'assets/icons/_china.png';
+        return 'assets/icons/china.png';
       case '분식':
         return 'assets/icons/_snacks.png';
       case '커피':

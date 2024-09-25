@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import '../viewmodel/my_travel_viewmodel.dart';
 import 'travel_schedule_view.dart';
 import 'package:project_island/section/common/google_api/views/google_search_page.dart';
-
+import 'new_google_search_page.dart';
 
 class ScheduleAddView extends StatefulWidget {
+  final String selectedIsland; // 새로 추가된 selectedIsland 속성
   final String travelId;
   final DateTime selectedDate;
   final MyTravelViewModel travelViewModel;
@@ -14,15 +15,17 @@ class ScheduleAddView extends StatefulWidget {
   final String? endTime;
   final String? memo;
 
-  ScheduleAddView({
+  const ScheduleAddView({
+    Key? key,
     required this.travelId,
     required this.selectedDate,
     required this.travelViewModel,
+    required this.selectedIsland, // 여기에 selectedIsland 추가
     this.title, // 기존 일정 제목
     this.startTime, // 기존 일정 시작 시간
     this.endTime, // 기존 일정 종료 시간
     this.memo, // 기존 메모
-  });
+  }) : super(key: key);
 
   @override
   _ScheduleAddViewState createState() => _ScheduleAddViewState();
@@ -37,10 +40,10 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
   int _selectedHour = 12;
   int _selectedMinute = 0;
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _memoController = TextEditingController();
+  late TextEditingController _titleController;
+  late TextEditingController _memoController;
 
-  bool _isTitleValid = true;  // 제목 유효성 확인 변수
+  bool _isTitleValid = true; // 제목 유효성 확인 변수
   final ScrollController _scrollController = ScrollController(); // 화면 스크롤을 위한 컨트롤러
 
   @override
@@ -58,8 +61,6 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     _memoController.dispose();
     _hoursController.dispose();
     _minutesController.dispose();
-    _titleController.dispose();
-    _memoController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -126,11 +127,11 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               _buildMemoInput(),
               SizedBox(height: 20),
               // _makeline(),
-              //SizedBox(height: 20),
-              //_buildPhotoSection(),
+              // SizedBox(height: 20),
+              // _buildPhotoSection(),
               SizedBox(height: 20),
               _buildSubmitButton(),
-              SizedBox(height: 50)
+              SizedBox(height: 50),
             ],
           ),
         ),
@@ -139,14 +140,10 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
   }
 
   Widget _makeline() {
-    return Column(
-      children: [
-        Container(
-          width: 375,
-          height: 1,
-          decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
-        ),
-      ],
+    return Container(
+      width: double.infinity,
+      height: 1,
+      color: Color(0xFFF7F7F7),
     );
   }
 
@@ -165,18 +162,24 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         SizedBox(height: 10),
         GestureDetector(
           onTap: () async {
-            // GoogleSearchPage에서 장소와 좌표를 받아옵니다
+            // NewGoogleSearchPage에서 장소와 좌표를 받아옵니다
             final result = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => GoogleSearchPage()),
+              MaterialPageRoute(
+                // 섬 이름을 별도 매개변수로 전달
+                builder: (context) => NewGoogleSearchPage(selectedIsland: widget.selectedIsland),
+              ),
             );
 
             // 결과로 받은 장소와 좌표를 저장
-            if (result != null && result is Map) {
+            if (result != null && result is Map<String, dynamic>) {
               setState(() {
                 _selectedPlace = result['place'];
                 _selectedLatitude = result['latitude'];
                 _selectedLongitude = result['longitude'];
+
+                print('선택된 장소: $_selectedPlace');
+                print('위도: $_selectedLatitude, 경도: $_selectedLongitude');
 
                 // 제목이 비어있다면 장소 이름으로 설정
                 if (_titleController.text.isEmpty) {
@@ -185,12 +188,12 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               });
             }
           },
-          child: AbsorbPointer( // TextField의 입력을 막고, 클릭만 가능하게 함
+          child: AbsorbPointer(
             child: TextField(
               decoration: InputDecoration(
-                hintText: _selectedPlace ?? '위치 검색',  // 선택된 장소가 없으면 '위치 검색' 표시
+                hintText: _selectedPlace ?? '위치 검색',
                 hintStyle: TextStyle(
-                  color: _selectedPlace != null ? Colors.black : Colors.grey,  // 장소 선택 시 검은색으로 표시
+                  color: _selectedPlace != null ? Colors.black : Colors.grey,
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 20), // 텍스트와 아이콘에 좌우 패딩 추가
                 enabledBorder: OutlineInputBorder(
@@ -242,9 +245,6 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
       ],
     );
   }
-
-
-
 
   Widget _buildTimePicker() {
     return Column(
@@ -360,33 +360,6 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     );
   }
 
-  Widget _buildPhotoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('사진 등록', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black)),
-        SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          height: 90,
-          decoration: BoxDecoration(
-            border: Border.all(color: Color(0xFFC8C8C8)),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(
-            child: TextButton.icon(
-              onPressed: () {
-                // 사진 선택 기능 구현
-              },
-              icon: Icon(Icons.camera_alt, size: 24, color: Colors.black),
-              label: Text('사진 선택', style: TextStyle(color: Colors.black)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildTitleInput() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,7 +391,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
             hintText: '간단한 제목을 작성해주세요',
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경 (초록색)
+              borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -442,7 +415,14 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('메모 작성', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black)),
+        Text(
+          '메모 작성',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Colors.black,
+          ),
+        ),
         SizedBox(height: 8),
         TextField(
           controller: _memoController,
@@ -452,7 +432,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
             hintText: '간단한 메모를 작성해주세요',
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경 (초록색)
+              borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1), // 테두리 색 변경
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -487,7 +467,15 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
       // 제목이 비어있거나 장소가 선택되지 않으면 경고 처리
       if (_titleController.text.isEmpty || _selectedPlace == null) {
         _isTitleValid = _titleController.text.isNotEmpty;
-        final String missingField = _selectedPlace == null ? '장소를' : '일정 제목을';
+        String missingField = '';
+
+        if (_titleController.text.isEmpty && _selectedPlace == null) {
+          missingField = '일정 제목과 장소를';
+        } else if (_titleController.text.isEmpty) {
+          missingField = '일정 제목을';
+        } else if (_selectedPlace == null) {
+          missingField = '장소를';
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -513,13 +501,20 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         date: selectedDateTime,
         title: _titleController.text,
         startTime: "${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}",
-        endTime: "23:59",
+        endTime: "23:59", // 예시: 종료 시간을 고정하거나, 사용자 입력으로 변경 가능
         memo: _memoController.text,
         latitude: _selectedLatitude,
         longitude: _selectedLongitude,
       );
 
-      Navigator.pop(context, true);  // result로 true를 반환
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('일정이 저장되었습니다.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.pop(context, true); // result로 true를 반환
     });
   }
 }

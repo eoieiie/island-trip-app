@@ -557,6 +557,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
                       travelId: widget.travelId, // travelId 전달
                       selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)), // 선택된 날짜 전달
                       travelViewModel: travelViewModel,  // ViewModel 인스턴스 전달
+                      selectedIsland: widget.selectedIsland, // selectedIsland 값 전달
                       title: place,
                       startTime: time,
                       endTime: "23:59", // 기존 종료 시간 예시
@@ -619,6 +620,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
                     travelId: widget.travelId, // travelId 전달
                     selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)), // 선택된 날짜 전달
                     travelViewModel: travelViewModel,  // ViewModel 인스턴스 전달
+                    selectedIsland: widget.selectedIsland, // selectedIsland 값 전달
                   ),
                 ),
               );
@@ -754,6 +756,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
                       travelId: widget.travelId, // travelId 전달
                       selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)), // 선택된 날짜 전달
                       travelViewModel: travelViewModel,  // ViewModel 인스턴스 전달
+                      selectedIsland: widget.selectedIsland, // selectedIsland 값 전달
                     ),
                   ),
                 );

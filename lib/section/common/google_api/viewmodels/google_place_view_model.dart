@@ -1,7 +1,6 @@
 import '../models/google_place_model.dart';
 import '../services/google_places_api.dart';
 
-
 class GooglePlaceViewModel {
   final GooglePlacesAPI _googlePlacesAPI = GooglePlacesAPI();
 

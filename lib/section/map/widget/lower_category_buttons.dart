@@ -62,6 +62,7 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
             // 첫 번째 줄: '전체' 버튼 포함 최대 4개
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(), // 제스처 충돌 방지
               child: Row(
                 children: [
                   // '전체' 버튼
@@ -112,21 +113,26 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
             child: Container(
               width: 35,
               height: 35,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2), // 테두리 추가
+              ),
               child: FloatingActionButton(
                 onPressed: () {
                   setState(() {
                     showMore = !showMore;
                   });
                 },
-                backgroundColor: Colors.grey.withOpacity(0.6),
+                backgroundColor: Colors.green.withOpacity(0.8), // 배경색 설정
                 child: Icon(
-                  showMore ? Icons.expand_less : Icons.expand_more,
+                  showMore ? Icons.expand_less : Icons.expand_more, // 아이콘 상태 변경
                   color: Colors.white,
                   size: 20, // 아이콘 크기 조정
                 ),
               ),
             ),
           ),
+
       ],
     );
   }
@@ -177,7 +183,7 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
   // 개별 하위 카테고리 버튼을 빌드하는 함수
   Widget _buildCategoryButton(String category, String emoji, VoidCallback onPressed) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 1.0),
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -227,8 +233,8 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
         return '🏛️';
       case '수상 레저':
         return '🐬';
-      case '자전거':
-        return '🚴‍♂️';
+      case '전망대':
+        return '🌄';
       case '한식':
         return '🇰🇷';
       case '양식':

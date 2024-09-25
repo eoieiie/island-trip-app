@@ -18,15 +18,18 @@ class HomemapList extends StatefulWidget {
   HomemapListState createState() => HomemapListState();
 }
 
-class HomemapListState extends State<HomemapList> {
+class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
   // 컨트롤러 초기화 (GetX 사용)
   final HomemapListController controller = Get.put(HomemapListController());
   final DraggableScrollableController draggableScrollableController = DraggableScrollableController(); // 바텀시트 컨트롤러
   final Completer<NaverMapController> _naverMapController = Completer(); // 네이버 맵 컨트롤러
 
+  bool _isKeyboardOpen = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // Observer 추가
     controller.resetCategories();  // 화면이 로드될 때 카테고리 초기화
     controller.onCategorySelected(widget.islandName); // 초기 카테고리 설정
     controller.loadInitialItems(widget.islandName); // 초기 데이터 로드
@@ -35,6 +38,36 @@ class HomemapListState extends State<HomemapList> {
     ever(controller.displayedItems, (_) {
       _addMarkersForItems(controller.displayedItems);
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Observer 제거
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final newIsKeyboardOpen = bottomInset > 0.0;
+    if (newIsKeyboardOpen != _isKeyboardOpen) {
+      _isKeyboardOpen = newIsKeyboardOpen;
+      if (_isKeyboardOpen) {
+        // 키보드가 열릴 때 바텀 시트를 전체 화면으로 확장
+        draggableScrollableController.animateTo(
+          1.0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        // 키보드가 닫힐 때 바텀 시트를 원래 크기로 복원
+        draggableScrollableController.animateTo(
+          0.35,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
 
   void _addMarkersForItems(List<IslandModel> items) {
@@ -126,10 +159,10 @@ class HomemapListState extends State<HomemapList> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // 키보드가 올라왔을 때 화면 크기 조정
       // 검색 기능을 포함한 커스텀 앱바
       appBar: CustomAppBar(
         onSearchSubmitted: controller.onSearchSubmitted, // 검색어 제출 시 처리
@@ -147,7 +180,7 @@ class HomemapListState extends State<HomemapList> {
             MapBackground(selectedIsland: widget.islandName),
             Column(
               children: [
-                // 상위 카테고리 버튼과 하위 카테고리 버튼을 포함한 컨테이너
+                // 상위 카테고리 버튼을 포함한 컨테이너
                 Container(
                   color: Colors.white, // 상위 카테고리 바의 배경색을 흰색으로 설정
                   child: Obx(() => UpperCategoryButtons(
@@ -161,8 +194,8 @@ class HomemapListState extends State<HomemapList> {
                   // 바텀시트: 스크롤 시 확장/축소 가능한 시트
                   child: DraggableScrollableSheet(
                     controller: draggableScrollableController,
-                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.25,
-                    minChildSize: 0.25,
+                    initialChildSize: controller.isFullScreen.value ? 1.0 : 0.35,
+                    minChildSize: 0.35,
                     maxChildSize: 1.0,
                     expand: true,
                     builder: (BuildContext context, ScrollController scrollController) {
@@ -184,15 +217,18 @@ class HomemapListState extends State<HomemapList> {
       // 지도 보기 버튼
       floatingActionButton: Obx(
             () => controller.isFullScreen.value
-            ? FloatingMapButton(
-          onPressed: () {
-            controller.isFullScreen.value = false; // 풀스크린 상태 해제
-            draggableScrollableController.animateTo(
-              0.4,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
+            ? SafeArea(
+          child: FloatingMapButton(
+            onPressed: () {
+              FocusScope.of(context).unfocus(); // 키보드 닫기
+              controller.isFullScreen.value = false; // 풀스크린 상태 해제
+              draggableScrollableController.animateTo(
+                0.35,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+          ),
         )
             : const SizedBox.shrink(),
       ),
@@ -200,6 +236,7 @@ class HomemapListState extends State<HomemapList> {
     );
   }
 }
+
 
 // 네이버 맵을 배경에 표시하는 위젯
 class MapBackground extends StatelessWidget {
@@ -280,6 +317,9 @@ class BottomSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 키보드가 나타날 때의 패딩을 계산
+    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent == 1.0 && !controller.isFullScreen.value) {
@@ -290,82 +330,87 @@ class BottomSheetContent extends StatelessWidget {
         return true;
       },
       child: Obx(
-            () => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: controller.isFullScreen.value
-                ? BorderRadius.zero
-                : const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              if (!controller.isFullScreen.value)
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              // 상위 카테고리가 선택된 경우에만 하위 카테고리 바를 표시합니다.
-              if (controller.selectedCategory.isNotEmpty)
-                LowerCategoryButtons(
-                  selectedSubCategory: controller.selectedSubCategory.value, // 선택된 하위 카테고리
-                  onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 시 호출
-                  subCategories: controller.subCategories, // 동적으로 하위 카테고리 목록을 표시
-                  selectedCategory: controller.selectedCategory.value, // 추가된 파라미터
-                  onAllSelected: () { // '전체' 버튼을 눌렀을 때 실행할 콜백 함수
-                    controller.onSubCategorySelected('전체'); // '전체' 카테고리를 처리하는 로직
-                  },
-                ),
-
-              Divider(color: Colors.grey[200], thickness: 1, height: 5),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      const Text(
-                        '목록 ',
-                        style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${controller.displayedItems.length}개',
-                        style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
+            () => SafeArea(
+          bottom: false, // 바텀 시트 내에서만 SafeArea를 적용
+          child: Padding(
+            padding: EdgeInsets.only(bottom: keyboardHeight), // 키보드 높이만큼 패딩 추가
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: controller.isFullScreen.value
+                    ? BorderRadius.zero
+                    : const BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    controller.displayedItems.isEmpty
-                        ? const Center(child: Text('저장된 항목이 없습니다.'))
-                        : HomemapListView(
-                      items: controller.displayedItems,
-                      controller: controller,
-                      scrollController: scrollController,
+              child: Column(
+                children: [
+                  if (!controller.isFullScreen.value)
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                    if (controller.isLoading.value)
-                      IgnorePointer( // 스크롤 가능하게 하기 위해 추가
-                        ignoring: true,
-                        child: Container(
-                          color: Colors.white.withOpacity(0.7),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.green[300],
+                  // 하위 카테고리 바: 시트 내에 배치
+                  if (controller.selectedCategory.isNotEmpty)
+                    LowerCategoryButtons(
+                      selectedSubCategory: controller.selectedSubCategory.value, // 선택된 하위 카테고리
+                      onSubCategorySelected: controller.onSubCategorySelected, // 하위 카테고리 선택 시 호출
+                      subCategories: controller.subCategories, // 동적으로 하위 카테고리 목록을 표시
+                      selectedCategory: controller.selectedCategory.value, // 추가된 파라미터
+                      onAllSelected: () { // '전체' 버튼을 눌렀을 때 실행할 콜백 함수
+                        controller.onSubCategorySelected('전체'); // '전체' 카테고리를 처리하는 로직
+                      },
+                    ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          const Text(
+                            '목록 ',
+                            style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '${controller.displayedItems.length}개',
+                            style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        controller.displayedItems.isEmpty
+                            ? const Center(child: Text('검색 결과가 없습니다'))
+                            : HomemapListView(
+                          items: controller.displayedItems,
+                          controller: controller,
+                          scrollController: scrollController,
+                        ),
+                        if (controller.isLoading.value)
+                          IgnorePointer( // 스크롤 가능하게 하기 위해 추가
+                            ignoring: true,
+                            child: Container(
+                              color: Colors.white.withOpacity(0.7),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.green,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

@@ -5,8 +5,8 @@ import 'travel_schedule_view.dart';
 import 'package:project_island/section/common/google_api/views/google_search_page.dart';
 import 'new_google_search_page.dart';
 
-
 class ScheduleAddView extends StatefulWidget {
+  final String selectedIsland; // 새로 추가된 selectedIsland 속성
   final String travelId;
   final DateTime selectedDate;
   final MyTravelViewModel travelViewModel;
@@ -20,6 +20,7 @@ class ScheduleAddView extends StatefulWidget {
     required this.travelId,
     required this.selectedDate,
     required this.travelViewModel,
+    required this.selectedIsland, // 여기에 selectedIsland 추가
     this.title, // 기존 일정 제목
     this.startTime, // 기존 일정 시작 시간
     this.endTime, // 기존 일정 종료 시간
@@ -164,7 +165,10 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
             // NewGoogleSearchPage에서 장소와 좌표를 받아옵니다
             final result = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const NewGoogleSearchPage()),
+              MaterialPageRoute(
+                // 섬 이름을 별도 매개변수로 전달
+                builder: (context) => NewGoogleSearchPage(selectedIsland: widget.selectedIsland),
+              ),
             );
 
             // 결과로 받은 장소와 좌표를 저장
@@ -184,12 +188,12 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               });
             }
           },
-          child: AbsorbPointer( // TextField의 입력을 막고, 클릭만 가능하게 함
+          child: AbsorbPointer(
             child: TextField(
               decoration: InputDecoration(
-                hintText: _selectedPlace ?? '위치 검색', // 선택된 장소가 없으면 '위치 검색' 표시
+                hintText: _selectedPlace ?? '위치 검색',
                 hintStyle: TextStyle(
-                  color: _selectedPlace != null ? Colors.black : Colors.grey, // 장소 선택 시 검은색으로 표시
+                  color: _selectedPlace != null ? Colors.black : Colors.grey,
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 20), // 텍스트와 아이콘에 좌우 패딩 추가
                 enabledBorder: OutlineInputBorder(

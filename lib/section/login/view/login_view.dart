@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 10),
                 // 구글 로그인 버튼
                 GestureDetector(
                   onTap: _handleGoogleSignIn, // 구글 로그인 처리
@@ -91,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 8),
+                /*
                 // 카카오 로그인 버튼
                 GestureDetector(
                   onTap: _handleKakaoSignIn, // 카카오 로그인 처리
@@ -98,6 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     'assets/images/kakao_Login.svg',
                   ),
                 ),
+
+                 */
                 Spacer(flex: 3),
               ],
             ),

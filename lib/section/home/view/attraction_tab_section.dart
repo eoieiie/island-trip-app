@@ -1,6 +1,4 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../common/google_api/viewmodels/google_place_view_model.dart';
 import '../../common/google_api/models/google_place_model.dart';
 

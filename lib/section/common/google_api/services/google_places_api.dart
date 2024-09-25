@@ -32,18 +32,15 @@ class GooglePlacesAPI {
 
             // API의 next_page_token은 2초 지연 후에 사용 가능하므로, 지연을 추가
             if (nextPageToken != null) {
-              await Future.delayed(Duration(seconds: 2));
+              await Future.delayed(const Duration(seconds: 2));
             }
           } else {
-            print('API Error: ${data['status']} - ${data['error_message']}');
             throw Exception('Failed to load places');
           }
         } else {
-          print('HTTP Error: ${response.statusCode}');
           throw Exception('Failed to load places');
         }
       } catch (e) {
-        print('Exception during API call: $e');
         throw Exception('Failed to load places');
       }
     } while (nextPageToken != null && allResults.length < maxResults);  // 다음 페이지가 있고, 결과가 원하는 개수보다 적을 때만 반복
@@ -62,11 +59,9 @@ class GooglePlacesAPI {
       if (response.statusCode == 200) { // HTTP 응답이 200(성공)일 경우
         return response.headers['location']; // 응답 헤더에서 사진 URL 반환
       } else {
-        print('HTTP Error: ${response.statusCode}'); // HTTP 에러 출력
         return null; // 실패 시 null 반환
       }
     } catch (e) {
-      print('Exception during photo API call: $e'); // 예외 출력
       return null; // 실패 시 null 반환
     }
   }

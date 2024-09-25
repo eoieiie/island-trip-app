@@ -5,7 +5,8 @@ class CustomNavigationBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  CustomNavigationBar({
+  const CustomNavigationBar({
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
   });
@@ -13,11 +14,11 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.transparent, // 그림자를 투명으로 설정
+            color: Colors.transparent,
             blurRadius: 0,
           ),
         ],
@@ -32,32 +33,44 @@ class CustomNavigationBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/images/icon-home-mono.svg',
-              color: selectedIndex == 0 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 0 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
+                BlendMode.srcIn,
+              ),
             ),
             label: '홈',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/images/icon_calendar.svg',
-              color: selectedIndex == 1 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 1 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
+                BlendMode.srcIn,
+              ),
             ),
             label: '일정',
           ),
-          BottomNavigationBarItem(
-            icon: Container(), // 가운데에 플로팅 액션 버튼이 들어가므로 빈 공간
+          const BottomNavigationBarItem(
+            icon: SizedBox.shrink(),
             label: '',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/images/icon-stack-up-square-mono.svg',
-              color: selectedIndex == 3 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 3 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
+                BlendMode.srcIn,
+              ),
             ),
             label: '저장',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/images/icon-user-mono.svg',
-              color: selectedIndex == 4 ? Color(0xFF1BB874) : Color(0xFFC8C8C8),
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 4 ? const Color(0xFF1BB874) : const Color(0xFFC8C8C8),
+                BlendMode.srcIn,
+              ),
             ),
             label: '마이페이지',
           ),

@@ -15,7 +15,7 @@ class KakaoAPI {
       {double? latitude, double? longitude, int radius = 20000, int page = 3, int size = 15}) async {
 
     // Kakao API의 기본 URL
-    final String url = 'https://dapi.kakao.com/v2/local/search/keyword.json';
+    const String url = 'https://dapi.kakao.com/v2/local/search/keyword.json';
 
     // 기본적으로 검색어와 반경을 포함한 요청 URL, 페이지와 크기도 포함됨.
     String requestUrl = '$url?query=$query&radius=$radius&page=$page&size=$size';
@@ -39,7 +39,7 @@ class KakaoAPI {
       return List<Map<String, dynamic>>.from(data['documents']); // JSON 데이터에서 'documents' 배열을 추출하여 리스트로 반환
     } else {
       // 요청이 실패한 경우, 에러 메시지를 출력
-      print('Response body: ${response.body}'); // 응답 바디 출력
+      // print('Response body: ${response.body}'); // 응답 바디 출력
       throw Exception('Failed to load places'); // 예외를 발생시켜 호출자에게 오류를 알리기
     }
   }

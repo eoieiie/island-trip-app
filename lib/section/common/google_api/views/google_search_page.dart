@@ -4,11 +4,13 @@ import 'google_place_detail_page.dart'; // 장소 상세 정보 페이지 임포
 import '../models/google_place_model.dart'; // 데이터 모델 임포트
 
 class GoogleSearchPage extends StatefulWidget {
+  const GoogleSearchPage({super.key}); // 생성자 추가 및 'super.key' 사용
+
   @override
-  _GoogleSearchPageState createState() => _GoogleSearchPageState(); // 상태 생성
+  GoogleSearchPageState createState() => GoogleSearchPageState(); // 상태 생성
 }
 
-class _GoogleSearchPageState extends State<GoogleSearchPage> {
+class GoogleSearchPageState extends State<GoogleSearchPage> {
   final TextEditingController _controller = TextEditingController(); // 텍스트 필드 컨트롤러
   final GooglePlaceViewModel _viewModel = GooglePlaceViewModel(); // ViewModel 인스턴스 생성
   List<GooglePlaceModel> _places = []; // 검색 결과 저장용 리스트
@@ -23,7 +25,8 @@ class _GoogleSearchPageState extends State<GoogleSearchPage> {
           _places = places; // 결과를 상태에 저장
         });
       } catch (e) {
-        print('Error: $e'); // 오류 발생 시 출력
+        // print('Error: $e'); // 프로덕션 코드에서 'print' 문 제거
+        // 오류 처리를 위한 대체 코드 추가 가능
       }
     }
   }
@@ -32,10 +35,10 @@ class _GoogleSearchPageState extends State<GoogleSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Place Search'), // 앱바 제목
+        title: const Text('Google Place Search'), // 앱바 제목에 'const' 추가
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0), // 패딩 적용
+        padding: const EdgeInsets.all(8.0), // 패딩 적용에 'const' 추가
         child: Column(
           children: [
             TextField(
@@ -43,7 +46,7 @@ class _GoogleSearchPageState extends State<GoogleSearchPage> {
               decoration: InputDecoration(
                 labelText: 'Enter search keyword', // 입력 필드 힌트 텍스트
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search), // 검색 아이콘
+                  icon: const Icon(Icons.search), // 검색 아이콘에 'const' 추가
                   onPressed: _searchPlaces, // 검색 버튼 클릭 시 실행
                 ),
               ),
@@ -65,7 +68,7 @@ class _GoogleSearchPageState extends State<GoogleSearchPage> {
                       height: 50, // 썸네일 높이
                       fit: BoxFit.cover, // 이미지 크기에 맞게 조정
                     )
-                        : Icon(Icons.image_not_supported), // 이미지가 없을 때 대체 아이콘
+                        : const Icon(Icons.image_not_supported), // 이미지가 없을 때 대체 아이콘에 'const' 추가
                     title: Text(place.name), // 장소 이름
                     subtitle: Text(place.address), // 장소 주소
                     onTap: () {

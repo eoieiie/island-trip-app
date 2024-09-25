@@ -16,6 +16,7 @@ class GooglePlaceModel {
   final double? latitude;  // 위도
   final double? longitude; // 경도
   final String? placeId;
+  final List<String>? types;
 
   // 생성자 - GooglePlaceModel 인스턴스를 생성하는 함수
   GooglePlaceModel({
@@ -30,6 +31,7 @@ class GooglePlaceModel {
     this.latitude,
     this.longitude,
     this.placeId,
+    this.types,
   });
 
   // fromJson 팩토리 생성자 - JSON 데이터를 받아 GooglePlaceModel 인스턴스를 생성
@@ -67,6 +69,7 @@ class GooglePlaceModel {
         longitude: json['geometry'] != null && json['geometry']['location'] != null
             ? json['geometry']['location']['lng'] as double : null,
         placeId: json['place_id'], // Google Places API 응답에서 `place_id`를 사용
+        types: json['types'] != null ? List<String>.from(json['types']) : null,  // types 필드 추가
       );
     } catch (e) {
       // JSON 파싱 중 에러가 발생하면 기본 값으로 아래 GooglePlaceModel 인스턴스를 반환
@@ -83,6 +86,7 @@ class GooglePlaceModel {
         latitude: null,  // 에러 발생 시 null로 설정
         longitude: null,  // 에러 발생 시 null로 설정
         placeId: null,
+        types: null,
       );
     }
   }

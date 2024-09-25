@@ -10,12 +10,13 @@ class IslandModel {
   final String title; // 제목
   final String address; // 주소
   final String description; // 설명
-  final String category; // 카테고리
+  String category; // 카테고리
   final String phone; // 전화번호
   final String website; // 웹사이트 URL
   final double? rating; // 평점
   final bool? isOpenNow; // 현재 영업 중 여부
   final String placeId; // 장소의 고유 식별자 (Place ID)
+  final List<String>? types;
 
   IslandModel({
     required this.name,
@@ -33,6 +34,7 @@ class IslandModel {
     required this.placeId, // 추가된 필드
     this.rating,
     this.isOpenNow,
+    this.types,
   });
 
   // JSON을 IslandModel 객체로 변환하는 팩토리 생성자
@@ -53,6 +55,7 @@ class IslandModel {
       rating: json['rating'], // 평점
       isOpenNow: json['isOpenNow'], // 영업 상태
       placeId: json['placeId'] ?? '',
+      types: List<String>.from(json['types'] ?? []),
     );
   }
 
@@ -74,6 +77,7 @@ class IslandModel {
       rating: place.rating, // 평점
       isOpenNow: place.isOpenNow, // 영업 상태
       placeId: place.placeId ?? '', // `GooglePlaceModel`에 `placeId`가 있다고 가정
+      types: place.types ?? [],
     );
   }
 
@@ -95,6 +99,7 @@ class IslandModel {
       'rating': rating, // 평점
       'isOpenNow': isOpenNow, // 영업 상태
       'placeId': placeId,
+      'types': types,
     };
   }
 }

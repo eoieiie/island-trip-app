@@ -20,7 +20,7 @@ class HomemapListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      controller: scrollController, // ScrollController 사용
+      controller: scrollController, // // DraggableScrollableSheet에서 전달된 ScrollController 사용
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];

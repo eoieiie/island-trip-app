@@ -15,14 +15,15 @@ class UpperCategoryButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal, // 상위 카테고리 버튼들을 가로로 스크롤 가능하게 설정
+      physics: const ClampingScrollPhysics(), // 제스처 충돌 방지
       child: Row(
         children: [
           const SizedBox(width: 15), // 좌측 간격
-          _buildCategoryButton('관심'), // 관심 카테고리 버튼 생성
           _buildCategoryButton('명소/놀거리'), // 명소/놀거리 카테고리 버튼 생성
           _buildCategoryButton('음식'), // 음식 카테고리 버튼 생성
           _buildCategoryButton('카페'), // 카페 카테고리 버튼 생성
           _buildCategoryButton('숙소'), // 숙소 카테고리 버튼 생성
+          const SizedBox(width: 15), // 우측 간격
         ],
       ),
     );
@@ -31,7 +32,7 @@ class UpperCategoryButtons extends StatelessWidget {
   // 상위 카테고리 버튼을 빌드하는 함수
   Widget _buildCategoryButton(String category) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 1.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ElevatedButton(
         onPressed: () => onCategorySelected(category), // 버튼 클릭 시 상위 카테고리 선택 이벤트 핸들러 호출
         style: ElevatedButton.styleFrom(

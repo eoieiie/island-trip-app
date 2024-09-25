@@ -185,7 +185,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
             _buildDaySchedule(), // 일자별 일정 표시 위젯
             // _buildAddScheduleButton(), // 일정 추가 버튼 표시
             _buildSaveAndAddButtons(), // 좌우 버튼
-            _buildSavedPlaces(), // 내 저장 장소 리스트
+            // _buildSavedPlaces(), // 내 저장 장소 리스트
             // _buildAISuggestions(), // AI 추천 섹션
             // _buildSavedPlaces(), // 저장된 장소 섹션
           ],
@@ -642,7 +642,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween, // 좌우로 버튼 나누기
         children: [
-          // '내 저장' 버튼
+          // '내 저장' 버튼 (주석 처리)
+          /*
           Expanded(
             child: GestureDetector(
               onTap: () {
@@ -677,8 +678,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
               ),
             ),
           ),
-          const SizedBox(width: 12), // 두 버튼 사이 간격
-          // '일정 추가' 버튼
+          */
+          // '일정 추가' 버튼 (전체 가로 차지)
           Expanded(
             child: GestureDetector(
               onTap: () async {
@@ -731,6 +732,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       ),
     );
   }
+
 
 // '내 저장 장소' 리스트를 보여주는 함수
   Widget _buildSavedPlaces() {

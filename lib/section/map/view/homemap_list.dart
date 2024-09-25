@@ -87,12 +87,12 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
           position: NLatLng(item.latitude, item.longitude), // 아이템의 위도와 경도
           caption: NOverlayCaption(
             text: item.title, // 마커에 표시될 제목
-            textSize: 15,
+            textSize: 10,
             color: Colors.black,
             haloColor: Colors.white,
           ),
           icon: NOverlayImage.fromAssetImage(iconPath),
-          size: const Size(40, 40),
+          size: const Size(25, 25),
         );
 
         // 마커 클릭 시 이벤트 처리
@@ -169,7 +169,7 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
       case '펜션':
         return 'assets/icons/_house.png';
       default:
-        return 'assets/icons/3disland.png'; // 기본 이모지
+        return 'assets/icons/_location.png'; // 기본 이모지
     }
   }
 
@@ -301,6 +301,7 @@ class MapBackground extends StatelessWidget {
             parentState._naverMapController.complete(controller); // 네이버 맵 컨트롤러 설정
           }
         },
+
         options: NaverMapViewOptions(
           initialCameraPosition: NCameraPosition(
             target: initialPosition, // 선택된 섬의 초기 위치

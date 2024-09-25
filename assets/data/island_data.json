@@ -12,7 +12,7 @@
     "name": "거제도",
     "imageUrl": "assets/icons/3dsurf.png",
     "iconUrl": "assets/icons/3dsurf.png",
-    "tags": ["#스노쿨링", "#낚시", "#해변", "#해산물", "#힐링"],
+    "tags": ["#해양스포츠","#스노쿨링", "#낚시", "#해변", "#해산물", "#힐링"],
     "latitude": 34.8806,
     "longitude": 128.6217,
     "address": "경상남도 거제시"
@@ -21,7 +21,7 @@
     "name": "울릉도",
     "imageUrl": "assets/icons/3ddiving.png",
     "iconUrl": "assets/icons/3ddiving.png",
-    "tags": ["#등산", "#낚시", "#자연경관", "#해양스포츠", "#해산물"],
+    "tags": ["#스노쿨링", "#낚시", "#자연경관", "#해양스포츠", "#등산", "#해산물"],
     "latitude": 37.4886,
     "longitude": 130.9055,
     "address": "경상북도 울릉군"
@@ -30,7 +30,7 @@
     "name": "안면도",
     "imageUrl": "assets/icons/3dflower.png",
     "iconUrl": "assets/icons/3dflower.png",
-    "tags": ["#해변", "#해양스포츠", "#낚시", "#캠핑", "#힐링"],
+    "tags": ["#꽃축제", "#액티비티","#힐링", "#해양스포츠", "#낚시", "#캠핑", "#힐링"],
     "latitude": 36.5262,
     "longitude": 126.2967,
     "address": "충청남도 태안군"

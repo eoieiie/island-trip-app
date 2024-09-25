@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 class ImageData extends StatelessWidget {
   final String icon; // immutable한거라고 final로 수정해달라고 오류나서 final 넣음
   final double? width;
-  ImageData(
-    this.icon, {
-    Key? key,
-    this.width = 55,
-  }) : super(key: key);
+
+  const ImageData(
+      this.icon, {
+        super.key,
+        this.width = 55,
+      });
 
   @override
   Widget build(BuildContext context) {

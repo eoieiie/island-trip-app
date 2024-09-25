@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart'; // Flutter UI 구성 요소 패키지
 
 class GridWidget extends StatefulWidget {
@@ -8,18 +7,18 @@ class GridWidget extends StatefulWidget {
 
   // GridWidget 생성자
   const GridWidget({
-    Key? key,
+    super.key,
     required this.groupBox, // groupBox와 onTap은 필수 매개변수
     required this.onTap,
     required this.onLoadMore, // onLoadMore는 무한 스크롤을 위해 추가된 필수 매개변수
-  }) : super(key: key);
+  });
 
   @override
-  _GridWidgetState createState() => _GridWidgetState();
+  GridWidgetState createState() => GridWidgetState();
 }
 
-class _GridWidgetState extends State<GridWidget> {
-  ScrollController _scrollController = ScrollController(); // 스크롤 컨트롤러 초기화
+class GridWidgetState extends State<GridWidget> {
+  final ScrollController _scrollController = ScrollController(); // 스크롤 컨트롤러 초기화
 
   @override
   void initState() {
@@ -72,4 +71,3 @@ class _GridWidgetState extends State<GridWidget> {
     );
   }
 }
-

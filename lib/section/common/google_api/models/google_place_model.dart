@@ -73,7 +73,6 @@ class GooglePlaceModel {
       );
     } catch (e) {
       // JSON 파싱 중 에러가 발생하면 기본 값으로 아래 GooglePlaceModel 인스턴스를 반환
-      print('Error parsing JSON: $e');
       return GooglePlaceModel(
         id: 'Unknown ID',  // 에러 발생 시 기본 값으로 설정
         name: 'Unknown Name',  // 에러 발생 시 기본 값으로 설정

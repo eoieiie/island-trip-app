@@ -4,11 +4,13 @@ import '../models/tour_api_photo_model.dart';
 import 'full_screen_image_view.dart'; // 전체 화면 이미지 페이지 임포트
 
 class TourApiSearchPage extends StatefulWidget {
+  const TourApiSearchPage({super.key});
+
   @override
-  _TourApiSearchPageState createState() => _TourApiSearchPageState();
+  TourApiSearchPageState createState() => TourApiSearchPageState();
 }
 
-class _TourApiSearchPageState extends State<TourApiSearchPage> {
+class TourApiSearchPageState extends State<TourApiSearchPage> {
   final TextEditingController _controller = TextEditingController();
   final TourApiViewModel _viewModel = TourApiViewModel();
   List<TourApiPhotoModel> _photos = [];
@@ -18,11 +20,15 @@ class _TourApiSearchPageState extends State<TourApiSearchPage> {
     if (query.isNotEmpty) {
       try {
         final photos = await _viewModel.searchPhotos(query);
+        if (!mounted) return;
         setState(() {
           _photos = photos;
         });
       } catch (e) {
-        print('Error: $e');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('사진을 불러오는 중 오류가 발생했습니다.')),
+        );
       }
     }
   }
@@ -31,7 +37,7 @@ class _TourApiSearchPageState extends State<TourApiSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TourAPI 사진 검색'),
+        title: const Text('TourAPI 사진 검색'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -42,7 +48,7 @@ class _TourApiSearchPageState extends State<TourApiSearchPage> {
               decoration: InputDecoration(
                 labelText: '검색어를 입력하세요',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: _searchPhotos,
                 ),
               ),
@@ -55,7 +61,6 @@ class _TourApiSearchPageState extends State<TourApiSearchPage> {
                   return ListTile(
                     leading: GestureDetector(
                       onTap: () {
-                        // 이미지를 클릭했을 때 전체 화면으로 보기
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -71,11 +76,27 @@ class _TourApiSearchPageState extends State<TourApiSearchPage> {
                           photo.galWebImageUrl,
                           fit: BoxFit.cover,
                           width: 100,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: Colors.grey,
+                                size: 50,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                     title: Text(photo.galTitle),
-                    subtitle: Text(photo.galPhotographyLocation ?? '촬영 장소 없음'),
+                    subtitle:
+                    Text(photo.galPhotographyLocation ?? '촬영 장소 없음'),
                   );
                 },
               ),

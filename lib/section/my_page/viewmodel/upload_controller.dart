@@ -1,3 +1,4 @@
+/*
 import 'dart:io'; // 파일 입출력을 위한 패키지
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage 사용을 위한 패키지 가져오기
 import 'package:flutter/material.dart'; // Flutter UI 패키지
@@ -150,5 +151,7 @@ class UploadController extends GetxController { // GetX 컨트롤러 상속
     );
   }
 }
+
+ */
 
 

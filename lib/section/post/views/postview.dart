@@ -15,8 +15,8 @@ class PostDetailPage extends StatefulWidget {
 
 class _PostDetailPageState extends State<PostDetailPage> {
   final PostViewModel postViewModel = PostViewModel();
-  TextEditingController _commentController = TextEditingController();
-  FocusNode _commentFocusNode = FocusNode();
+  final TextEditingController _commentController = TextEditingController();
+  final FocusNode _commentFocusNode = FocusNode();
   Map<String, dynamic>? postData;
 
   Future<void> _refreshPostData() async {
@@ -47,14 +47,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
   InputDecoration _commentInputDecoration() {
     return InputDecoration(
       hintText: ' 댓글을 입력하세요',
-      hintStyle: TextStyle(color: Colors.grey),
+      hintStyle: const TextStyle(color: Colors.grey),
       filled: true,
       fillColor: Colors.grey[100],
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(24),
         borderSide: BorderSide.none,
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
@@ -67,7 +67,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
@@ -82,14 +82,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 '댓글 수정',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
                 width: MediaQuery.of(context).size.width * 0.88,
-                child: Align(
+                child: const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     '댓글',
@@ -97,12 +97,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    textSelectionTheme: TextSelectionThemeData(
+                    textSelectionTheme: const TextSelectionThemeData(
                       cursorColor: Colors.black,
                       selectionColor: Color(0xFF1BB874),
                       selectionHandleColor: Color(0xFF1BB874),
@@ -114,20 +114,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       hintText: ' 댓글을 수정하세요',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.grey,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFF6699FF),
                           width: 1,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.grey,
                           width: 1,
                         ),
@@ -137,7 +137,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -152,7 +152,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       Navigator.pop(context); // 모달 닫기
                       _refreshPostData(); // 수정 후 새로고침
                     },
-                    child: Text(
+                    child: const Text(
                       '저장',
                       style: TextStyle(color: Color(0xFF6EBF54)),
                     ),
@@ -161,7 +161,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     onPressed: () {
                       Navigator.pop(context); // 모달 닫기
                     },
-                    child: Text('취소', style: TextStyle(color: Colors.black)),
+                    child: const Text('취소', style: TextStyle(color: Colors.black)),
                   ),
                 ],
               ),
@@ -182,7 +182,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
@@ -204,16 +204,16 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.center, // 전체 컬럼의 가운데 정렬
                 children: [
                   // 게시글 수정 텍스트
-                  Text(
+                  const Text(
                     '게시글 수정',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // 제목 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.88,
-                    child: Align(
+                    child: const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '제목',
@@ -221,7 +221,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   // 제목 입력 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
@@ -237,7 +237,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF1BB874), // 포커스 시 초록색 테두리
                             width: 1,
                           ),
@@ -252,11 +252,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   // 내용 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.88,
-                    child: Align(
+                    child: const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '내용',
@@ -264,7 +264,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   // 내용 입력 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
@@ -280,7 +280,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF1BB874), // 포커스 시 초록색 테두리
                             width: 1,
                           ),
@@ -296,7 +296,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       maxLines: 5,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // 저장 및 취소 버튼
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end, // 버튼을 오른쪽 정렬
@@ -312,7 +312,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Navigator.pop(context); // 모달 닫기
                           _refreshPostData(); // 수정 후 새로고침
                         },
-                        child: Text(
+                        child: const Text(
                           '저장',
                           style: TextStyle(color: Color(0xFF6EBF54)),
                         ),
@@ -321,7 +321,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         onPressed: () {
                           Navigator.pop(context); // 모달 닫기
                         },
-                        child: Text(
+                        child: const Text(
                           '취소',
                           style: TextStyle(color: Colors.black),
                         ),
@@ -343,7 +343,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       BuildContext context, BuildContext parentContext) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
@@ -351,36 +351,36 @@ class _PostDetailPageState extends State<PostDetailPage> {
           child: Wrap(
             children: <Widget>[
               ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.edit,
                   color: Color(0xFF6EBF54),
                 ),
-                title: Text('수정'),
+                title: const Text('수정'),
                 onTap: () {
                   Navigator.of(context).pop(); // 현재 바텀 시트 닫기
                   _showEditPostBottomSheet(context); // 수정 바텀 시트 열기
                 },
               ),
               ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.delete,
                   color: Color(0xFFE57373),
                 ),
-                title: Text('삭제'),
+                title: const Text('삭제'),
                 onTap: () async {
                   Navigator.of(context).pop(); // 바텀 시트 닫기
                   bool? confirmDelete = await showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text(
+                        title: const Text(
                           '정말 삭제하시겠습니까?',
                           style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         actions: <Widget>[
                           TextButton(
-                            child: Text(
+                            child: const Text(
                               '네',
                               style: TextStyle(color: Colors.black),
                             ),
@@ -389,7 +389,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             },
                           ),
                           TextButton(
-                            child: Text('아니오', style: TextStyle(color: Colors.black)),
+                            child: const Text('아니오', style: TextStyle(color: Colors.black)),
                             onPressed: () {
                               Navigator.of(context).pop(false);
                             },
@@ -408,8 +408,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.close),
-                title: Text('닫기'),
+                leading: const Icon(Icons.close),
+                title: const Text('닫기'),
                 onTap: () {
                   Navigator.of(context).pop(); // 바텀 시트 닫기
                 },
@@ -426,7 +426,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       BuildContext context, Map<String, dynamic> comment) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
@@ -434,42 +434,42 @@ class _PostDetailPageState extends State<PostDetailPage> {
           child: Wrap(
             children: <Widget>[
               ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.edit,
                   color: Color(0xFF6EBF54),
                 ),
-                title: Text('수정'),
+                title: const Text('수정'),
                 onTap: () {
                   Navigator.of(context).pop(); // 현재 바텀 시트 닫기
                   _showEditCommentBottomSheet(context, comment); // 수정 바텀 시트 열기
                 },
               ),
               ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.delete,
                   color: Color(0xFFE57373),
                 ),
-                title: Text('삭제'),
+                title: const Text('삭제'),
                 onTap: () async {
                   Navigator.of(context).pop(); // 바텀 시트 닫기
                   bool? confirmDelete = await showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text(
+                        title: const Text(
                           '정말 삭제하시겠습니까?',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         actions: <Widget>[
                           TextButton(
-                            child: Text('네', style: TextStyle(color: Colors.black)),
+                            child: const Text('네', style: TextStyle(color: Colors.black)),
                             onPressed: () {
                               Navigator.of(context).pop(true);
                             },
                           ),
                           TextButton(
-                            child: Text('아니오', style: TextStyle(color: Colors.black)),
+                            child: const Text('아니오', style: TextStyle(color: Colors.black)),
                             onPressed: () {
                               Navigator.of(context).pop(false);
                             },
@@ -486,8 +486,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.close),
-                title: Text('닫기'),
+                leading: const Icon(Icons.close),
+                title: const Text('닫기'),
                 onTap: () {
                   Navigator.of(context).pop(); // 바텀 시트 닫기
                 },
@@ -514,7 +514,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 3,
@@ -523,14 +523,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ],
             ),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           '게시글 상세',
           style: TextStyle(
             color: Color(0xFF222222),
@@ -543,7 +543,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           if (postData != null &&
               FirebaseAuth.instance.currentUser?.uid == postData!['authorId'])
             IconButton(
-              icon: Icon(Icons.more_vert, color: Colors.black),
+              icon: const Icon(Icons.more_vert, color: Colors.black),
               onPressed: () {
                 _commentFocusNode.unfocus();
                 _showPostOptionsBottomSheet(context, parentContext);
@@ -552,12 +552,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ],
       ),
       body: postData == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
           Expanded(
             child: RefreshIndicator(
-              color: Color(0xFF3CCB7F),
+              color: const Color(0xFF3CCB7F),
               onRefresh: _refreshPostData,
               child: ListView(
                 children: [
@@ -568,31 +568,31 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       children: [
                         Text(
                           postData!['title'],
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
-                            Icon(Icons.person,
+                            const Icon(Icons.person,
                                 size: 16, color: Colors.grey),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 postData!['author'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(width: 16),
-                            Icon(Icons.access_time,
+                            const SizedBox(width: 16),
+                            const Icon(Icons.access_time,
                                 size: 16, color: Colors.grey),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               DateFormat('yyyy-MM-dd HH:mm').format(
                                   postData!['timestamp'].toDate()),
@@ -601,19 +601,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Divider(thickness: 1, color: Colors.grey[300]),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Text(
                           postData!['content'],
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Divider(thickness: 1, color: Colors.grey[300]),
                       ],
                     ),
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 4.0),
                     child: Text(
@@ -628,18 +628,18 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                       if (snapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return Center(
+                        return const Center(
                             child: Text('댓글을 불러오는 중 오류가 발생했습니다.'));
                       } else if (!snapshot.hasData ||
                           snapshot.data!.isEmpty) {
-                        return Center(child: Text('댓글이 없습니다.'));
+                        return const Center(child: Text('댓글이 없습니다.'));
                       } else {
                         var comments = snapshot.data!;
                         return ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: comments.length,
                           itemBuilder: (context, index) {
                             var comment = comments[index];
@@ -661,10 +661,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           children: [
                                             Row(
                                               children: [
-                                                Icon(Icons.person,
+                                                const Icon(Icons.person,
                                                     size: 15,
                                                     color: Colors.grey),
-                                                SizedBox(width: 3),
+                                                const SizedBox(width: 3),
                                                 Text(
                                                   comment['author'],
                                                   style: TextStyle(
@@ -677,20 +677,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(height: 4),
+                                            const SizedBox(height: 4),
                                             Padding(
                                               padding:
                                               const EdgeInsets.only(
                                                   left: 3.0),
                                               child: Text(
                                                 comment['comment'],
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontSize: 15,
                                                     fontWeight:
                                                     FontWeight.w300),
                                               ),
                                             ),
-                                            SizedBox(height: 8),
+                                            const SizedBox(height: 8),
                                             Padding(
                                               padding:
                                               const EdgeInsets.only(
@@ -715,7 +715,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           .currentUser?.uid ==
                                           comment['authorId'])
                                         IconButton(
-                                          icon: Icon(
+                                          icon: const Icon(
                                             Icons.more_vert,
                                             color: Color(0xFF6EBF54),
                                           ),
@@ -750,13 +750,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
           ),
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(left: 12.0, right: 8.0, bottom: 20),
+              padding: const EdgeInsets.only(left: 12.0, right: 8.0, bottom: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        textSelectionTheme: TextSelectionThemeData(
+                        textSelectionTheme: const TextSelectionThemeData(
                           cursorColor: Colors.black,
                           selectionColor: Color(0xFFBBDDFF),
                           selectionHandleColor: Color(0xFF6699FF),
@@ -770,7 +770,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   IconButton(
                     icon: SvgPicture.asset(
                       'assets/icons/send_Button_Active.svg',
@@ -786,7 +786,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         _refreshPostData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('댓글을 입력하세요')),
+                          const SnackBar(content: Text('댓글을 입력하세요')),
                         );
                       }
                     },

@@ -13,7 +13,7 @@ class NoticeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항'),
+        title: const Text('공지사항'),
       ),
       body: ListView.builder(
         itemCount: notices.length,
@@ -41,7 +41,7 @@ class NoticeScreen extends StatelessWidget {
 class NoticeDetailScreen extends StatelessWidget {
   final String notice;
 
-  NoticeDetailScreen({required this.notice});
+  const NoticeDetailScreen({required this.notice});
 
   @override
   Widget build(BuildContext context) {

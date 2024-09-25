@@ -1,5 +1,7 @@
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/images/thumbnail.png
   android: true
   ios: true
+  color: "#ffffff"
+  android_12:
+    color: "#ffffff"
+    image: "assets/images/isletrip_a.png"

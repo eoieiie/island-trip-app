@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => MainPage(selectedIndex: 0)),
+        MaterialPageRoute(builder: (context) => const MainPage(selectedIndex: 0)),
       );
     }
   }
@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) =>MainPage(selectedIndex: 0)),
+        MaterialPageRoute(builder: (context) =>const MainPage(selectedIndex: 0)),
       );
     }
   }
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           // 백그라운드 이미지
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/splashImage.jpg'),
                 fit: BoxFit.cover,
@@ -57,10 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Spacer(flex: 5),
+                const Spacer(flex: 5),
                 Column(
                   children: [
-                    Text(
+                    const Text(
                       '섬캉스로 떠나는 완벽한 힐링 여행',
                       style: TextStyle(
                         color: Colors.white,
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-                Spacer(flex: 2),
+                const Spacer(flex: 2),
                 Text(
                   'Sign in with Social Networks',
                   style: TextStyle(
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // 구글 로그인 버튼
                 GestureDetector(
                   onTap: _handleGoogleSignIn, // 구글 로그인 처리
@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'assets/images/google_Login.svg',
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 /*
                 // 카카오 로그인 버튼
                 GestureDetector(
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                  */
-                Spacer(flex: 3),
+                const Spacer(flex: 3),
               ],
             ),
           ),

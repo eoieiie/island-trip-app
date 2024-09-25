@@ -38,11 +38,6 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
       return const SizedBox.shrink(); // 하위 카테고리가 없을 경우 빈 공간으로 대체
     }
 
-    // '관심' 카테고리일 때는 '전체' 버튼 없이 하위 카테고리만 표시
-    if (widget.selectedCategory == '관심') {
-      return _buildSingleLineButtons(widget.subCategories);
-    }
-
     // '전체' 버튼을 제외한 하위 카테고리들
     List<String> filteredSubCategories = widget.subCategories.where((category) => category != '기타').toList();
 

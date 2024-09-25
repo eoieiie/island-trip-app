@@ -153,17 +153,25 @@ class _PostHomePageState extends State<PostHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF3CCB7F),
-        elevation: 3,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PostPage()),
-          );
-        },
-        child: Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Container(
+        width: 45, // 버튼의 가로 크기
+        height: 45, // 버튼의 세로 크기
+        child: FloatingActionButton(
+          backgroundColor: Color(0xFF3CCB7F),
+          elevation: 3,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PostPage()),
+            );
+          },
+          child: Icon(Icons.add, color: Colors.white),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18), // 둥글기 설정
+          ),
+        ),
       ),
+
     );
   }
 }

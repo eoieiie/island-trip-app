@@ -73,7 +73,7 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
                     });
                   }),
                   ...initialSubCategories.map((subCategory) {
-                    return _buildCategoryButton(subCategory, _getEmoji(subCategory), () {
+                    return _buildCategoryButton(subCategory, _getIconPathForCategory(subCategory), () {
                       setState(() {
                         selectedSubCategory = subCategory;
                         widget.onSubCategorySelected(subCategory); // 하위 카테고리 선택 시 호출
@@ -204,13 +204,79 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
             borderRadius: BorderRadius.circular(20), // 둥근 테두리
           ),
         ),
-        child: Text(
-          '$emoji $category', // 이모지와 카테고리 텍스트
-          style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500), // 텍스트 스타일
+        child: Row(
+          children: [
+            Image.asset(_getIconPathForCategory(category), width: 20, height: 20), // 아이콘 추가
+            const SizedBox(width: 5), // 간격 추가
+            Text(
+              category, // 카테고리 텍스트
+              style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  String _getIconPathForCategory(String category) {
+    switch (category) {
+      case '전체':
+        return 'assets/icons/_location.png';
+      case '낚시':
+        return 'assets/icons/_fishing.png';
+      case '스쿠버 다이빙':
+        return 'assets/icons/_diving.png';
+      case '계곡':
+        return 'assets/icons/_valley.png';
+      case '바다':
+        return 'assets/icons/_beach.png';
+      case '자전거':
+        return 'assets/icons/_bicycle.png';
+      case '산/휴향림':
+        return 'assets/icons/_mountain.png';
+      case '산책길':
+        return 'assets/icons/_trail.png';
+      case '역사':
+        return 'assets/icons/_history.png';
+      case '수상 레저':
+        return 'assets/icons/_surfing.png';
+      case '전망대':
+        return 'assets/icons/_viewpoint.png';
+      case '한식':
+        return 'assets/icons/korea.png';
+      case '양식':
+        return 'assets/icons/_fork.png';
+      case '일식':
+        return 'assets/icons/japan.png';
+      case '중식':
+        return 'assets/icons/china.png';
+      case '분식':
+        return 'assets/icons/_snacks.png';
+      case '커피':
+        return 'assets/icons/_coffee.png';
+      case '베이커리':
+        return 'assets/icons/_bakery.png';
+      case '아이스크림/빙수':
+        return 'assets/icons/_shaved-ice.png';
+      case '차':
+        return 'assets/icons/_tea.png';
+      case '과일/주스':
+        return 'assets/icons/_juice.png';
+      case '모텔':
+        return 'assets/icons/_motel.png';
+      case '호텔/리조트':
+        return 'assets/icons/_hotel.png';
+      case '캠핑':
+        return 'assets/icons/_camping.png';
+      case '게하/한옥':
+        return 'assets/icons/_house.png';
+      case '펜션':
+        return 'assets/icons/_house.png';
+      default:
+        return 'assets/icons/_location.png'; // 기본 아이콘
+    }
+  }
+
 
   // 각 카테고리에 맞는 이모지를 반환하는 함수
   String _getEmoji(String category) {

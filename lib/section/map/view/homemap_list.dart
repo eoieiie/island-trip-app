@@ -8,6 +8,8 @@ import 'package:project_island/section/map/widget/custom_appbar.dart';
 import 'package:project_island/section/map/widget/upper_category_buttons.dart';
 import 'package:project_island/section/map/widget/lower_category_buttons.dart'; // 하위 카테고리 버튼 위젯 import
 import 'package:project_island/section/map/model/island_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 // 메인 리스트 화면 클래스
 class HomemapList extends StatefulWidget {
@@ -85,13 +87,29 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
           position: NLatLng(item.latitude, item.longitude), // 아이템의 위도와 경도
           caption: NOverlayCaption(
             text: item.title, // 마커에 표시될 제목
-            textSize: 15,
+            textSize: 10,
             color: Colors.black,
             haloColor: Colors.white,
           ),
           icon: NOverlayImage.fromAssetImage(iconPath),
-          size: const Size(40, 40),
+          size: const Size(25, 25),
         );
+
+        // 마커 클릭 시 이벤트 처리
+        marker.setOnTapListener((overlay) {
+          setState(() async {
+            String url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(item.name)}&query_place_id=${item.placeId}';
+            Uri uri = Uri.parse(url);
+            if (await canLaunch(uri.toString())) {
+              await launch(uri.toString(), forceSafariVC: false, forceWebView: false);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('해당 장소의 정보를 열 수 없습니다.')),
+              );
+            }
+          });
+        });
+
         markers.add(marker);
       }
 
@@ -110,10 +128,8 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
         return 'assets/icons/_valley.png️';
       case '바다':
         return 'assets/icons/_beach.png';
-      case '서핑':
-        return 'assets/icons/_surfing.png';
-      case '휴향림':
-        return 'assets/icons/_forest.png';
+      case '산/휴향림':
+        return 'assets/icons/_mountain.png';
       case '산책길':
         return 'assets/icons/_trail.png';
       case '역사':
@@ -123,13 +139,13 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
       case '자전거':
         return 'assets/icons/_bicycle.png';
       case '한식':
-        return 'assets/icons/_korea.png';
+        return 'assets/icons/korea.png';
       case '양식':
-        return 'assets/icons/_america.png';
+        return 'assets/icons/_fork.png';
       case '일식':
-        return 'assets/icons/_japan.png';
+        return 'assets/icons/japan.png';
       case '중식':
-        return 'assets/icons/_china.png';
+        return 'assets/icons/china.png';
       case '분식':
         return 'assets/icons/_snacks.png';
       case '커피':
@@ -137,17 +153,15 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
       case '베이커리':
         return 'assets/icons/_bakery.png';
       case '아이스크림/빙수':
-        return 'assets/icons/_ice_cream.png';
+        return 'assets/icons/_shaved-ice.png';
       case '차':
         return 'assets/icons/_tea.png';
       case '과일/주스':
         return 'assets/icons/_juice.png';
-      case '전통 디저트':
-        return 'assets/icons/_dessert.png';
       case '모텔':
-        return 'assets/icons/_house.png';
+        return 'assets/icons/_motel.png';
       case '호텔/리조트':
-        return 'assets/icons/_house.png';
+        return 'assets/icons/_hotel.png';
       case '캠핑':
         return 'assets/icons/_camping.png';
       case '게하/한옥':
@@ -155,7 +169,7 @@ class HomemapListState extends State<HomemapList> with WidgetsBindingObserver {
       case '펜션':
         return 'assets/icons/_house.png';
       default:
-        return 'assets/icons/shrimp.png'; // 기본 이모지
+        return 'assets/icons/_location.png'; // 기본 이모지
     }
   }
 
@@ -287,6 +301,7 @@ class MapBackground extends StatelessWidget {
             parentState._naverMapController.complete(controller); // 네이버 맵 컨트롤러 설정
           }
         },
+
         options: NaverMapViewOptions(
           initialCameraPosition: NCameraPosition(
             target: initialPosition, // 선택된 섬의 초기 위치

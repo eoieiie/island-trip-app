@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-enum AvatarType { TYPE1, TYPE2, TYPE3 }
+enum AvatarType { type1, type2, type3 }
 
 class AvatarWidget extends StatelessWidget {
   final bool? hasStory; // immutable한거라고 final로 수정해달라고 오류나서 final 넣음
@@ -10,14 +10,14 @@ class AvatarWidget extends StatelessWidget {
   final AvatarType type;
   final double? size;
 
-  AvatarWidget({
-    Key? key,
+  const AvatarWidget({
+    super.key,
     required this.type,
     required this.thumbPath,
     this.hasStory,
     this.nickname,
     this.size = 65,
-  }) : super(key: key);
+  });
 
   Widget type1Widget() {
     return Container(
@@ -77,11 +77,11 @@ class AvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (type) {
-      case AvatarType.TYPE1:
+      case AvatarType.type1:
         return type1Widget();
-      case AvatarType.TYPE2:
+      case AvatarType.type2:
         return type2Widget();
-      case AvatarType.TYPE3:
+      case AvatarType.type3:
         return type3Widget();
     }
   }

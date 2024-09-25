@@ -56,6 +56,8 @@ class MyTravelViewModel extends GetxController {
     required String startTime,
     required String endTime,
     String? memo,
+    double? latitude,  // 위도 추가
+    double? longitude,  // 경도 추가
   }) async {
     final travel = travels.firstWhere((t) => t.id == travelId);
     final DateTime startDateTime = DateTime.parse("${date.toString().split(' ')[0]} $startTime");
@@ -68,12 +70,29 @@ class MyTravelViewModel extends GetxController {
       startTime: startDateTime,
       endTime: endDateTime,
       memo: memo,
+      latitude: latitude,  // 추가된 좌표
+      longitude: longitude,  // 추가된 좌표
     );
     travel.schedules.add(newSchedule);
     saveSchedules(travelId); // 스케줄 데이터 저장
     saveTravels(); // 여행 데이터 저장
     update(); // 상태 업데이트
   }
+
+  // 새로운 일정 삭제 메서드
+  void deleteSchedule(String travelId, String scheduleId) async {
+    // 해당 여행을 찾습니다.
+    final travel = travels.firstWhere((t) => t.id == travelId);
+
+    // 스케줄에서 해당 id를 가진 항목을 삭제합니다.
+    travel.schedules.removeWhere((schedule) => schedule.id == scheduleId);
+
+    // 스케줄 저장
+    saveSchedules(travelId);
+    saveTravels(); // 전체 여행 데이터를 저장 (여기서 스케줄도 함께 저장됩니다)
+    update(); // 상태 업데이트
+  }
+
 
   Future<void> updateTravel(int index, TravelModel updatedTravel) async {
     updatedTravel.updatedAt = DateTime.now(); // 수정된 날짜를 현재 시간으로 업데이트

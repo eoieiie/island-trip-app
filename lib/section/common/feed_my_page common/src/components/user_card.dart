@@ -4,11 +4,12 @@ import 'package:project_island/section/common/feed_my_page common/src/components
 class UserCard extends StatelessWidget {
   final String userId;
   final String description;
+
   const UserCard({
-    Key? key,
+    super.key, // 'Key? key'를 super 매개변수로 변환하여 코드 간결화
     required this.userId,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +33,10 @@ class UserCard extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 10),
-                AvatarWidget(
-                  type: AvatarType.TYPE2,
+                const AvatarWidget( // 'AvatarWidget'에 const 추가하여 성능 최적화
+                  type: AvatarType.type2,
                   thumbPath:
-                      'https://thumbs.dreamstime.com/b/photo-portrait-cheerful-cool-swag-trend-trendy-guy-leaving-his-feedback-social-media-network-using-smart-phone-photo-145377495.jpg',
+                  'https://thumbs.dreamstime.com/b/photo-portrait-cheerful-cool-swag-trend-trendy-guy-leaving-his-feedback-social-media-network-using-smart-phone-photo-145377495.jpg',
                   size: 80,
                 ),
                 const SizedBox(height: 10),
@@ -53,7 +54,10 @@ class UserCard extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                ElevatedButton(onPressed: () {}, child: const Text('Follow'))
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Follow'),
+                ),
               ],
             ),
           ),

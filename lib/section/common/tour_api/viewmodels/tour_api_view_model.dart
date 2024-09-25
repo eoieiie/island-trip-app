@@ -11,8 +11,6 @@ class TourApiViewModel {
       // 응답이 null이 아닌 경우, JSON 데이터를 TourApiPhotoModel로 변환하여 리스트로 반환
       return response.map((json) => TourApiPhotoModel.fromJson(json)).toList();
     } else {
-      // 응답이 null인 경우, 오류 메시지를 출력하고 빈 리스트를 반환
-      print('No photos found for the keyword.');
       return [];
     }
   }

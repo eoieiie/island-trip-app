@@ -103,7 +103,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: Colors.black!,
+                      cursorColor: Colors.black,
                       selectionColor: Color(0xFF1BB874),
                       selectionHandleColor: Color(0xFF1BB874),
                     ),

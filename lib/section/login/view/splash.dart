@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth; // AuthService 불러오기
-import 'package:project_island/section/home/view/home_view.dart'; // HomeScreen 불러오기
 import 'package:project_island/section/login/view/login_view.dart'; // LoginScreen 불러오기
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 import '../../../main.dart';

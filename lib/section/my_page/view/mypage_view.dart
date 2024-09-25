@@ -4,13 +4,11 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Cutomer Service.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
-import 'package:project_island/section/my_page/view/setting_view.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth;
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 임포트
-import 'package:google_sign_in/google_sign_in.dart'; // GoogleSignIn 임포트
 import '../../login/view/login_view.dart';
-import 'package:http/http.dart' as http;
+import '../../post/views/my_post_page.dart';
 
 class MyPageView extends StatelessWidget {
   @override
@@ -139,7 +137,7 @@ class MenuListSection extends StatelessWidget {
   google_auth.AuthService(); // Google AuthService 인스턴스 생성
   final kakao_auth.AuthService _kakaoAuthService =
   kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
-  final MyPageController _myPageController = MyPageController();
+  //final MyPageController _myPageController = MyPageController();
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +164,13 @@ class MenuListSection extends StatelessWidget {
           trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 사용 가이드 클릭 시 이벤트 처리
+          },
+        ),
+        ListTile(
+          title: Text('내 게시글 보기'),
+          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          onTap: () {
+            Get.to(() => MyPostsPage());
           },
         ),
         ListTile(

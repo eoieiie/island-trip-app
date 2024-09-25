@@ -215,6 +215,8 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
 
   String _getIconPathForCategory(String category) {
     switch (category) {
+      case '전체':
+        return 'assets/icons/_location.png';
       case '낚시':
         return 'assets/icons/_fishing.png';
       case '스쿠버 다이빙':
@@ -236,13 +238,13 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
       case '전망대':
         return 'assets/icons/_viewpoint.png';
       case '한식':
-        return 'assets/icons/_korea.png';
+        return 'assets/icons/korea.png';
       case '양식':
-        return 'assets/icons/_america.png';
+        return 'assets/icons/_fork.png';
       case '일식':
-        return 'assets/icons/_japan.png';
+        return 'assets/icons/japan.png';
       case '중식':
-        return 'assets/icons/_china.png';
+        return 'assets/icons/china.png';
       case '분식':
         return 'assets/icons/_snacks.png';
       case '커피':
@@ -266,7 +268,7 @@ class _LowerCategoryButtonsState extends State<LowerCategoryButtons> {
       case '펜션':
         return 'assets/icons/_house.png';
       default:
-        return 'assets/icons/3disland.png'; // 기본 아이콘
+        return 'assets/icons/_location.png'; // 기본 아이콘
     }
   }
 

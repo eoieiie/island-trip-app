@@ -31,6 +31,9 @@ class ScheduleAddView extends StatefulWidget {
 class _ScheduleAddViewState extends State<ScheduleAddView> {
   FixedExtentScrollController _hoursController = FixedExtentScrollController();
   FixedExtentScrollController _minutesController = FixedExtentScrollController();
+  String? _selectedPlace;
+  double? _selectedLatitude;
+  double? _selectedLongitude;
   int _selectedHour = 12;
   int _selectedMinute = 0;
 
@@ -65,6 +68,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text(
@@ -103,7 +107,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Column(
@@ -119,14 +123,14 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               SizedBox(height: 20),
               _buildTitleInput(),
               SizedBox(height: 20),
-              SizedBox(height: 20),
               _buildMemoInput(),
               SizedBox(height: 20),
-              _makeline(),
+              // _makeline(),
               //SizedBox(height: 20),
               //_buildPhotoSection(),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
               _buildSubmitButton(),
+              SizedBox(height: 50)
             ],
           ),
         ),
@@ -160,16 +164,34 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         ),
         SizedBox(height: 10),
         GestureDetector(
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            // GoogleSearchPage에서 장소와 좌표를 받아옵니다
+            final result = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => GoogleSearchPage()), // GoogleSearchPage로 이동
+              MaterialPageRoute(builder: (context) => GoogleSearchPage()),
             );
+
+            // 결과로 받은 장소와 좌표를 저장
+            if (result != null && result is Map) {
+              setState(() {
+                _selectedPlace = result['place'];
+                _selectedLatitude = result['latitude'];
+                _selectedLongitude = result['longitude'];
+
+                // 제목이 비어있다면 장소 이름으로 설정
+                if (_titleController.text.isEmpty) {
+                  _titleController.text = _selectedPlace!;
+                }
+              });
+            }
           },
           child: AbsorbPointer( // TextField의 입력을 막고, 클릭만 가능하게 함
             child: TextField(
               decoration: InputDecoration(
-                hintText: '위치 검색',
+                hintText: _selectedPlace ?? '위치 검색',  // 선택된 장소가 없으면 '위치 검색' 표시
+                hintStyle: TextStyle(
+                  color: _selectedPlace != null ? Colors.black : Colors.grey,  // 장소 선택 시 검은색으로 표시
+                ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 20), // 텍스트와 아이콘에 좌우 패딩 추가
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -191,7 +213,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
           ),
         ),
         SizedBox(height: 16), // 칸 사이 여백 설정
-        Center( // 버튼 가운데 정렬
+        /*Center( // 버튼 가운데 정렬
           child: ElevatedButton(
             onPressed: () {
               // 관심 리스트에서 불러오는 기능 추가 가능
@@ -216,7 +238,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
               ),
             ),
           ),
-        ),
+        ),*/
       ],
     );
   }
@@ -460,15 +482,18 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     );
   }
 
-void _submitSchedule() {
-  setState(() {
-    // 제목이 비어있으면 경고 처리
-      if (_titleController.text.isEmpty) {
-        _isTitleValid = false;
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+  void _submitSchedule() {
+    setState(() {
+      // 제목이 비어있거나 장소가 선택되지 않으면 경고 처리
+      if (_titleController.text.isEmpty || _selectedPlace == null) {
+        _isTitleValid = _titleController.text.isNotEmpty;
+        final String missingField = _selectedPlace == null ? '장소를' : '일정 제목을';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$missingField 입력해주세요.'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       } else {
@@ -490,6 +515,8 @@ void _submitSchedule() {
         startTime: "${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}",
         endTime: "23:59",
         memo: _memoController.text,
+        latitude: _selectedLatitude,
+        longitude: _selectedLongitude,
       );
 
       Navigator.pop(context, true);  // result로 true를 반환

@@ -103,9 +103,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: Color(0xFF6699FF),
-                      selectionColor: Color(0xFFBBDDFF),
-                      selectionHandleColor: Color(0xFF6699FF),
+                      cursorColor: Colors.black!,
+                      selectionColor: Color(0xFF1BB874),
+                      selectionHandleColor: Color(0xFF1BB874),
                     ),
                   ),
                   child: TextField(
@@ -172,7 +172,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
   }
 
-  // 게시글 수정 모달 바텀 시트
+  // 게시글 수정 모달 바텀 시트 수정
   void _showEditPostBottomSheet(BuildContext context) {
     TextEditingController _titleController =
     TextEditingController(text: postData!['title']);
@@ -186,167 +186,155 @@ class _PostDetailPageState extends State<PostDetailPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center, // 전체 컬럼의 가운데 정렬
-            children: [
-              // 게시글 수정 텍스트를 가운데 정렬
-              Text(
-                '게시글 수정',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center, // 텍스트 가운데 정렬
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent, // 빈 화면 터치 시 키보드 내리기
+          onTap: () {
+            FocusScope.of(context).unfocus(); // 키보드 내림
+          },
+          child: SingleChildScrollView( // 스크롤 가능하게 만듦
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
-              SizedBox(height: 16),
-
-              // 제목은 제목 수정 칸 왼쪽에 맞게 배치
-              Container(
-                width: MediaQuery.of(context).size.width * 0.88,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '제목',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              // 제목 수정 칸을 가운데 정렬
-              Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: Color(0xFF6699FF),
-                      selectionColor: Color(0xFFBBDDFF),
-                      selectionHandleColor: Color(0xFF6699FF),
-                    ),
-                  ),
-                  child: TextField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      hintText: ' 제목 수정',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Color(0xFF6699FF),
-                          width: 1,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 15),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.88,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '내용',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              // 내용 수정 칸을 가운데 정렬
-              Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: Color(0xFF6699FF),
-                      selectionColor: Color(0xFFBBDDFF),
-                      selectionHandleColor: Color(0xFF6699FF),
-                    ),
-                  ),
-                  child: TextField(
-                    controller: _contentController,
-                    decoration: InputDecoration(
-                      hintText: ' 내용 수정',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Color(0xFF6699FF),
-                          width: 1,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    maxLines: 5,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-
-              // 취소, 저장 버튼을 화면 중앙에 배치
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end, // 버튼을 오른쪽에 정렬
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center, // 전체 컬럼의 가운데 정렬
                 children: [
-                  TextButton(
-                    onPressed: () async {
-                      // 수정된 게시글 저장 처리
-                      await postViewModel.updatePost(
-                        widget.postId,
-                        _titleController.text,
-                        _contentController.text,
-                      );
-                      Navigator.pop(context); // 모달 닫기
-                      _refreshPostData(); // 수정 후 새로고침
-                    },
-                    child: Text(
-                      '저장',
-                      style: TextStyle(color: Color(0xFF6EBF54)),
+                  // 게시글 수정 텍스트
+                  Text(
+                    '게시글 수정',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16),
+                  // 제목 필드
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.88,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '제목',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // 모달 닫기
-                    },
-                    child: Text(
-                      '취소',
-                      style: TextStyle(color: Colors.black),
+                  SizedBox(height: 8),
+                  // 제목 입력 필드
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: TextField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        hintText: ' 제목 수정',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.grey[200]!, // 기본 테두리 색상을 grey[200]으로 설정
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Color(0xFF1BB874), // 포커스 시 초록색 테두리
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.grey[200]!, // 비활성화 시 테두리 색
+                            width: 1,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: 15),
+                  // 내용 필드
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.88,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '내용',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  // 내용 입력 필드
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: TextField(
+                      controller: _contentController,
+                      decoration: InputDecoration(
+                        hintText: ' 내용 수정',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.grey[200]!, // 기본 테두리 색상 grey[200]으로 설정
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Color(0xFF1BB874), // 포커스 시 초록색 테두리
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.grey[200]!, // 비활성화 시 테두리 색
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      maxLines: 5,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  // 저장 버튼을 가로로 길게 하단에 배치
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9, // 가로 길이를 화면의 90%로 설정
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // 수정된 게시글 저장 처리
+                        await postViewModel.updatePost(
+                          widget.postId,
+                          _titleController.text,
+                          _contentController.text,
+                        );
+                        Navigator.pop(context); // 모달 닫기
+                        _refreshPostData(); // 수정 후 새로고침
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 15), // 버튼 높이 설정
+                        backgroundColor: Color(0xFF1BB874), // 초록색 배경
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15), // 버튼 모서리 둥글게 설정
+                        ),
+                      ),
+                      child: Text(
+                        '저장',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20), // 버튼과 바닥 사이에 20px 여백 추가
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
     );
   }
+
+
 
   // 게시글 옵션 모달 바텀 시트 (수정, 삭제, 닫기)
   void _showPostOptionsBottomSheet(
@@ -553,7 +541,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           if (postData != null &&
               FirebaseAuth.instance.currentUser?.uid == postData!['authorId'])
             IconButton(
-              icon: Icon(Icons.more_vert, color: Color(0xFF6EBF54)),
+              icon: Icon(Icons.more_vert, color: Colors.black),
               onPressed: () {
                 _commentFocusNode.unfocus();
                 _showPostOptionsBottomSheet(context, parentContext);
@@ -760,22 +748,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
           ),
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(left: 12.0, right: 8.0, bottom: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: Theme(
                       data: Theme.of(context).copyWith(
                         textSelectionTheme: TextSelectionThemeData(
-                          cursorColor: Color(0xFF6699FF),
+                          cursorColor: Colors.black,
                           selectionColor: Color(0xFFBBDDFF),
-                          selectionHandleColor: Color(0xFF6699FF),
+                          selectionHandleColor: Color(0xFF1BB874),
                         ),
                       ),
                       child: TextField(
                         controller: _commentController,
                         focusNode: _commentFocusNode,
-                        cursorColor: Color(0xFF6699FF),
+                        cursorColor: Colors.black,
                         decoration: _commentInputDecoration(),
                       ),
                     ),

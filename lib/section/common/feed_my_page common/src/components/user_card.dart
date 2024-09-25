@@ -33,7 +33,7 @@ class UserCard extends StatelessWidget {
               children: [
                 const SizedBox(height: 10),
                 AvatarWidget(
-                  type: AvatarType.TYPE2,
+                  type: AvatarType.type2,
                   thumbPath:
                       'https://thumbs.dreamstime.com/b/photo-portrait-cheerful-cool-swag-trend-trendy-guy-leaving-his-feedback-social-media-network-using-smart-phone-photo-145377495.jpg',
                   size: 80,

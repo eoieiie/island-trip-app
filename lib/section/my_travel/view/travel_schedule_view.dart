@@ -216,7 +216,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
     double rating;
 
     switch (travel.island) {
-      case '덕적도':
+      case '영흥도':
         imageUrl = 'assets/icons/3dcamping.png';
         tags = ['#캠핑', '#해변', '#트레킹'];
         rating = 4.7;
@@ -403,8 +403,8 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
     // 섬 이름에 따른 지도 초기 위치와 줌 레벨을 설정
     switch (widget.selectedIsland) {
-      case '덕적도':
-        initialPosition = NLatLng(37.2338, 126.1344); // 덕적도 좌표
+      case '영흥도':
+        initialPosition = NLatLng(37.2606, 126.4914); // 영흥도 좌표
         initialZoom = 10.2; // 줌 레벨
         break;
       case '거제도':

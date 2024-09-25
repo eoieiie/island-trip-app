@@ -1,6 +1,4 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../common/google_api/viewmodels/google_place_view_model.dart';
 import '../../common/google_api/models/google_place_model.dart';
 
@@ -152,13 +150,6 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
                       width: MediaQuery.of(context).size.width * 0.33,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 10.0,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
                       ),
                       child: Stack(
                         children: [

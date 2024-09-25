@@ -231,8 +231,8 @@ class TravelCard extends StatelessWidget {
   // 섬 이름에 따른 이미지 경로를 반환하는 함수
   String getIslandImage(String islandName) {
     switch (islandName) {
-      case '덕적도':
-        return 'assets/icons/3dcamping.png'; // 덕적도: 캠핑 이미지
+      case '영흥도':
+        return 'assets/icons/3dcamping.png'; // 영흥도: 캠핑 이미지
       case '거제도':
         return 'assets/icons/3dsurf.png'; // 거제도: 서핑 이미지
       case '울릉도':

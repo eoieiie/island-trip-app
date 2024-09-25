@@ -266,8 +266,8 @@ class MapBackground extends StatelessWidget {
 
     // 선택된 섬에 따라 위치 및 줌 레벨 설정
     switch (selectedIsland) {
-      case '덕적도':
-        initialPosition = NLatLng(37.2138, 126.1344); // 덕적도 좌표
+      case '영흥도':
+        initialPosition = NLatLng(37.2606, 126.4914); // 영흥도 좌표
         initialZoom = 11.4;
         break;
       case '거제도':

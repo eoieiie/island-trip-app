@@ -244,7 +244,8 @@ class MagazineView extends StatelessWidget {
                                   fontSize: 13,
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w300,
-                                  height: 0.12,
+                                  // height: 0.12, // 이 줄을 제거하거나 아래와 같이 수정
+                                  height: 1.5, // 줄 간격을 적절하게 설정
                                 ),
                               ),
                             ),
@@ -377,10 +378,22 @@ class MagazineView extends StatelessWidget {
                                     ),
                                   ),
 
-                                  // 각 섹션 사이에 얇은 경계선 추가
-                                  Divider(
-                                    color: Color(0xFF999999).withOpacity(0.2),
-                                    thickness: 1, // 얇은 경계선
+                                  // 각 섹션 사이에 경계선 추가 (해시태그 밑 경계선과 동일하게 수정)
+                                  Container(
+                                    width: double.infinity,
+                                    height: 8,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 8,
+                                          decoration: BoxDecoration(color: Color(0xFFF7F7F7)), // 경계선 색상 설정
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               );

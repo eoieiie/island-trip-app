@@ -5,11 +5,48 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../repository/home_repository.dart';
 import '../viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
-import '../model/home_model.dart';
 import 'magazine_view.dart'; // MagazineView 화면을 가져오기 위해 추가
+
+// TabBar의 커스텀 인디케이터 클래스
+class CustomWidthUnderlineTabIndicator extends Decoration {
+  final double indicatorWidth;
+  final BorderSide borderSide;
+
+  const CustomWidthUnderlineTabIndicator({
+    required this.borderSide,
+    required this.indicatorWidth,
+  });
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _CustomWidthUnderlinePainter(this, onChanged);
+  }
+}
+
+class _CustomWidthUnderlinePainter extends BoxPainter {
+  final CustomWidthUnderlineTabIndicator decoration;
+
+  _CustomWidthUnderlinePainter(this.decoration, VoidCallback? onChanged)
+      : super(onChanged);
+
+  @override
+  void paint(
+      Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    assert(configuration.size != null);
+    final Rect rect = offset & configuration.size!;
+    final double indicatorWidth = decoration.indicatorWidth;
+    final double left = rect.left + (rect.width - indicatorWidth) / 2;
+    final double right = left + indicatorWidth;
+    final double bottom = rect.bottom;
+
+    final Paint paint = decoration.borderSide.toPaint();
+    canvas.drawLine(Offset(left, bottom), Offset(right, bottom), paint);
+  }
+}
 
 class IslandDetailView extends StatefulWidget {
   final String islandName; // 섬 이름을 받는 매개변수
+
   IslandDetailView({required this.islandName});
 
   @override
@@ -20,13 +57,15 @@ class _IslandDetailViewState extends State<IslandDetailView>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   late IslandDetailViewModel viewModel;
-  final HomeViewModel homeViewModel = Get.find<HomeViewModel>(); // HomeViewModel 인스턴스 추가
+  final HomeViewModel homeViewModel =
+  Get.find<HomeViewModel>(); // HomeViewModel 인스턴스 추가
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this); // 탭 수를 2로 변경
+    _tabController =
+        TabController(length: 2, vsync: this); // 탭 수를 2로 변경
     _pageController.addListener(() {
       setState(() {});
     });
@@ -56,7 +95,9 @@ class _IslandDetailViewState extends State<IslandDetailView>
         } else if (viewModel.errorMessage.isNotEmpty) {
           return Center(child: Text(viewModel.errorMessage.value));
         } else {
-          int currentPage = _pageController.hasClients ? _pageController.page!.toInt() : 0;
+          int currentPage = _pageController.hasClients
+              ? _pageController.page!.toInt()
+              : 0;
 
           return Stack(
             children: [
@@ -69,7 +110,8 @@ class _IslandDetailViewState extends State<IslandDetailView>
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.4, // 화면 높이에 비례한 높이
+                          height:
+                          MediaQuery.of(context).size.height * 0.4, // 화면 높이에 비례한 높이
                           color: Colors.white, // 배경을 흰색으로 설정
                           child: PageView.builder(
                             controller: _pageController,
@@ -91,102 +133,43 @@ class _IslandDetailViewState extends State<IslandDetailView>
                           child: Center(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: List.generate(viewModel.islandImages.length, (index) {
-                                return AnimatedContainer(
-                                  duration: Duration(milliseconds: 300), // 애니메이션 적용
-                                  margin: EdgeInsets.symmetric(horizontal: 4.0),
-                                  width: currentPage == index ? 16.0 : 8.0,
-                                  height: 8.0,
-                                  decoration: BoxDecoration(
-                                    color: currentPage == index ? Colors.green : Colors.grey.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(4.0), // 둥근 모서리 설정
-                                  ),
-                                );
-                              }),
+                              children: List.generate(
+                                viewModel.islandImages.length,
+                                    (index) {
+                                  return AnimatedContainer(
+                                    duration: Duration(milliseconds: 300),
+                                    // 애니메이션 적용
+                                    margin: EdgeInsets.symmetric(horizontal: 4.0),
+                                    width: currentPage == index ? 16.0 : 8.0,
+                                    height: 8.0,
+                                    decoration: BoxDecoration(
+                                      color: currentPage == index
+                                          ? Colors.green
+                                          : Colors.grey.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(4.0), // 둥근 모서리 설정
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    // 섬 이름, 별점, 저장 버튼
+                    // 섬 이름
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                viewModel.islandName1.value ?? '섬 이름', // 섬 이름을 여기에 넣으세요
-                                style: TextStyle(
-                                  color: Color(0xFF222222),
-                                  fontSize: 20,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0.08,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  // 저장 버튼을 눌렀을 때의 동작을 여기에 추가하세요
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white.withOpacity(0.35),
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(width: 1, color: Color(0xFFF1F1F1)),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/book_mark_off_icon.jpg', // 저장 아이콘 이미지 경로
-                                        width: 16,
-                                        height: 16,
-                                      ),
-                                      SizedBox(width: 8), // 아이콘과 텍스트 사이의 간격
-                                      Text(
-                                        '저장',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          color: Color(0xFF666666),
-                                          fontSize: 12,
-                                          fontFamily: 'Pretendard',
-                                          fontWeight: FontWeight.w700,
-                                          height: 0.11,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Color(0xFFFFD700),
-                                size: 16.0,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                '5.0', // 별점 나중에 viewModel.islandRating.value ?? '5.0',
-                                style: TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 12,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0.11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 30.0),
+                      child: Text(
+                        viewModel.islandName1.value ?? '섬 이름',
+                        // 섬 이름을 여기에 넣으세요
+                        style: TextStyle(
+                          color: Color(0xFF222222),
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
+                          height: 0.08,
+                        ),
                       ),
                     ),
                     // 탭바
@@ -208,7 +191,13 @@ class _IslandDetailViewState extends State<IslandDetailView>
                         fontWeight: FontWeight.w400,
                         height: 0.12,
                       ),
-                      indicatorColor: Color(0xFF222222),
+                      // 커스텀 인디케이터 적용
+                      indicator: CustomWidthUnderlineTabIndicator(
+                        borderSide:
+                        BorderSide(color: Color(0xFF222222), width: 2.0),
+                        indicatorWidth:
+                        MediaQuery.of(context).size.width / 2, // 절반 길이
+                      ),
                       tabs: [
                         Tab(text: '섬정보'),
                         Tab(text: '매거진'),
@@ -228,8 +217,10 @@ class _IslandDetailViewState extends State<IslandDetailView>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // 기존 코드 유지
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         '길찾기',
@@ -241,13 +232,19 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                       IconButton(
                                         onPressed: () {
                                           // 복사 버튼 클릭 시 클립보드에 주소 복사
-                                          Clipboard.setData(ClipboardData(text: viewModel.islandAddress.value ?? '주소 없음'));
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(content: Text('주소가 복사되었습니다.')),
+                                          Clipboard.setData(ClipboardData(
+                                              text: viewModel
+                                                  .islandAddress.value ??
+                                                  '주소 없음'));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text('주소가 복사되었습니다.')),
                                           );
                                         },
                                         icon: SvgPicture.asset(
-                                          'assets/images/boksa.svg', // 복사 아이콘 이미지 경로
+                                          'assets/images/boksa.svg',
+                                          // 복사 아이콘 이미지 경로
                                           width: 24,
                                           height: 24,
                                         ),
@@ -258,13 +255,15 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                   Row(
                                     children: [
                                       SvgPicture.asset(
-                                        'assets/images/icon-pin-location-mono.svg', // 핀 아이콘 이미지 경로
+                                        'assets/images/icon-pin-location-mono.svg',
+                                        // 핀 아이콘 이미지 경로
                                         width: 24,
                                         height: 24,
                                       ),
                                       SizedBox(width: 8),
                                       Text(
-                                        viewModel.islandAddress.value ?? '주소를 여기에 입력하세요', // 주소를 여기에 입력하세요
+                                        viewModel.islandAddress.value ??
+                                            '주소를 여기에 입력하세요', // 주소를 여기에 입력하세요
                                         style: TextStyle(
                                           color: Color(0xFF999999),
                                           fontSize: 12,
@@ -277,7 +276,8 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                   ),
                                   SizedBox(height: 16.0),
                                   Text(
-                                    viewModel.islandDescription.value ?? '여기에 섬에 대한 상세 정보를 입력하세요. 예를 들어 섬의 역사, 주요 명소, 활동 정보 등을 추가할 수 있습니다.',
+                                    viewModel.islandDescription.value ??
+                                        '여기에 섬에 대한 상세 정보를 입력하세요. 예를 들어 섬의 역사, 주요 명소, 활동 정보 등을 추가할 수 있습니다.',
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color: Colors.grey[700],
@@ -303,98 +303,127 @@ class _IslandDetailViewState extends State<IslandDetailView>
                                     );
                                   } else {
                                     return Column(
-                                      children: viewModel.islandMagazines.map((magazine) {
+                                      children: viewModel.islandMagazines
+                                          .map((magazine) {
                                         return GestureDetector(
                                           onTap: () {
                                             // 매거진 카드 탭 시 MagazineView로 이동
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => MagazineView(
-                                                  magazine: magazine,
-                                                  islandName: '',
-                                                ),
+                                                builder: (context) =>
+                                                    MagazineView(
+                                                      magazine: magazine,
+                                                      islandName: '',
+                                                    ),
                                               ),
                                             );
                                           },
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(16.0), // 카드 모서리를 둥글게
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white, // 카드 배경색
-                                                borderRadius: BorderRadius.circular(16.0), // 둥근 모서리 설정
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 5.0,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  FutureBuilder<String>(
-                                                    future: magazine.thumbnail.isNotEmpty
-                                                        ? Future.value(magazine.thumbnail)
-                                                        : Get.find<HomeViewModel>().repository.getFallbackThumbnail(magazine.title),
-                                                    builder: (context, snapshot) {
-                                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                                        return Container(
-                                                          height: 200.0,
-                                                          child: Center(child: CircularProgressIndicator()),
-                                                        );
-                                                      } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                                                        return Container(
-                                                          height: 200.0,
-                                                          color: Colors.grey,
-                                                          child: Center(
-                                                            child: Text("사진이 없습니다"),
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        return ClipRRect(
-                                                          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)), // 이미지 모서리를 둥글게
-                                                          child: Image.network(
-                                                            snapshot.data!,
-                                                            fit: BoxFit.cover,
-                                                            width: double.infinity,
-                                                            height: 200.0,
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(16.0), // 내부 여백 추가
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                            borderRadius:
+                                            BorderRadius.circular(16.0), // 카드 모서리를 둥글게
+                                            child: FutureBuilder<String>(
+                                              future: magazine.thumbnail
+                                                  .isNotEmpty
+                                                  ? Future.value(
+                                                  magazine.thumbnail)
+                                                  : Get.find<HomeViewModel>()
+                                                  .repository
+                                                  .getFallbackThumbnail(
+                                                  magazine.title),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return Container(
+                                                    height: 200.0,
+                                                    child: Center(
+                                                        child:
+                                                        CircularProgressIndicator()),
+                                                  );
+                                                } else if (snapshot.hasError ||
+                                                    !snapshot.hasData ||
+                                                    snapshot.data!.isEmpty) {
+                                                  return Container(
+                                                    height: 200.0,
+                                                    color: Colors.grey,
+                                                    child: Center(
+                                                      child: Text("사진이 없습니다"),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Container(
+                                                    height: 200.0,
+                                                    child: Stack(
+                                                      fit: StackFit.expand,
                                                       children: [
-                                                        Text(
-                                                          magazine.title,
-                                                          style: TextStyle(
-                                                            fontSize: 20.0,
-                                                            fontWeight: FontWeight.bold,
+                                                        Image.network(
+                                                          snapshot.data!,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        // 이미지 위에 텍스트 오버레이
+                                                        Container(
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            gradient:
+                                                            LinearGradient(
+                                                              begin:
+                                                              Alignment.topCenter,
+                                                              end: Alignment
+                                                                  .bottomCenter,
+                                                              colors: [
+                                                                Colors
+                                                                    .transparent,
+                                                                Colors.black
+                                                                    .withOpacity(0.7),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
-                                                        SizedBox(height: 5.0), // 간격 조정
-                                                        Text(
-                                                          magazine.description,
-                                                          maxLines: 2, // 최대 두 줄까지만 표시
-                                                          overflow: TextOverflow.ellipsis, // 넘치는 텍스트는 "..."으로 표시
-                                                          style: TextStyle(
-                                                            color: Color(0xFF666666),
-                                                            fontSize: 12,
-                                                            fontFamily: 'Pretendard',
-                                                            fontWeight: FontWeight.w400,
-                                                            height: 1.5, // 줄 간격을 넓혀서 텍스트가 겹치지 않도록 함
+                                                        Positioned(
+                                                          left: 16.0,
+                                                          bottom: 16.0,
+                                                          right: 16.0,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                            children: [
+                                                              Text(
+                                                                magazine.title,
+                                                                style: TextStyle(
+                                                                  color:
+                                                                  Colors.white,
+                                                                  fontSize: 20.0,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 5.0),
+                                                              Text(
+                                                                magazine
+                                                                    .description,
+                                                                maxLines:
+                                                                2, // 최대 두 줄까지만 표시
+                                                                overflow:
+                                                                TextOverflow
+                                                                    .ellipsis, // 넘치는 텍스트는 "..."으로 표시
+                                                                style: TextStyle(
+                                                                  color:
+                                                                  Colors.white,
+                                                                  fontSize: 14.0,
+                                                                  height: 1.5,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
+                                                  );
+                                                }
+                                              },
                                             ),
                                           ),
                                         );
@@ -425,21 +454,8 @@ class _IslandDetailViewState extends State<IslandDetailView>
                   ),
                 ),
               ),
-              // 오른쪽 상단에 저장 버튼 추가
-              Positioned(
-                top: 28.0, // 상단에 위치
-                right: 9.0, // 오른쪽에 위치
-                child: GestureDetector(
-                  onTap: () {
-                    // 저장 버튼을 눌렀을 때의 동작을 여기에 추가하세요
-                  },
-                  child: SvgPicture.asset(
-                    'assets/images/islanddetailsave.svg', // 저장 버튼 이미지 경로
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
-              ),
+              // 오른쪽 상단의 에셋 버튼 제거
+              // 저장 버튼이 제거되었습니다.
             ],
           );
         }

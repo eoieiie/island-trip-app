@@ -6,13 +6,14 @@ class MessagePopup extends StatelessWidget {
   final String? message;
   final Function()? okCallback;
   final Function()? cancelCallback;
+
   const MessagePopup({
-    Key? key,
     required this.title,
     required this.message,
     required this.okCallback,
     this.cancelCallback,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +50,18 @@ class MessagePopup extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(onPressed: okCallback, child: const Text('확인')),
+                      ElevatedButton(
+                        onPressed: okCallback,
+                        child: const Text('확인'),
+                      ),
                       const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: cancelCallback,
-                        child: const Text('취소'),
                         style: ElevatedButton.styleFrom(
                           //primary: Colors.grey,
                         ),
-                      )
+                        child: const Text('취소'),
+                      ),
                     ],
                   ),
                 ],

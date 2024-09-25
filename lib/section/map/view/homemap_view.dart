@@ -109,7 +109,7 @@ class _HomeMapViewState extends State<HomeMapView> {
             '로맨틱한 꽃 축제와 익스트림한\n놀거리까지! 떠오르는 데이트 성지😘',
             style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
           );
-        case '덕적도':
+        case '영흥도':
           return Text(
             '수도권에서 가볍게 떠나는 힐링 섬캉스, 프라이빗 바닷가 캠핑 명소🔥',
             style: TextStyle(fontSize: 14, color: Color(0xFF606060)),
@@ -271,7 +271,7 @@ class _HomeMapViewState extends State<HomeMapView> {
                 return '"여기가 한국이야?" 감성과 분위기가 넘쳐 흐르는 꿈 같은 섬 🐚';
               case '안면도':
                 return '로맨틱한 꽃 축제와 익스트림한 놀거리까지! 떠오르는 데이트 성지😘';
-              case '덕적도':
+              case '영흥도':
                 return '수도권에서 가볍게 떠나는 힐링 섬캉스, 프라이빗 바닷가 캠핑 명소🔥';
               case '진도':
                 return '진도는 물회 맛집! 전통 시장 구경하고, 청정자연에서 몸도 마음도 refresh😚';

@@ -30,7 +30,7 @@ class IslandRepository {
     '안면도': [36.4162, 126.3867],
     '거제도': [34.8803, 128.6217],
     '울릉도': [37.4803, 130.9055],
-    '덕적도': [37.2138, 126.1344],
+    '영흥도': [37.2606, 126.4914],
     '진도': [34.4800, 126.2600],
   };
 
@@ -121,8 +121,8 @@ class IslandRepository {
       return '거제도';
     } else if (category.contains('울릉도')) {
       return '울릉도';
-    } else if (category.contains('덕적도')) {
-      return '덕적도';
+    } else if (category.contains('영흥도')) {
+      return '영흥도';
     } else if (category.contains('진도')) {
       return '진도';
     }

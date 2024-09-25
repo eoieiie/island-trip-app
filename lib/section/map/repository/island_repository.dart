@@ -43,10 +43,18 @@ class IslandRepository {
 
   // 카테고리에 따른 섬(장소) 데이터를 가져오는 메서드
   Future<List<IslandModel>> getItemsByCategory(String category) async {
+
+    String islandName = _extractIslandNameFromCategory(category);
+
+    // 섬 이름으로 검색할 때는 캐시를 무시하고 항상 새 데이터를 가져오도록 처리
+    bool forceRefresh = category == islandName;  // 카테고리와 섬 이름이 정확히 일치할 때만 true
+
     // 캐시에 데이터가 있으면 반환
-    if (_categoryCache.containsKey(category)) {
+    // 캐시에 데이터가 있고, 섬 이름 검색이 아니라면 캐시를 사용
+    if (!forceRefresh && _categoryCache.containsKey(category)) {
       return _categoryCache[category]!;
     }
+
 
     List<GooglePlaceModel> places = [];
 
@@ -73,7 +81,6 @@ class IslandRepository {
     }
 //
     // 해당 섬의 좌표 가져오기
-    String islandName = _extractIslandNameFromCategory(category);
     List<double>? islandCoords = islandCoordinates[islandName];
 
     if (islandCoords == null) {

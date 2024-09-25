@@ -50,68 +50,70 @@ class _PostHomePageState extends State<PostHomePage> {
                   if (posts.isEmpty) {
                     return Center(child: Text('게시글이 없습니다.'));
                   } else {
-                    return ListView.builder(
+                    return ListView.separated(
                       itemCount: posts.length,
+                      separatorBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17), // Divider 양쪽 여백
+                        child: Divider(
+                          color: Colors.grey[300],
+                          thickness: 1,
+                          height: 0.5,
+                        ),
+                      ),
                       itemBuilder: (context, index) {
                         var post = posts[index];
-                        // 게시글 카드 위젯
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Card(
-                            color: Color(0xFFE6F0FF),
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(16),
-                              title: Text(
-                                post.title,
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis, // 긴 제목에 말줄임표 적용
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 7),
-                                  Text(
-                                    post.content,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                                  ),
-                                  SizedBox(height: 7),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.person, size: 14, color: Colors.grey),
-                                      SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          post.author,
-                                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      SizedBox(width: 16),
-                                      Icon(Icons.access_time, size: 14, color: Colors.grey),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        DateFormat('yyyy-MM-dd HH:mm').format(post.timestamp),
-                                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                // 게시글 상세 페이지로 이동
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PostDetailPage(postId: post.id),
-                                  ),
-                                );
-                              },
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(5),
+                            title: Text(
+                              post.title,
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis, // 긴 제목에 말줄임표 적용
                             ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 3),
+                                Text(
+                                  post.content,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 12, color: Colors.black87),
+                                ),
+                                SizedBox(height: 7),
+                                Row(
+                                  children: [
+                                    Icon(Icons.person, size: 14, color: Colors.grey),
+                                    SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        post.author,
+                                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    SizedBox(width: 16),
+                                    Icon(Icons.access_time, size: 14, color: Colors.grey),
+                                    SizedBox(width: 3),
+                                    Text(
+                                      DateFormat('yyyy-MM-dd HH:mm').format(post.timestamp),
+                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              // 게시글 상세 페이지로 이동
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostDetailPage(postId: post.id),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },

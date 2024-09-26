@@ -3,7 +3,7 @@ flutter_native_splash:
   ios: true
   color: "#ffffff"
   android_12:
-    image: "assets/images/spscreen.png" # 생성한 이미지 경로를 입력하세요
+    image: "assets/images/sp10.png" # 생성한 이미지 경로를 입력하세요
 
-  image: "assets/images/spscreen.png" # 생성한 이미지 경로를 입력하세요
   fill: true # 이미지를 화면에 맞게 채웁니다
+  fullscreen: true

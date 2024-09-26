@@ -163,11 +163,11 @@ class _MyTravelViewState extends State<MyTravelView> {
                                   actions: <Widget>[
                                     TextButton(
                                       onPressed: () => Navigator.of(context).pop(false),
-                                      child: Text('취소'),
+                                      child: Text('취소', style: TextStyle(color: Colors.black),),
                                     ),
                                     TextButton(
                                       onPressed: () => Navigator.of(context).pop(true),
-                                      child: Text('삭제'),
+                                      child: Text('삭제', style: TextStyle(color: Colors.black),),
                                     ),
                                   ],
                                 );

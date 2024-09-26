@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:project_island/section/home/repository/home_repository.dart';
 import 'package:project_island/section/home/viewmodel/island_detail_viewmodel.dart';
 import 'package:project_island/section/my_travel/view/my_travel_view.dart';
@@ -37,6 +38,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

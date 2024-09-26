@@ -121,7 +121,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                         borderSide: const BorderSide(
-                          color: Color(0xFF6699FF),
+                          color: Color(0xFF1BB874),
                           width: 1,
                         ),
                       ),
@@ -225,6 +225,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   // 제목 입력 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        textSelectionTheme: const TextSelectionThemeData(
+                          cursorColor: Colors.black, // 커서 색상 검은색으로 설정
+                          selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
+                        ),
+                      ),
                     child: TextField(
                       controller: _titleController,
                       decoration: InputDecoration(
@@ -252,6 +259,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                     ),
                   ),
+                  ),
                   const SizedBox(height: 15),
                   // 내용 필드
                   Container(
@@ -268,6 +276,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   // 내용 입력 필드
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        textSelectionTheme: const TextSelectionThemeData(
+                          cursorColor: Colors.black, // 커서 색상 검은색으로 설정
+                          selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
+                        ),
+                      ),
                     child: TextField(
                       controller: _contentController,
                       decoration: InputDecoration(
@@ -295,6 +310,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                       maxLines: 5,
                     ),
+                  ),
                   ),
                   const SizedBox(height: 16),
                   // 저장 및 취소 버튼

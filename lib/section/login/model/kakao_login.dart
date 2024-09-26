@@ -14,9 +14,9 @@ class AuthService {
         try {
           // 카카오톡으로 로그인 시도
           token = await UserApi.instance.loginWithKakaoTalk();
-          print('카카오톡으로 로그인 성공');
+
         } catch (error) {
-          print('카카오톡으로 로그인 실패 $error');
+          print('$error');
 
           // 사용자가 로그인을 취소한 경우
           if (error is PlatformException && error.code == 'CANCELED') {
@@ -26,9 +26,8 @@ class AuthService {
           // 카카오톡 로그인 실패 시, 카카오 계정으로 로그인 시도
           try {
             token = await UserApi.instance.loginWithKakaoAccount();
-            print('카카오계정으로 로그인 성공');
           } catch (error) {
-            print('카카오계정으로 로그인 실패 $error');
+            print('$error');
             return null;
           }
         }
@@ -36,9 +35,8 @@ class AuthService {
         // 카카오톡이 설치되어 있지 않은 경우, 카카오 계정으로 로그인
         try {
           token = await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
         } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          print('$error');
           return null;
         }
       }
@@ -58,14 +56,13 @@ class AuthService {
 
       // Firebase 로그인 성공 및 사용자 정보 출력
       if (user != null) {
-        print('Firebase 로그인 성공');
         await _printUserInfo(user);  // 로그인 성공 후 사용자 정보를 바로 출력
       }
 
       // 로그인된 사용자 정보를 반환
       return user;
     } catch (error) {
-      print('카카오 계정으로 로그인 실패: $error');
+      print('$error');
       return null;
     }
   }
@@ -74,13 +71,11 @@ class AuthService {
     try {
       // 카카오 로그아웃 처리
       await UserApi.instance.logout();
-      print('카카오 로그아웃 성공');
 
       // Firebase 로그아웃 처리
       await _auth.signOut();
-      print('Firebase 로그아웃 성공');
     } catch (error) {
-      print('로그아웃 실패: $error');
+      print('$error');
     }
   }
 
@@ -89,7 +84,7 @@ class AuthService {
       // 현재 로그인된 사용자 반환
       return _auth.currentUser;
     } catch (error) {
-      print('현재 사용자 정보를 가져오는 데 실패: $error');
+      print('$error');
       return null;
     }
   }

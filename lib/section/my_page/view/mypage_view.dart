@@ -4,24 +4,22 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project_island/section/my_page/viewmodel/mypage_controller.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Cutomer Service.dart';
 import 'package:project_island/section/my_page/mypage_list/view/Notice.dart';
-import 'package:project_island/section/my_page/view/setting_view.dart';
 import 'package:project_island/section/login/model/login_model.dart' as google_auth;
 import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 임포트
-import 'package:google_sign_in/google_sign_in.dart'; // GoogleSignIn 임포트
 import '../../login/view/login_view.dart';
-import 'package:http/http.dart' as http;
+import '../../post/views/my_post_page.dart';
 
 class MyPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           ' 마이페이지',
           style: TextStyle(
             color: Color(0xFF222222),
-            fontSize: 22,
+            fontSize: 20,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
           ),
@@ -46,14 +44,14 @@ class MyPageView extends StatelessWidget {
       body: GetBuilder<MyPageController>(
         builder: (controller) {
           return SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 UserProfileSection(controller: controller), // 프로필 섹션
-                SizedBox(height: 20),
-                SizedBox(height: 20),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+                const SizedBox(height: 20),
+                const SizedBox(height: 20),
                 MenuListSection(), // 메뉴 리스트 섹션
               ],
             ),
@@ -98,14 +96,14 @@ class UserProfileSection extends StatelessWidget {
                 // userTitle과 profileEditButton을 정렬
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black, // 배경색을 검정색으로 설정
                       borderRadius: BorderRadius.circular(5), // 둥근 모서리 설정
                     ),
                     child: Text(
                       controller.userTitle, // '탐험가'와 같은 타이틀
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white, // 텍스트 색상을 흰색으로 설정
                         fontSize: 12,
                         fontFamily: 'Pretendard',
@@ -113,18 +111,18 @@ class UserProfileSection extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Spacer(), // userTitle을 왼쪽에 고정하고 나머지 공간 확보
+                  const Spacer(), // userTitle을 왼쪽에 고정하고 나머지 공간 확보
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 controller.userName.value, // 사용자 이름
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
             ],
           ),
         ),
@@ -139,57 +137,120 @@ class MenuListSection extends StatelessWidget {
   google_auth.AuthService(); // Google AuthService 인스턴스 생성
   final kakao_auth.AuthService _kakaoAuthService =
   kakao_auth.AuthService(); // Kakao AuthService 인스턴스 생성
-  final MyPageController _myPageController = MyPageController();
+  //final MyPageController _myPageController = MyPageController();
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         ListTile(
-          title: Text('공지사항'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          title: const Text('공지사항'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             Get.to(NoticeScreen());
           },
         ),
         ListTile(
-          title: Text('고객센터'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          title: const Text('고객센터'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             Get.to(CustomerServiceScreen());
           },
         ),
         ListTile(
-          title: Text('사용 가이드'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          title: const Text('사용 가이드'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 사용 가이드 클릭 시 이벤트 처리
           },
         ),
         ListTile(
-          title: Text('로그아웃'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
-          onTap: () async {
-            // 로그아웃 클릭 시 이벤트 처리
-            final googleUser = _googleAuthService.googleGetCurrentUser();
-            final kakaoUser = _kakaoAuthService.kakaoGetCurrentUser();
-
-            if (googleUser != null) {
-              await _googleAuthService.googleSignOut();
-            } else if (kakaoUser != null) {
-              await UserApi.instance.unlink();
-              await _kakaoAuthService.kakaoSignOut();
-            }
-
-            // 로그아웃 후 로그인 화면으로 이동
-            Get.offAll(() => LoginScreen());
+          title: const Text('내 게시글 보기'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          onTap: () {
+            Get.to(() => MyPostsPage());
           },
         ),
         ListTile(
-          title: Text('회원 탈퇴'),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          title: const Text('로그아웃'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
+          onTap: () {
+            // 로그아웃 클릭 시 바텀 모달 시트 표시
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.white,
+              builder: (BuildContext context) {
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // 필요한 만큼만 공간 차지
+                    children: [
+                      const Text(
+                        '정말 로그아웃 하시겠습니까?',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              // 로그아웃 처리
+                              final googleUser = _googleAuthService.googleGetCurrentUser();
+                              final kakaoUser = _kakaoAuthService.kakaoGetCurrentUser();
+
+                              if (googleUser != null) {
+                                await _googleAuthService.googleSignOut();
+                              } else if (kakaoUser != null) {
+                                await UserApi.instance.unlink();
+                                await _kakaoAuthService.kakaoSignOut();
+                              }
+
+                              Navigator.of(context).pop(); // Modal Bottom Sheet 닫기
+                              Get.offAll(() => LoginScreen()); // 로그아웃 후 로그인 화면으로 이동
+                            },
+                            child: const Text('네',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black, // 버튼 배경색을 검정색으로 설정
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Modal Bottom Sheet 닫기
+                            },
+                            child: const Text('아니오',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black, // 버튼 배경색을 검정색으로 설정
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        ListTile(
+          title: const Text('회원 탈퇴'),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
           onTap: () {
             // 회원 탈퇴 클릭 시 이벤트 처리
             showModalBottomSheet(
@@ -197,15 +258,15 @@ class MenuListSection extends StatelessWidget {
               backgroundColor: Colors.white,
               builder: (BuildContext context) {
                 return Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min, // 필요한 만큼만 공간 차지
                     children: [
-                      Text(
+                      const Text(
                         '정말 회원 탈퇴 하시겠습니까?',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -213,7 +274,6 @@ class MenuListSection extends StatelessWidget {
                             onPressed: () async {
                               Navigator.of(context).pop(); // Modal Bottom Sheet 닫기
                               final currentUser = FirebaseAuth.instance.currentUser;
-                              print(currentUser);
                               if (currentUser != null) {
                                 final providerData = currentUser.providerData;
                                 try {
@@ -238,11 +298,10 @@ class MenuListSection extends StatelessWidget {
                                 }
                               } else {
                                 // 로그인된 사용자가 없음
-                                print('로그인된 사용자가 없습니다.');
                               }
                             },
 
-                            child: Text('네',
+                            child: const Text('네',
                               style: TextStyle(fontFamily: 'Pretendard',
                                   fontSize: 13,
                                   color: Colors.white,
@@ -262,7 +321,7 @@ class MenuListSection extends StatelessWidget {
                               Navigator.of(context)
                                   .pop(); // Modal Bottom Sheet 닫기
                             },
-                            child: Text('아니오',
+                            child: const Text('아니오',
                             style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontSize: 13,

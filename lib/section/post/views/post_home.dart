@@ -24,13 +24,13 @@ class _PostHomePageState extends State<PostHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '커뮤니티',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 22,
+            fontSize: 20,
             fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
         backgroundColor: Colors.white,
@@ -40,7 +40,7 @@ class _PostHomePageState extends State<PostHomePage> {
       body: Stack(
         children: [
           RefreshIndicator(
-            color: Color(0xFF3CCB7F),
+            color: const Color(0xFF3CCB7F),
             onRefresh: _refreshPosts,
             child: StreamBuilder<List<Post>>(
               stream: postViewModel.getPosts(),
@@ -48,7 +48,7 @@ class _PostHomePageState extends State<PostHomePage> {
                 if (snapshot.hasData) {
                   var posts = snapshot.data!;
                   if (posts.isEmpty) {
-                    return Center(child: Text('게시글이 없습니다.'));
+                    return const Center(child: Text('게시글이 없습니다.'));
                   } else {
                     return ListView.separated(
                       itemCount: posts.length,
@@ -65,41 +65,41 @@ class _PostHomePageState extends State<PostHomePage> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           child: ListTile(
-                            contentPadding: EdgeInsets.all(5),
+                            contentPadding: const EdgeInsets.all(5),
                             title: Text(
                               post.title,
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis, // 긴 제목에 말줄임표 적용
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 3),
+                                const SizedBox(height: 3),
                                 Text(
                                   post.content,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 12, color: Colors.black87),
+                                  style: const TextStyle(fontSize: 12, color: Colors.black87),
                                 ),
-                                SizedBox(height: 7),
+                                const SizedBox(height: 7),
                                 Row(
                                   children: [
-                                    Icon(Icons.person, size: 14, color: Colors.grey),
-                                    SizedBox(width: 4),
+                                    const Icon(Icons.person, size: 14, color: Colors.grey),
+                                    const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
                                         post.author,
-                                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    SizedBox(width: 16),
-                                    Icon(Icons.access_time, size: 14, color: Colors.grey),
-                                    SizedBox(width: 3),
+                                    const SizedBox(width: 16),
+                                    const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                                    const SizedBox(width: 3),
                                     Text(
                                       DateFormat('yyyy-MM-dd HH:mm').format(post.timestamp),
-                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -121,7 +121,7 @@ class _PostHomePageState extends State<PostHomePage> {
                   }
                 } else if (snapshot.hasError) {
                   // 에러 발생 시 에러 메시지 표시
-                  return Center(child: Text('오류가 발생했습니다.'));
+                  return const Center(child: Text('오류가 발생했습니다.'));
                 } else {
                   // 데이터가 아직 로드되지 않았을 때 빈 컨테이너 반환
                   return Container();
@@ -147,17 +147,17 @@ class _PostHomePageState extends State<PostHomePage> {
                   ),
                 );
               } else {
-                return SizedBox.shrink(); // 로딩 중이 아닐 때는 아무것도 표시하지 않음
+                return const SizedBox.shrink(); // 로딩 중이 아닐 때는 아무것도 표시하지 않음
               }
             },
           ),
         ],
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         width: 45, // 버튼의 가로 크기
         height: 45, // 버튼의 세로 크기
         child: FloatingActionButton(
-          backgroundColor: Color(0xFF3CCB7F),
+          backgroundColor: const Color(0xFF3CCB7F),
           elevation: 3,
           onPressed: () {
             Navigator.push(
@@ -165,7 +165,7 @@ class _PostHomePageState extends State<PostHomePage> {
               MaterialPageRoute(builder: (context) => PostPage()),
             );
           },
-          child: Icon(Icons.add, color: Colors.white),
+          child: const Icon(Icons.add, color: Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18), // 둥글기 설정
           ),

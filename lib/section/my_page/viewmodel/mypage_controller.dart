@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:get_storage/get_storage.dart';
+//import 'package:image_picker/image_picker.dart';
+//import 'dart:io';
+//import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:project_island/section/login/model/login_model.dart' as google_auth;
-import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
+//import 'package:project_island/section/login/model/login_model.dart' as google_auth;
+//import 'package:project_island/section/login/model/kakao_login.dart' as kakao_auth;
 
 class MyPageController extends GetxController {
   var profileImagePath = 'assets/images/noUserImage.png'.obs; // 프로필 이미지 URL

@@ -139,6 +139,20 @@ class PostViewModel {
     });
   }
 
+  // 내 게시글 리스트 가져오기
+  Stream<List<Post>> getMyPosts(String userId) {
+    return _firestore
+        .collection('posts')
+        .where('authorId', isEqualTo: userId)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Post.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    });
+  }
+
   // 이미지 선택 (ImagePicker 사용)
   Future<File?> pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);

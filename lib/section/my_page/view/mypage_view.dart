@@ -159,6 +159,7 @@ class MenuListSection extends StatelessWidget {
             Get.to(CustomerServiceScreen());
           },
         ),
+        /*
         ListTile(
           title: const Text('사용 가이드'),
           trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),
@@ -166,6 +167,8 @@ class MenuListSection extends StatelessWidget {
             // 사용 가이드 클릭 시 이벤트 처리
           },
         ),
+
+         */
         ListTile(
           title: const Text('내 게시글 보기'),
           trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 15),

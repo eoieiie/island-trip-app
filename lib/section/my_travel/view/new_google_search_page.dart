@@ -23,34 +23,65 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController(); // 초기 검색어를 비워둠
+    _fetchRandomPlaces(); // 페이지 로드 시 랜덤 장소 추천
+  }
+
+  Future<void> _fetchRandomPlaces() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _places = [];
+    });
+    try {
+      // 선택한 섬의 인기 장소를 가져오는 메서드 호출
+      final places = await _viewModel.getPopularPlaces(widget.selectedIsland);
+      setState(() {
+        _places = places;
+        if (_places.isEmpty) {
+          _errorMessage = '추천할 장소가 없습니다.';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '장소를 불러오는 중 오류가 발생했습니다.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _searchPlaces() async {
     final userQuery = _controller.text.trim();
-    if (userQuery.isNotEmpty) {
-      final fullQuery = "${widget.selectedIsland} $userQuery"; // 섬 이름과 사용자 입력을 결합
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-        _places = [];
-      });
-      try {
-        final places = await _viewModel.searchPlaces(fullQuery);
-        setState(() {
-          _places = places;
-          if (_places.isEmpty) {
-            _errorMessage = '검색 결과가 없습니다.';
-          }
-        });
-      } catch (e) {
-        setState(() {
-          _errorMessage = '검색 중 오류가 발생했습니다.';
-        });
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _places = [];
+    });
+    try {
+      List<GooglePlaceModel> places;
+      if (userQuery.isNotEmpty) {
+        final fullQuery = "${widget.selectedIsland} $userQuery";
+        places = await _viewModel.searchPlaces(fullQuery);
+      } else {
+        // 검색어가 없을 때는 인기 장소를 가져옴
+        places = await _viewModel.getPopularPlaces(widget.selectedIsland);
       }
+      setState(() {
+        _places = places;
+        if (_places.isEmpty) {
+          _errorMessage = '검색 결과가 없습니다.';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = '검색 중 오류가 발생했습니다.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -66,60 +97,157 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // 배경색을 흰색으로 설정
       appBar: AppBar(
-        title: const Text('장소 검색'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: '검색어를 입력하세요',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: _searchPlaces,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '장소 검색',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            inherit: true,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: Color(0xFF222222),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 1.5,
+                  offset: Offset(0, 0),
                 ),
-              ),
-              onSubmitted: (_) => _searchPlaces(),
+              ],
             ),
-            const SizedBox(height: 10),
-            if (_isLoading)
-              const CircularProgressIndicator()
-            else if (_errorMessage != null)
-              Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              )
-            else
-              Expanded(
-                child: _places.isNotEmpty
-                    ? ListView.builder(
-                  itemCount: _places.length,
-                  itemBuilder: (context, index) {
-                    final place = _places[index];
-                    final thumbnailUrl = place.photoUrls != null && place.photoUrls!.isNotEmpty
-                        ? place.photoUrls!.first
-                        : null;
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+      ),
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Colors.black, // 커서 색상 검은색으로 설정
+            selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
+          ),
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0), // 패딩을 일정하게 설정
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 검색어 입력 필드
+                  TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: '검색어를 입력하세요',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.search, color: Color(0xFF1BB874)),
+                        onPressed: _searchPlaces,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
+                      ),
+                    ),
+                    onSubmitted: (_) => _searchPlaces(),
+                  ),
+                  SizedBox(height: 20),
+                  Expanded(
+                    child: _errorMessage != null
+                        ? Center(
+                      child: Text(
+                        _errorMessage!,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
+                        : _places.isNotEmpty
+                        ? ListView.separated(
+                      itemCount: _places.length,
+                      separatorBuilder: (context, index) => Divider(
+                        color: Color(0xFFF7F7F7),
+                        thickness: 1,
+                      ),
+                      itemBuilder: (context, index) {
+                        final place = _places[index];
+                        final thumbnailUrl = place.photoUrls != null && place.photoUrls!.isNotEmpty
+                            ? place.photoUrls!.first
+                            : null;
 
-                    return ListTile(
-                      leading: thumbnailUrl != null
-                          ? Image.network(
-                        thumbnailUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      )
-                          : const Icon(Icons.image_not_supported),
-                      title: Text(place.name),
-                      subtitle: Text(place.address),
-                      onTap: () => _selectPlace(place),
-                    );
-                  },
-                )
-                    : const Center(
-                  child: Text('검색 결과가 없습니다.'),
+                        return ListTile(
+                          leading: thumbnailUrl != null
+                              ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              thumbnailUrl,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                              : Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.image_not_supported, color: Colors.white),
+                          ),
+                          title: Text(
+                            place.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          subtitle: Text(
+                            place.address,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: () => _selectPlace(place),
+                        );
+                      },
+                    )
+                        : Center(
+                      child: Text('추천할 장소가 없습니다.'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_isLoading)
+              IgnorePointer(
+                ignoring: true,
+                child: Container(
+                  color: Colors.white.withOpacity(0.7),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.green[300],
+                    ),
+                  ),
                 ),
               ),
           ],

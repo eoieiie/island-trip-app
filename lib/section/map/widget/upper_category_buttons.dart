@@ -13,18 +13,20 @@ class UpperCategoryButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal, // 상위 카테고리 버튼들을 가로로 스크롤 가능하게 설정
-      physics: const ClampingScrollPhysics(), // 제스처 충돌 방지
-      child: Row(
-        children: [
-          const SizedBox(width: 15), // 좌측 간격
-          _buildCategoryButton('명소/놀거리'), // 명소/놀거리 카테고리 버튼 생성
-          _buildCategoryButton('음식'), // 음식 카테고리 버튼 생성
-          _buildCategoryButton('카페'), // 카페 카테고리 버튼 생성
-          _buildCategoryButton('숙소'), // 숙소 카테고리 버튼 생성
-          const SizedBox(width: 15), // 우측 간격
-        ],
+    return Padding(
+      // 좌우 간격을 18로 설정
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal, // 상위 카테고리 버튼들을 가로로 스크롤 가능하게 설정
+        physics: const ClampingScrollPhysics(), // 제스처 충돌 방지
+        child: Row(
+          children: [
+            _buildCategoryButton('명소/놀거리'), // 명소/놀거리 카테고리 버튼 생성
+            _buildCategoryButton('음식'), // 음식 카테고리 버튼 생성
+            _buildCategoryButton('카페'), // 카페 카테고리 버튼 생성
+            _buildCategoryButton('숙소'), // 숙소 카테고리 버튼 생성
+          ],
+        ),
       ),
     );
   }
@@ -37,6 +39,7 @@ class UpperCategoryButtons extends StatelessWidget {
         onPressed: () => onCategorySelected(category), // 버튼 클릭 시 상위 카테고리 선택 이벤트 핸들러 호출
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(40, 28),
+          padding: const EdgeInsets.only(top: 3, left: 26, right: 26, bottom: 4), // 상단 패딩만 제거
           backgroundColor: selectedCategory == category ? Colors.white : Colors.white, // 선택 여부에 따른 배경색
           foregroundColor: selectedCategory == category ? Colors.green : Colors.black, // 선택 여부에 따른 텍스트 색상
           side: BorderSide(
@@ -48,7 +51,7 @@ class UpperCategoryButtons extends StatelessWidget {
           ),
         ),
         child: Text(
-          category, // 카테고리 이름만 표시 (이모지 제거됨)
+          category, // 카테고리 이름만 표시
           style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500), // 텍스트 스타일
         ),
       ),

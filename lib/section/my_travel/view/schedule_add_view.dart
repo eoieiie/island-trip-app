@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../viewmodel/my_travel_viewmodel.dart';
-import 'travel_schedule_view.dart';
-import 'package:project_island/section/common/google_api/views/google_search_page.dart';
 import 'new_google_search_page.dart';
 
 class ScheduleAddView extends StatefulWidget {
@@ -69,7 +66,8 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
+      // 키보드에 의해 화면이 밀려올라가도록 설정
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text(
@@ -107,32 +105,40 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildLocationInput(),
-              SizedBox(height: 20),
-              _makeline(),
-              SizedBox(height: 20),
-              _buildTimePicker(),
-              SizedBox(height: 20),
-              _makeline(),
-              SizedBox(height: 20),
-              _buildTitleInput(),
-              SizedBox(height: 20),
-              _buildMemoInput(),
-              SizedBox(height: 20),
-              // _makeline(),
-              // SizedBox(height: 20),
-              // _buildPhotoSection(),
-              SizedBox(height: 20),
-              _buildSubmitButton(),
-              SizedBox(height: 50),
-            ],
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Colors.black, // 커서 색상 검은색으로 설정
+            selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            // 키보드가 올라올 때 하단에 충분한 공간을 주기 위해 추가
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLocationInput(),
+                SizedBox(height: 20),
+                _makeline(),
+                SizedBox(height: 20),
+                _buildTimePicker(),
+                SizedBox(height: 20),
+                _makeline(),
+                SizedBox(height: 20),
+                _buildTitleInput(),
+                SizedBox(height: 20),
+                _buildMemoInput(),
+                SizedBox(height: 20),
+                _buildSubmitButton(),
+                SizedBox(height: 50),
+              ],
+            ),
           ),
         ),
       ),
@@ -216,32 +222,6 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
           ),
         ),
         SizedBox(height: 16), // 칸 사이 여백 설정
-        /*Center( // 버튼 가운데 정렬
-          child: ElevatedButton(
-            onPressed: () {
-              // 관심 리스트에서 불러오는 기능 추가 가능
-            },
-            child: Text(
-              '관심 리스트에서 불러오기',
-              style: TextStyle(
-                fontWeight: FontWeight.w100,
-                fontSize: 12,
-                color: Colors.white,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF222222),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-              textStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),*/
       ],
     );
   }
@@ -427,7 +407,7 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         TextField(
           controller: _memoController,
           maxLength: 100,
-          maxLines: 3,
+          maxLines: null, // 입력 내용에 따라 자동으로 높이 조절
           decoration: InputDecoration(
             hintText: '간단한 메모를 작성해주세요',
             enabledBorder: OutlineInputBorder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../common/google_api/viewmodels/google_place_view_model.dart';
 import '../../common/google_api/models/google_place_model.dart';
 
@@ -153,7 +154,7 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
                 color: Color(0xFF222222),
                 fontSize: 16,
                 fontFamily: 'Lobster',
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w800,
               ),
             ),
             // 섹션 제목 옆에 꺽새 버튼 추가
@@ -195,110 +196,115 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
                   ? place.photoUrls!.first
                   : null;
 
-              return Padding(
-                padding: const EdgeInsets.only(right: 4.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.33,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Stack(
-                    children: [
-                      // 장소 이미지
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: imageUrl != null
-                            ? Image.network(
-                          imageUrl,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                            : Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10.0),
+              return GestureDetector(
+                onTap: () {
+                  _openPlaceInMaps(place);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.33,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Stack(
+                      children: [
+                        // 장소 이미지
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: imageUrl != null
+                              ? Image.network(
+                            imageUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                              : Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Icon(Icons.image_not_supported),
                           ),
-                          child: Icon(Icons.image_not_supported),
                         ),
-                      ),
-                      // 이미지 위에 텍스트(장소 이름, 섬 이름)
-                      Positioned(
-                        bottom: 10.0,
-                        left: 10.0,
-                        right: 10.0,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 장소 이름
-                            Text(
-                              place.name,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 4.0,
-                                    color: Colors.black.withOpacity(0.5),
+                        // 이미지 위에 텍스트(장소 이름, 섬 이름)
+                        Positioned(
+                          bottom: 10.0,
+                          left: 10.0,
+                          right: 10.0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 장소 이름
+                              Text(
+                                place.name,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(1.0, 1.0),
+                                      blurRadius: 4.0,
+                                      color: Colors.black.withOpacity(0.5),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 4.0),
+                              // 섬 이름 앞에 아이콘 추가
+                              Row(
+                                children: [
+                                  Icon(Icons.location_pin, color: Colors.white, size: 16),
+                                  SizedBox(width: 4.0),
+                                  Text(
+                                    islandName,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(1.0, 1.0),
+                                          blurRadius: 4.0,
+                                          color: Colors.black.withOpacity(0.5),
+                                        ),
+                                      ],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 4.0),
-                            // 섬 이름 앞에 아이콘 추가
-                            Row(
-                              children: [
-                                Icon(Icons.location_pin, color: Colors.white, size: 16),
-                                SizedBox(width: 4.0),
-                                Text(
-                                  islandName,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    shadows: [
-                                      Shadow(
-                                        offset: Offset(1.0, 1.0),
-                                        blurRadius: 4.0,
-                                        color: Colors.black.withOpacity(0.5),
-                                      ),
-                                    ],
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      // 별점 표시
-                      Positioned(
-                        top: 170,
-                        right: 10.0,
-                        child: place.rating != null
-                            ? Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow, size: 16),
-                            SizedBox(width: 4.0),
-                            Text(
-                              place.rating!.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        // 별점 표시
+                        Positioned(
+                          top: 170,
+                          right: 10.0,
+                          child: place.rating != null
+                              ? Row(
+                            children: [
+                              Icon(Icons.star, color: Colors.yellow, size: 16),
+                              SizedBox(width: 4.0),
+                              Text(
+                                place.rating!.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                            : Container(),
-                      ),
-                    ],
+                            ],
+                          )
+                              : Container(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -307,6 +313,20 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
         ),
       ],
     );
+  }
+
+  // 장소를 Google 지도에서 여는 함수
+  void _openPlaceInMaps(GooglePlaceModel place) async {
+    final Uri googleMapsUri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(place.name)}&query_place_id=${place.placeId}',
+    );
+    if (await canLaunchUrl(googleMapsUri)) {
+      await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('지도를 열 수 없습니다.')),
+      );
+    }
   }
 }
 
@@ -361,7 +381,7 @@ class CategoryFullScreen extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                // 상세 페이지로 이동하는 코드 추가 가능
+                _openPlaceInMaps(context, place);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -481,5 +501,19 @@ class CategoryFullScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 장소를 Google 지도에서 여는 함수
+  void _openPlaceInMaps(BuildContext context, GooglePlaceModel place) async {
+    final Uri googleMapsUri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(place.name)}&query_place_id=${place.placeId}',
+    );
+    if (await canLaunchUrl(googleMapsUri)) {
+      await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('지도를 열 수 없습니다.')),
+      );
+    }
   }
 }

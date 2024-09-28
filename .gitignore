@@ -42,11 +42,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/app/key.jks
-/android/app/key.properties
+/android/key.properties
 /android/app/proguard-rules.pro
+/android/app/google-services.json
+/lib/firebase_options.dart
 
-google-services.json
-firebase_options.dart
 .firebaserc
 firebase.json
 

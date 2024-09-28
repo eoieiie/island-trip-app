@@ -1,9 +1,0 @@
-{
-  "projects": {
-    "default": "bunnyjourney-island",
-    "everything": "bunnyjourney-island"
-  },
-  "targets": {},
-  "etags": {},
-  "dataconnectEmulatorConfig": {}
-}

@@ -7,7 +7,8 @@ import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import '../viewmodel/magazine_viewmodel.dart';
 import 'magazine_view.dart';
-import 'attraction_tab_section.dart'; // 새로운 AttractionTabSection 파일 import
+import 'attraction_tab_section.dart';
+import 'island_detail_view.dart'; // IslandDetailView import 추가
 
 // HomeView: 메인 홈 화면을 구성하는 클래스
 class HomeView extends StatelessWidget {
@@ -63,7 +64,6 @@ class HomeView extends StatelessWidget {
 }
 
 // MagazineSection: 매거진을 표시하는 섹션
-// PageView와 Indicator를 포함하여 사용자가 스와이핑으로 매거진을 넘겨볼 수 있음
 class MagazineSection extends StatefulWidget {
   final HomeViewModel viewModel;
 
@@ -153,12 +153,12 @@ class MagazineListView extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
+              // IslandDetailView로 이동하도록 수정
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MagazineView(
-                    islandName: magazine.title,
-                    magazine: magazine,
+                  builder: (context) => IslandDetailView(
+                    islandName: magazine.title, // 섬 이름 전달
                   ),
                 ),
               );
@@ -425,30 +425,43 @@ class _BottomSheetContentState extends State<BottomSheetContent> with SingleTick
                   final magazine = widget.viewModel.magazines[index];
                   return Padding(
                     padding: EdgeInsets.only(right: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.45,
-                          height: MediaQuery.of(context).size.width * 0.45,
-                          child: MagazineCard(
-                            magazine: magazine,
-                            magazine1: null,
-                            isRounded: true,
+                    child: GestureDetector(
+                      onTap: () {
+                        // IslandDetailView로 이동하도록 수정
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => IslandDetailView(
+                              islandName: magazine.title, // 섬 이름 전달
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 15.0),
-                        Text(
-                          magazine.title,
-                          style: const TextStyle(
-                            color: Color(0xFF999999),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.bold,
-                            height: 0.10,
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            height: MediaQuery.of(context).size.width * 0.45,
+                            child: MagazineCard(
+                              magazine: magazine,
+                              magazine1: null,
+                              isRounded: true,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 15.0),
+                          Text(
+                            magazine.title,
+                            style: const TextStyle(
+                              color: Color(0xFF999999),
+                              fontSize: 13,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.bold,
+                              height: 0.10,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

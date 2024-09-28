@@ -11,7 +11,7 @@ class HomeViewModel extends GetxController {
 
   // 생성자에서 저장소를 받아 데이터 초기화
   HomeViewModel(this.repository) {
-    _fetchData(); // 데이터를 가져오는 함수 호출
+    fetchData(); // 데이터를 가져오는 함수 호출
   }
 
   // 현재 선택된 카테고리 인덱스 상태
@@ -21,7 +21,7 @@ class HomeViewModel extends GetxController {
   get pageController => null;
 
   // 데이터를 가져오는 비동기 함수
-  void _fetchData() async {
+  Future<void> fetchData() async {
     isLoading.value = true; // 로딩 상태 시작
 
     try {

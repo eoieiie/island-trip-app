@@ -1,19 +1,10 @@
 
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
     id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
-// start of Gradle 서명 구성
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('app/key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-// end of Gradle 서명 구성
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -33,6 +24,12 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.example.project_island"
     compileSdk flutter.compileSdkVersion
@@ -49,6 +46,17 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    buildscript {
+        ext.kotlin_version = '1.9.0'
+        repositories {
+            google()
+            mavenCentral()
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        }
     }
 
     defaultConfig {
@@ -73,7 +81,6 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // 코드 난독화 및 사이즈 축소
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -83,3 +90,4 @@ android {
 flutter {
     source '../..'
 }
+

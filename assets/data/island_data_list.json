@@ -1,0 +1,57 @@
+[
+  {
+    "name": "영흥도",
+    "imageUrl": "https://example.com/dukjukdo.jpg",
+    "address": "인천 옹진군 덕적면",
+    "description": "자연경관이 아름다운 영흥도",
+    "category": "섬",
+    "phone": "032-123-4567",
+    "website": "https://dukjukdo.com",
+    "rating": 4.5,
+    "isOpenNow": true
+  },
+  {
+    "name": "안면도",
+    "imageUrl": "https://example.com/anmyundo.jpg",
+    "address": "충남 태안군 안면읍",
+    "description": "해양 레포츠의 천국 안면도",
+    "category": "섬",
+    "phone": "041-987-6543",
+    "website": "https://anmyundo.com",
+    "rating": 4.0,
+    "isOpenNow": false
+  },
+  {
+    "name": "진도",
+    "imageUrl": "https://example.com/jindo.jpg",
+    "address": "전남 진도군",
+    "description": "역사와 문화가 살아 숨쉬는 진도",
+    "category": "섬",
+    "phone": "061-789-1234",
+    "website": "https://jindo.com",
+    "rating": 4.2,
+    "isOpenNow": true
+  },
+  {
+    "name": "거제도",
+    "imageUrl": "https://example.com/geoje.jpg",
+    "address": "경남 거제시",
+    "description": "힐링과 관광의 명소 거제도",
+    "category": "섬",
+    "phone": "055-456-7890",
+    "website": "https://geoje.com",
+    "rating": 4.8,
+    "isOpenNow": true
+  },
+  {
+    "name": "울릉도",
+    "imageUrl": "https://example.com/ulleungdo.jpg",
+    "address": "경북 울릉군",
+    "description": "천혜의 자연경관을 자랑하는 울릉도",
+    "category": "섬",
+    "phone": "054-987-6543",
+    "website": "https://ulleungdo.com",
+    "rating": 4.7,
+    "isOpenNow": false
+  }
+]

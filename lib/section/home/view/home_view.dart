@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
 import 'package:project_island/section/home/viewmodel/home_viewmodel.dart';
+import 'package:flutter/scheduler.dart'; // AppLifecycleListener 사용을 위해 필요
 import '../model/home_model.dart';
 import '../repository/home_repository.dart';
 import '../viewmodel/magazine_viewmodel.dart';
@@ -11,8 +12,58 @@ import 'attraction_tab_section.dart';
 import 'island_detail_view.dart'; // IslandDetailView import 추가
 
 // HomeView: 메인 홈 화면을 구성하는 클래스
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late final AppLifecycleListener _lifecycleListener;
   final HomeViewModel viewModel = Get.put(HomeViewModel(Repository())); // ViewModel 연결
+
+  @override
+  void initState() {
+    super.initState();
+
+    // AppLifecycleListener 설정
+    _lifecycleListener = AppLifecycleListener(
+      onShow: () {
+        // 앱이 포그라운드로 돌아왔을 때 처리할 로직
+        print('App is now visible (onShow)');
+        viewModel.fetchData(); // 앱이 포그라운드로 돌아왔을 때 데이터를 다시 가져옴
+      },
+      onResume: () {
+        print('App resumed (onResume)');
+      },
+      onHide: () {
+        // 앱이 백그라운드로 갈 때 처리할 로직
+        print('App is now hidden (onHide)');
+      },
+      onInactive: () {
+        print('App is inactive (onInactive)');
+      },
+      onPause: () {
+        // 앱이 일시 중지될 때 처리할 로직
+        print('App paused (onPause)');
+      },
+      onDetach: () {
+        print('App detached (onDetach)');
+      },
+      onRestart: () {
+        // 앱이 재시작될 때 처리할 로직
+        print('App restarted (onRestart)');
+      },
+      onStateChange: (AppLifecycleState state) {
+        print('App lifecycle state: $state');
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose(); // 생명주기 listener 제거
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

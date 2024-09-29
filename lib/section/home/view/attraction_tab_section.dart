@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/scheduler.dart'; // AppLifecycleListener 사용을 위해 필요
 import '../../common/google_api/viewmodels/google_place_view_model.dart';
 import '../../common/google_api/models/google_place_model.dart';
 
@@ -31,10 +32,42 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
 
   Map<String, List<Map<String, dynamic>>> _placesByCategory = {}; // 카테고리별 장소 저장
   bool isLoading = true; // 로딩 상태 변수
+  late final AppLifecycleListener _lifecycleListener; // AppLifecycleListener 추가
 
   @override
   void initState() {
     super.initState();
+
+    // AppLifecycleListener 설정
+    _lifecycleListener = AppLifecycleListener(
+      onShow: () {
+        // 앱이 포그라운드로 돌아왔을 때 처리할 로직
+        if (!attractionData.hasFetchedData) {
+          _fetchIslandData(); // 앱이 포그라운드로 돌아왔을 때 데이터를 다시 가져옴
+        } else {
+          setState(() {
+            _placesByCategory = attractionData.placesByCategory;
+            isLoading = false;
+          });
+        }
+      },
+      onHide: () {
+        // 앱이 백그라운드로 갈 때 처리할 로직
+        print('App is now hidden');
+      },
+      onPause: () {
+        // 앱이 일시 중지될 때 처리할 로직
+        print('App paused');
+      },
+      onResume: () {
+        // 앱이 다시 활성화되었을 때 처리할 로직
+        print('App resumed');
+      },
+      onStateChange: (AppLifecycleState state) {
+        print('App lifecycle state: $state');
+      },
+    );
+
     if (!attractionData.hasFetchedData) {
       _fetchIslandData(); // 화면 초기화 시 API 호출
     } else {
@@ -43,6 +76,12 @@ class _AttractionTabSectionState extends State<AttractionTabSection> {
         isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose(); // 생명주기 listener 제거
+    super.dispose();
   }
 
   // 섬 데이터를 검색하는 함수

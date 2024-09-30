@@ -513,44 +513,50 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(top:10.0,left: 15.0,right: 15.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
         borderRadius: BorderRadius.circular(8.0),
         color: Colors.white,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start, // 메모가 왼쪽에 붙게 설정
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Row 내부에서 아이템을 양 끝에 배치
             children: [
-              Image.asset(
-                iconPath,
-                width: 20,
-                height: 20,
+              Row(
+                children: [
+                  Image.asset(
+                    iconPath,
+                    width: 20,
+                    height: 20,
+                  ),
+                  SizedBox(width: 8.0),
+                  Text(
+                    place,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              SizedBox(width: 8.0),
+              // 시간 텍스트를 오른쪽 끝에 붙임
               Text(
-                place,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 8.0),
-              // 시간 텍스트를 오른쪽 정렬로 설정하고 오른쪽 끝에서 떨어지게 배치
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0), // 오른쪽으로 살짝 떨어지게 패딩 추가
-                child: Text(
-                  formattedTime,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w200),
-                  textAlign: TextAlign.right, // 텍스트 오른쪽 정렬
-                ),
+                formattedTime,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w200),
+                textAlign: TextAlign.right,
               ),
             ],
           ),
           SizedBox(height: 8.0),
           if (memo.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(memo, style: TextStyle(fontSize: 14), textAlign: TextAlign.left,),
+              padding: const EdgeInsets.only(left: 30.0, bottom: 4.0),  // 메모 부분에 왼쪽 패딩 추가
+              // 메모를 왼쪽에 붙임
+              child: Text(
+                memo,
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.left,
+              ),
             ),
           Row(
             children: [
@@ -628,6 +634,7 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
       ),
     );
   }
+
 
   // 구글 지도 길찾기 URL 실행 함수
   void _launchGoogleMap(String url) async {

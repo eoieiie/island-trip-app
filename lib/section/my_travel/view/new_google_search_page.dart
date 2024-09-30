@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:project_island/section/common/google_api/viewmodels/google_place_view_model.dart';
 import 'package:project_island/section/common/google_api/models/google_place_model.dart';
+import 'package:project_island/section/map/repository/island_repository.dart';
 import '../model/custom_google_place_model.dart'; // 새로 생성한 모델
+import 'package:geolocator/geolocator.dart'; // 거리 계산을 위함
+
 
 class NewGoogleSearchPage extends StatefulWidget {
   final String selectedIsland; // 섬 이름을 별도 매개변수로 전달받음
@@ -52,6 +55,7 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
     }
   }
 
+
   Future<void> _searchPlaces() async {
     final userQuery = _controller.text.trim();
     setState(() {
@@ -61,19 +65,38 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
     });
     try {
       List<GooglePlaceModel> places;
-      if (userQuery.isNotEmpty) {
-        final fullQuery = "${widget.selectedIsland} $userQuery";
-        places = await _viewModel.searchPlaces(fullQuery);
-      } else {
-        // 검색어가 없을 때는 인기 장소를 가져옴
-        places = await _viewModel.getPopularPlaces(widget.selectedIsland);
-      }
-      setState(() {
-        _places = places;
-        if (_places.isEmpty) {
-          _errorMessage = '검색 결과가 없습니다.';
+
+      // 섬의 좌표를 가져옵니다.
+      List<double>? islandCoords = IslandRepository().islandCoordinates[widget.selectedIsland];
+
+      if (islandCoords != null) {
+        // 검색어가 있으면 해당 검색어로 장소 검색, 없으면 인기 장소를 가져옴
+        if (userQuery.isNotEmpty) {
+          places = await _viewModel.searchPlaces("${widget.selectedIsland} $userQuery");
+        } else {
+          places = await _viewModel.getPopularPlaces(widget.selectedIsland);
         }
-      });
+
+        // 좌표로 필터링: 섬의 좌표와 장소 좌표 간의 거리 계산
+        List<GooglePlaceModel> filteredPlaces = places.where((place) {
+          double distanceInMeters = Geolocator.distanceBetween(
+            islandCoords[0], islandCoords[1], // 섬 좌표
+            place.latitude ?? 0.0, place.longitude ?? 0.0, // 장소 좌표
+          );
+          return distanceInMeters <= 50000; // 50km 이내의 장소만 필터링
+        }).toList();
+
+        setState(() {
+          _places = filteredPlaces;
+          if (_places.isEmpty) {
+            _errorMessage = '검색 결과가 없습니다.';
+          }
+        });
+      } else {
+        setState(() {
+          _errorMessage = '섬의 좌표를 찾을 수 없습니다.';
+        });
+      }
     } catch (e) {
       setState(() {
         _errorMessage = '검색 중 오류가 발생했습니다.';
@@ -84,6 +107,7 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
       });
     }
   }
+
 
   void _selectPlace(GooglePlaceModel place) {
     final customPlace = CustomGooglePlaceModel.fromGooglePlaceModel(place);

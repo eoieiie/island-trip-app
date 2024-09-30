@@ -58,6 +58,7 @@ class MyTravelViewModel extends GetxController {
     String? memo,
     double? latitude,  // 위도 추가
     double? longitude,  // 경도 추가
+    String? placeName,
   }) async {
     final travel = travels.firstWhere((t) => t.id == travelId);
     final DateTime startDateTime = DateTime.parse("${date.toString().split(' ')[0]} $startTime");
@@ -72,6 +73,7 @@ class MyTravelViewModel extends GetxController {
       memo: memo,
       latitude: latitude,  // 추가된 좌표
       longitude: longitude,  // 추가된 좌표
+      placeName: placeName,
     );
     travel.schedules.add(newSchedule);
     saveSchedules(travelId); // 스케줄 데이터 저장
@@ -92,6 +94,48 @@ class MyTravelViewModel extends GetxController {
     saveTravels(); // 전체 여행 데이터를 저장 (여기서 스케줄도 함께 저장됩니다)
     update(); // 상태 업데이트
   }
+
+  // 일정 업데이트 메서드
+  void updateSchedule({
+    required String travelId,
+    required String scheduleId,
+    required DateTime date,
+    required String title,
+    required String startTime,
+    required String endTime,
+    String? memo,
+    double? latitude,
+    double? longitude,
+    String? placeName,
+  }) async {
+    final travel = travels.firstWhere((t) => t.id == travelId);
+    final scheduleIndex = travel.schedules.indexWhere((s) => s.id == scheduleId);
+
+    if (scheduleIndex == -1) {
+      throw Exception('해당 일정이 존재하지 않습니다.');
+    }
+
+    final DateTime startDateTime = DateTime.parse("${date.toString().split(' ')[0]} $startTime");
+    final DateTime endDateTime = DateTime.parse("${date.toString().split(' ')[0]} $endTime");
+
+    // 기존 일정을 업데이트
+    travel.schedules[scheduleIndex] = ScheduleModel(
+      id: scheduleId,
+      title: title,
+      date: date,
+      startTime: startDateTime,
+      endTime: endDateTime,
+      memo: memo,
+      latitude: latitude,
+      longitude: longitude,
+      placeName: placeName,
+    );
+
+    saveSchedules(travelId); // 스케줄 데이터 저장
+    saveTravels(); // 여행 데이터 저장
+    update(); // 상태 업데이트
+  }
+
 
 
   Future<void> updateTravel(int index, TravelModel updatedTravel) async {

@@ -9,6 +9,7 @@ class ScheduleModel {
   final String? memo; // 일정 메모 (선택적)
   final double? latitude; // 장소의 위도 (선택적)
   final double? longitude; // 장소의 경도 (선택적)
+  final String? placeName; // 장소의 이름 (선택적)
   final List<String>? imageUrls; // 이미지 URL 목록, 로컬 asset 이미지도 포함 가능 (선택적)
 
   // 생성자: 필수 필드와 선택적 필드들을 초기화
@@ -21,6 +22,7 @@ class ScheduleModel {
     this.memo, // 메모는 선택적
     this.latitude, // 위도는 선택적
     this.longitude, // 경도는 선택적
+    this.placeName, // 장소 이름은 선택적
     this.imageUrls, // 이미지 URL 목록은 선택적
   });
 
@@ -35,6 +37,7 @@ class ScheduleModel {
       memo: json['memo'] ?? '', // 메모가 없으면 빈 문자열 할당
       latitude: json['latitude'] != null ? json['latitude'].toDouble() : null, // 위도 값이 있으면 변환
       longitude: json['longitude'] != null ? json['longitude'].toDouble() : null, // 경도 값이 있으면 변환
+      placeName: json['placeName'], // 장소 이름 변환
       imageUrls: json['imageUrls'] != null ? List<String>.from(json['imageUrls']) : null, // 이미지 URL 목록 처리
     );
   }
@@ -50,6 +53,7 @@ class ScheduleModel {
       'memo': memo, // memo 필드 변환
       'latitude': latitude, // latitude 필드 변환
       'longitude': longitude, // longitude 필드 변환
+      'placeName': placeName,
       'imageUrls': imageUrls, // imageUrls 필드 변환 (여러 개 가능)
     };
   }

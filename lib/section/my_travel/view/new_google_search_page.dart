@@ -120,161 +120,167 @@ class _NewGoogleSearchPageState extends State<NewGoogleSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // 배경색을 흰색으로 설정
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: Text(
-          '장소 검색',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            inherit: true,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: Color(0xFF222222),
-          ),
-        ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();  // 터치 시 키보드 숨기기
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 1.5,
-                  offset: Offset(0, 0),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          title: Text(
+            '장소 검색',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              inherit: true,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF222222),
             ),
           ),
-        ),
-      ),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.black, // 커서 색상 검은색으로 설정
-            selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
-          ),
-        ),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0), // 패딩을 일정하게 설정
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 검색어 입력 필드
-                  TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: '검색어를 입력하세요',
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.search, color: Color(0xFF1BB874)),
-                        onPressed: _searchPlaces,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
-                      ),
-                    ),
-                    onSubmitted: (_) => _searchPlaces(),
-                  ),
-                  SizedBox(height: 20),
-                  Expanded(
-                    child: _errorMessage != null
-                        ? Center(
-                      child: Text(
-                        _errorMessage!,
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    )
-                        : _places.isNotEmpty
-                        ? ListView.separated(
-                      itemCount: _places.length,
-                      separatorBuilder: (context, index) => Divider(
-                        color: Color(0xFFF7F7F7),
-                        thickness: 1,
-                      ),
-                      itemBuilder: (context, index) {
-                        final place = _places[index];
-                        final thumbnailUrl = place.photoUrls != null && place.photoUrls!.isNotEmpty
-                            ? place.photoUrls!.first
-                            : null;
-
-                        return ListTile(
-                          leading: thumbnailUrl != null
-                              ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              thumbnailUrl,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                              : Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.image_not_supported, color: Colors.white),
-                          ),
-                          title: Text(
-                            place.name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          subtitle: Text(
-                            place.address,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          onTap: () => _selectPlace(place),
-                        );
-                      },
-                    )
-                        : Center(
-                      child: Text('추천할 장소가 없습니다.'),
-                    ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 1.5,
+                    offset: Offset(0, 0),
                   ),
                 ],
               ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
-            if (_isLoading)
-              IgnorePointer(
-                ignoring: true,
-                child: Container(
-                  color: Colors.white.withOpacity(0.7),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green[300],
+          ),
+        ),
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: Colors.black,
+              selectionHandleColor: Color(0xFF1BB874),
+            ),
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: '검색어를 입력하세요',
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.search, color: Color(0xFF1BB874)),
+                          onPressed: _searchPlaces,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Color(0xFFC8C8C8), width: 1),
+                        ),
+                      ),
+                      onSubmitted: (_) => _searchPlaces(),
+                    ),
+                    SizedBox(height: 20),
+                    Expanded(
+                      child: _errorMessage != null
+                          ? Center(
+                        child: Text(
+                          _errorMessage!,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )
+                          : _places.isNotEmpty
+                          ? ListView.separated(
+                        itemCount: _places.length,
+                        separatorBuilder: (context, index) => Divider(
+                          color: Color(0xFFF7F7F7),
+                          thickness: 1,
+                        ),
+                        itemBuilder: (context, index) {
+                          final place = _places[index];
+                          final thumbnailUrl = place.photoUrls != null &&
+                              place.photoUrls!.isNotEmpty
+                              ? place.photoUrls!.first
+                              : null;
+
+                          return ListTile(
+                            leading: thumbnailUrl != null
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                thumbnailUrl,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                                : Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.image_not_supported,
+                                  color: Colors.white),
+                            ),
+                            title: Text(
+                              place.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            subtitle: Text(
+                              place.address,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            onTap: () => _selectPlace(place),
+                          );
+                        },
+                      )
+                          : Center(
+                        child: Text('추천할 장소가 없습니다.'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_isLoading)
+                IgnorePointer(
+                  ignoring: true,
+                  child: Container(
+                    color: Colors.white.withOpacity(0.7),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.green[300],
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

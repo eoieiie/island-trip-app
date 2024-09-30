@@ -78,86 +78,90 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      // 키보드에 의해 화면이 밀려올라가도록 설정
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: Text(
-          '일정 추가',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            inherit: true,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: Color(0xFF222222),
-          ),
-        ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();  // 터치 시 키보드 숨기기
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 1.5,
-                  offset: Offset(0, 0),
-                ),
-              ],
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          title: Text(
+            '일정 추가',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              inherit: true,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF222222),
             ),
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 1.5,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ),
         ),
-      ),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.black, // 커서 색상 검은색으로 설정
-            selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            // 키보드가 올라올 때 하단에 충분한 공간을 주기 위해 추가
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: Colors.black,
+              selectionHandleColor: Color(0xFF1BB874),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLocationInput(),
-                SizedBox(height: 20),
-                _makeline(),
-                SizedBox(height: 20),
-                _buildTimePicker(),
-                SizedBox(height: 20),
-                _makeline(),
-                SizedBox(height: 20),
-                _buildTitleInput(),
-                SizedBox(height: 20),
-                _buildMemoInput(),
-                SizedBox(height: 20),
-                _buildSubmitButton(),
-                SizedBox(height: 50),
-              ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLocationInput(),
+                  SizedBox(height: 20),
+                  _makeline(),
+                  SizedBox(height: 20),
+                  _buildTimePicker(),
+                  SizedBox(height: 20),
+                  _makeline(),
+                  SizedBox(height: 20),
+                  _buildTitleInput(),
+                  SizedBox(height: 20),
+                  _buildMemoInput(),
+                  SizedBox(height: 20),
+                  _buildSubmitButton(),
+                  SizedBox(height: 50),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 
   Widget _makeline() {
     return Container(

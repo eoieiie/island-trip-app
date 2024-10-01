@@ -11,6 +11,11 @@ class ScheduleAddView extends StatefulWidget {
   final String? startTime;
   final String? endTime;
   final String? memo;
+  final String? selectedPlace;  // 여기 추가
+  final double? latitude;  // 위도
+  final double? longitude;  // 경도
+  final bool isEditing;  // 수정인지 추가인지 구분하는 플래그
+  final String? scheduleId;
 
   const ScheduleAddView({
     Key? key,
@@ -22,6 +27,11 @@ class ScheduleAddView extends StatefulWidget {
     this.startTime, // 기존 일정 시작 시간
     this.endTime, // 기존 일정 종료 시간
     this.memo, // 기존 메모
+    this.selectedPlace,
+    this.latitude,  // 위도 추가
+    this.longitude,  // 경도 추가
+    this.isEditing = false, // 기본값은 추가 모드
+    this.scheduleId, // 일정 ID 파라미터
   }) : super(key: key);
 
   @override
@@ -50,6 +60,10 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
     _memoController = TextEditingController(text: widget.memo ?? '');
     _hoursController = FixedExtentScrollController(initialItem: _selectedHour);
     _minutesController = FixedExtentScrollController(initialItem: _selectedMinute);
+    _selectedPlace = widget.selectedPlace;  // 기존 장소 정보를 초기화
+    _selectedLatitude = widget.latitude;  // 기존 위도 초기화
+    _selectedLongitude = widget.longitude;  // 기존 경도 초기화
+    print('ScheduleAddView로 전달된 장소: ${widget.selectedPlace}');
   }
 
   @override
@@ -64,86 +78,90 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      // 키보드에 의해 화면이 밀려올라가도록 설정
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: Text(
-          '일정 추가',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            inherit: true,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: Color(0xFF222222),
-          ),
-        ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();  // 터치 시 키보드 숨기기
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 1.5,
-                  offset: Offset(0, 0),
-                ),
-              ],
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          title: Text(
+            '일정 추가',
+            style: TextStyle(
+              fontFamily: 'Pretendard',
+              inherit: true,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF222222),
             ),
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 1.5,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ),
         ),
-      ),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.black, // 커서 색상 검은색으로 설정
-            selectionHandleColor: Color(0xFF1BB874), // 선택 핸들 색상 초록색으로 설정
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            // 키보드가 올라올 때 하단에 충분한 공간을 주기 위해 추가
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: Colors.black,
+              selectionHandleColor: Color(0xFF1BB874),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLocationInput(),
-                SizedBox(height: 20),
-                _makeline(),
-                SizedBox(height: 20),
-                _buildTimePicker(),
-                SizedBox(height: 20),
-                _makeline(),
-                SizedBox(height: 20),
-                _buildTitleInput(),
-                SizedBox(height: 20),
-                _buildMemoInput(),
-                SizedBox(height: 20),
-                _buildSubmitButton(),
-                SizedBox(height: 50),
-              ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLocationInput(),
+                  SizedBox(height: 20),
+                  _makeline(),
+                  SizedBox(height: 20),
+                  _buildTimePicker(),
+                  SizedBox(height: 20),
+                  _makeline(),
+                  SizedBox(height: 20),
+                  _buildTitleInput(),
+                  SizedBox(height: 20),
+                  _buildMemoInput(),
+                  SizedBox(height: 20),
+                  _buildSubmitButton(),
+                  SizedBox(height: 50),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 
   Widget _makeline() {
     return Container(
@@ -187,17 +205,15 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
                 print('선택된 장소: $_selectedPlace');
                 print('위도: $_selectedLatitude, 경도: $_selectedLongitude');
 
-                // 제목이 비어있다면 장소 이름으로 설정
-                if (_titleController.text.isEmpty) {
-                  _titleController.text = _selectedPlace!;
-                }
+                // 장소가 선택될 때마다 제목을 장소 이름으로 업데이트
+                _titleController.text = _selectedPlace!;
               });
             }
           },
           child: AbsorbPointer(
             child: TextField(
               decoration: InputDecoration(
-                hintText: _selectedPlace ?? '위치 검색',
+                hintText: _selectedPlace?.isEmpty ?? true ? '위치 검색' : _selectedPlace,  // null이거나 빈 값일 때만 힌트 텍스트 사용
                 hintStyle: TextStyle(
                   color: _selectedPlace != null ? Colors.black : Colors.grey,
                 ),
@@ -430,7 +446,8 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         onPressed: _submitSchedule,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-          child: Text('추가하기', style: TextStyle(fontSize: 16, color: Colors.white)),
+          // 수정 모드인지에 따라 버튼 텍스트 변경
+          child: Text(widget.isEditing ? '수정하기' : '추가하기', style: TextStyle(fontSize: 16, color: Colors.white)),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xFF1BB874),
@@ -476,23 +493,46 @@ class _ScheduleAddViewState extends State<ScheduleAddView> {
         _selectedMinute,
       );
 
-      widget.travelViewModel.addSchedule(
-        travelId: widget.travelId,
-        date: selectedDateTime,
-        title: _titleController.text,
-        startTime: "${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}",
-        endTime: "23:59", // 예시: 종료 시간을 고정하거나, 사용자 입력으로 변경 가능
-        memo: _memoController.text,
-        latitude: _selectedLatitude,
-        longitude: _selectedLongitude,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('일정이 저장되었습니다.'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (widget.isEditing) {
+        // **기존 일정을 수정하는 로직**
+        widget.travelViewModel.updateSchedule(
+          travelId: widget.travelId,
+          scheduleId: widget.scheduleId!,
+          date: selectedDateTime,
+          title: _titleController.text,
+          startTime: "${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}",
+          endTime: "23:59",
+          memo: _memoController.text,
+          latitude: _selectedLatitude,
+          longitude: _selectedLongitude,
+          placeName: _selectedPlace,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('일정이 수정되었습니다.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        // **새로운 일정 추가 로직**
+        widget.travelViewModel.addSchedule(
+          travelId: widget.travelId,
+          date: selectedDateTime,
+          title: _titleController.text,
+          startTime: "${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}",
+          endTime: "23:59",
+          memo: _memoController.text,
+          latitude: _selectedLatitude,
+          longitude: _selectedLongitude,
+          placeName: _selectedPlace,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('일정이 저장되었습니다.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
 
       Navigator.pop(context, true); // result로 true를 반환
     });

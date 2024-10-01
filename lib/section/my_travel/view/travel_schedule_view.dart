@@ -7,6 +7,8 @@ import '../viewmodel/my_travel_viewmodel.dart';
 import 'package:project_island/main.dart';
 import 'schedule_add_view.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class TravelScheduleView extends StatefulWidget {
   final String travelId;
@@ -511,75 +513,138 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(top:10.0,left: 15.0,right: 15.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
         borderRadius: BorderRadius.circular(8.0),
         color: Colors.white,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start, // 메모가 왼쪽에 붙게 설정
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Row 내부에서 아이템을 양 끝에 배치
             children: [
-              Image.asset(
-                iconPath,
-                width: 20,
-                height: 20,
+              Row(
+                children: [
+                  Image.asset(
+                    iconPath,
+                    width: 20,
+                    height: 20,
+                  ),
+                  SizedBox(width: 8.0),
+                  Text(
+                    place,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              SizedBox(width: 8.0),
-              Text(
-                place,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 8.0),
+              // 시간 텍스트를 오른쪽 끝에 붙임
               Text(
                 formattedTime,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w200),
+                textAlign: TextAlign.right,
               ),
             ],
           ),
           SizedBox(height: 8.0),
           if (memo.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(memo, style: TextStyle(fontSize: 14)),
+              padding: const EdgeInsets.only(left: 30.0, bottom: 4.0),  // 메모 부분에 왼쪽 패딩 추가
+              // 메모를 왼쪽에 붙임
+              child: Text(
+                memo,
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.left,
+              ),
             ),
-          /*
           Row(
             children: [
-              _buildWhiteButton('수 정', () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ScheduleAddView(
-                      travelId: widget.travelId,
-                      selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)),
-                      travelViewModel: travelViewModel,
-                      selectedIsland: widget.selectedIsland,
-                      title: place,
-                      startTime: time,
-                      endTime: "23:59",
-                      memo: memo,
+              Expanded(
+                child: _buildWhiteButton('길 찾기', () {
+                  // 스케줄 데이터를 가져와서 출발지와 도착지 설정
+                  final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex);
+                  String startPlace = "";
+                  String endPlace = "";
+
+                  // 이전 일정의 좌표 (없으면 빈 값으로 설정)
+                  if (scheduleIndex > 1) {
+                    final previousSchedule = schedules[scheduleIndex - 2];
+                    startPlace = "${previousSchedule.latitude},${previousSchedule.longitude}";
+                  }
+
+                  // 현재 일정의 좌표
+                  final currentSchedule = schedules[scheduleIndex-1];
+                  if (currentSchedule.latitude != null && currentSchedule.longitude != null) {
+                    endPlace = "${currentSchedule.latitude},${currentSchedule.longitude}";
+                  }
+
+                  // 구글 맵 길찾기 URL 생성
+                  String url = "https://www.google.com/maps/dir/$startPlace/$endPlace";
+                  print("Launching URL: $url");
+
+                  // URL 실행
+                  _launchGoogleMap(url);
+                }),
+              ),
+              SizedBox(width: 10), // 버튼 사이 간격
+              Expanded(
+                child: _buildWhiteButton('일정 변경', () async {
+                  final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex);
+                  final schedule = schedules[scheduleIndex - 1]; // 현재 일정의 정보를 가져옴
+
+                  // DateTime을 String으로 변환
+                  String formattedStartTime = DateFormat('HH:mm').format(schedule.startTime);
+                  String formattedEndTime = DateFormat('HH:mm').format(schedule.endTime);
+
+                  // 현재 선택된 장소와 좌표를 ScheduleAddView로 전달
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ScheduleAddView(
+                        travelId: widget.travelId,
+                        selectedDate: widget.startDate.add(Duration(days: _selectedDayIndex)),
+                        travelViewModel: travelViewModel,
+                        selectedIsland: widget.selectedIsland,
+                        title: schedule.title, // 기존 제목 전달
+                        startTime: formattedStartTime,
+                        endTime: formattedEndTime,
+                        memo: schedule.memo, // 기존 메모 전달
+                        // 기존 선택된 장소 및 좌표 전달
+                        selectedPlace: schedule.placeName,
+                        latitude: schedule.latitude,
+                        longitude: schedule.longitude,
+                        isEditing: true, // 수정 모드로 진입
+                        scheduleId: schedule.id,
+                      ),
                     ),
-                  ),
-                );
-                if (result == true) {
-                  await travelViewModel.loadSchedules(widget.travelId).then((_) {
-                    setState(() {
-                      _updateMarkers(); // 일정 수정 후 마커 업데이트
+                  );
+                  if (result == true) {
+                    await travelViewModel.loadSchedules(widget.travelId).then((_) {
+                      setState(() {
+                        _updateMarkers();
+                      });
                     });
-                  });
-                }
-              }),
+                  }
+                }),
+              ),
             ],
           ),
-
-           */
         ],
       ),
     );
   }
+
+
+  // 구글 지도 길찾기 URL 실행 함수
+  void _launchGoogleMap(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
 
   // 흰색 버튼 스타일을 설정하는 함수
   Widget _buildWhiteButton(String text, VoidCallback onPressed) {

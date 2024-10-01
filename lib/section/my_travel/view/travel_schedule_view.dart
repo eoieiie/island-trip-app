@@ -561,27 +561,71 @@ class _TravelScheduleViewState extends State<TravelScheduleView> {
           Row(
             children: [
               Expanded(
-                child: _buildWhiteButton('길 찾기', () {
+                child: _buildWhiteButton('길 찾기', () async {
                   // 스케줄 데이터를 가져와서 출발지와 도착지 설정
                   final schedules = travelViewModel.getSchedulesByDay(widget.travelId, _selectedDayIndex);
-                  String startPlace = "";
-                  String endPlace = "";
+                  String startPlaceName = "";
+                  String startPlaceX = "";
+                  String startPlaceY = "";
+
+                  String endPlaceName = "";
+                  String endPlaceX = "";
+                  String endPlaceY = "";
 
                   // 이전 일정의 좌표 (없으면 빈 값으로 설정)
+                  /*
                   if (scheduleIndex > 1) {
                     final previousSchedule = schedules[scheduleIndex - 2];
                     startPlace = "${previousSchedule.latitude},${previousSchedule.longitude}";
                   }
+                  */
+                  // 네이버용 좌표
+                  if (scheduleIndex > 1) {
+                    final previousSchedule = schedules[scheduleIndex - 2];
+                    startPlaceName = "${previousSchedule.placeName}";
+                    startPlaceX = "${previousSchedule.longitude}";
+                    startPlaceY = "${previousSchedule.latitude}";
+                  }
 
                   // 현재 일정의 좌표
+                  /*
                   final currentSchedule = schedules[scheduleIndex-1];
                   if (currentSchedule.latitude != null && currentSchedule.longitude != null) {
                     endPlace = "${currentSchedule.latitude},${currentSchedule.longitude}";
                   }
+                  */
+
+                  if (scheduleIndex > 1) {
+                    final currentSchedule = schedules[scheduleIndex-1];
+                    endPlaceName = "${currentSchedule.placeName}";
+                    endPlaceX = "${currentSchedule.longitude}";
+                    endPlaceY = "${currentSchedule.latitude}";
+                  }
 
                   // 구글 맵 길찾기 URL 생성
-                  String url = "https://www.google.com/maps/dir/$startPlace/$endPlace";
+                  String url = "https://www.google.com/maps/dir/?api=1&origin=$startPlaceY,$startPlaceX&destination=$endPlaceY,$endPlaceX&travelmode=driving&dir_action=navigate";
                   print("Launching URL: $url");
+
+                  // 네이버 맵 길찾기 URL
+                  // 네이버 지도 URL 스킴 (네이버 지도 앱)
+                  /*
+                  String urlScheme = "nmap://route/public?slat=$startPlaceY&slng=$startPlaceX&sname=$startPlaceName&dlat=$endPlaceY&dlng=$endPlaceX&dname=$endPlaceName&appname=com.example.project_island";
+
+                  // 웹 브라우저용 URL (네이버 지도 웹)
+                  String urlWeb = "https://map.naver.com/v5/directions/${startPlaceX},${startPlaceY},$startPlaceName/${endPlaceX},${endPlaceY},$endPlaceName";
+
+                  // 네이버 지도 앱 실행 시도
+                  if (await canLaunch(urlScheme)) {
+                  await launch(urlScheme);
+                  } else {
+                  // 네이버 지도 앱이 없으면 웹 브라우저로 실행
+                    if (await canLaunch(urlWeb)) {
+                    await launch(urlWeb);
+                    } else {
+                    throw '네이버 지도를 실행할 수 없습니다.';
+                    }
+                  }
+                  */
 
                   // URL 실행
                   _launchGoogleMap(url);
